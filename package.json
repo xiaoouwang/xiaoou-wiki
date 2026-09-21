@@ -12,6 +12,7 @@
     "sync:admin": "node scripts/sync-admin.mjs",
     "export:admin": "node scripts/export-admin.mjs",
     "add:video": "node scripts/add-youtube-video.mjs",
+    "media:upload": "node scripts/upload-media-r2.mjs",
     "hooks:install": "node scripts/install-hooks.mjs",
     "prepare": "node scripts/install-hooks.mjs"
   },

@@ -23,6 +23,16 @@ npm start
 
 No public login. Visitors only see the published site.
 
+## Media storage (Cloudflare R2)
+
+Downloaded coaching videos and thumbnails are stored in the **xiaoou-wiki-media** R2 bucket and served from `https://xiaoou-wiki-api.singerxo.workers.dev/media/…` — not from GitHub.
+
+```bash
+npm run media:upload -- videos/….mp4 thumbnails/….jpg
+```
+
+`npm run add:video` uploads to R2 automatically.
+
 ## Admin ownership (push → database)
 
 Every `git push` from this computer runs a **pre-push hook** that syncs text content (`data/`, pages, css, js, …) into D1 under the single **admin** identity.

@@ -24,6 +24,8 @@ import {
 import { basename, join } from "node:path";
 
 const ROOT = process.cwd();
+const MEDIA_BASE =
+  process.env.XIAOOU_MEDIA_BASE || "https://xiaoou-wiki-api.singerxo.workers.dev/media";
 
 function arg(name, fallback = null) {
   const i = process.argv.indexOf(`--${name}`);
@@ -307,12 +309,18 @@ function main() {
     subtags,
   });
 
+  console.log("Uploading media to Cloudflare R2…");
+  execFileSync("node", [join(ROOT, "scripts/upload-media-r2.mjs"), `videos/${mp4Name}`, `thumbnails/${thumbName}`], {
+    stdio: "inherit",
+    cwd: ROOT,
+  });
+
   const entry = {
     id,
     title: englishTitleFromChinese(titleZh, subtags),
     description: titleZh,
-    thumbnail: `thumbnails/${thumbName}`,
-    file: `videos/${mp4Name}`,
+    thumbnail: `${MEDIA_BASE}/thumbnails/${thumbName}`,
+    file: `${MEDIA_BASE}/videos/${mp4Name}`,
     source: {
       platform: "youtube",
       creator,

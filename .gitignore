@@ -1,5 +1,9 @@
 videos/_sample.mp4
 videos/_meta/
+videos/bd*-*.mp4
+thumbnails/bd*-*.jpg
+thumbnails/bd*-*.jpeg
+thumbnails/bd*-*.webp
 .DS_Store
 node_modules/
 .wrangler/

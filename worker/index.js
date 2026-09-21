@@ -1,10 +1,8 @@
 /**
  * API-only Worker for Xiaoou Wiki.
- * Public site is on GitHub Pages; this Worker holds the D1 database.
+ * Public site is on GitHub Pages; Cloudflare holds D1 + R2 media.
  *
- * Everything writable is owned by the single admin identity (`admin`).
- *
- * Public:  GET /api/health, GET /api/records?topic=
+ * Public:  GET /media/*, GET /api/health, GET /api/records?topic=
  * Admin:   Authorization: Bearer <ADMIN_TOKEN>
  *          records CRUD, POST /api/admin/sync, GET /api/admin/export
  */
@@ -26,18 +24,24 @@ export default {
     }
 
     const url = new URL(request.url);
-    if (!url.pathname.startsWith("/api/")) {
-      return cors(
-        json({
-          service: "xiaoou-wiki-api",
-          owner: ADMIN_ID,
-          docs: "Public site: https://xiaoouwang.github.io/xiaoou-wiki/",
-        }),
-        request
-      );
-    }
 
     try {
+      if (url.pathname.startsWith("/media/")) {
+        return cors(await serveMedia(request, env, url), request);
+      }
+
+      if (!url.pathname.startsWith("/api/")) {
+        return cors(
+          json({
+            service: "xiaoou-wiki-api",
+            owner: ADMIN_ID,
+            media: "/media/{key}",
+            docs: "Public site: https://xiaoouwang.github.io/xiaoou-wiki/",
+          }),
+          request
+        );
+      }
+
       const res = await handleApi(request, env, url);
       return cors(res, request);
     } catch (err) {
@@ -46,6 +50,46 @@ export default {
     }
   },
 };
+
+async function serveMedia(request, env, url) {
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return new Response("Method not allowed", { status: 405 });
+  }
+
+  const key = decodeURIComponent(url.pathname.replace(/^\/media\//, "")).replace(/^\/+/, "");
+  if (!key || key.includes("..")) return new Response("Not found", { status: 404 });
+
+  const object =
+    request.method === "HEAD"
+      ? await env.MEDIA.head(key)
+      : await env.MEDIA.get(key, {
+          range: request.headers,
+          onlyIf: request.headers,
+        });
+
+  if (!object) return new Response("Not found", { status: 404 });
+
+  const headers = new Headers();
+  object.writeHttpMetadata(headers);
+  headers.set("etag", object.httpEtag);
+  headers.set("Accept-Ranges", "bytes");
+  headers.set("Cache-Control", headers.get("Cache-Control") || "public, max-age=86400");
+
+  if (request.method === "HEAD") {
+    return new Response(null, { status: 200, headers });
+  }
+
+  // Ranged body when Range requested
+  if (object.range) {
+    headers.set(
+      "Content-Range",
+      `bytes ${object.range.offset}-${object.range.offset + object.range.length - 1}/${object.size}`
+    );
+    return new Response(object.body, { status: 206, headers });
+  }
+
+  return new Response(object.body, { status: 200, headers });
+}
 
 async function handleApi(request, env, url) {
   const path = url.pathname.replace(/\/+$/, "") || "/";

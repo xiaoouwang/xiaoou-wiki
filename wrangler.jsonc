@@ -17,5 +17,11 @@
       "database_id": "6c2c09a9-beaf-48d8-b3f3-f12601a17fae",
       "migrations_dir": "migrations"
     }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "xiaoou-wiki-media"
+    }
   ]
 }
