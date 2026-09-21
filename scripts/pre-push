@@ -1,0 +1,8 @@
+#!/bin/sh
+# On every push from this machine, sync site content into the admin D1 store.
+if [ ! -f .env ] && [ -z "$ADMIN_TOKEN" ]; then
+  echo "pre-push: ADMIN_TOKEN missing (.env). Sync skipped would break admin ownership — aborting push."
+  echo "Create .env with: ADMIN_TOKEN=your_token"
+  exit 1
+fi
+npm run sync:admin || exit 1

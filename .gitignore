@@ -5,6 +5,8 @@ node_modules/
 deploy-assets/
 dist/
 .env
+.env.local
 .dev.vars
 *.local
+admin-export-*.json
 .vscode/

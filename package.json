@@ -8,7 +8,11 @@
     "start": "npx --yes serve -l 5173",
     "api:dev": "wrangler dev",
     "api:deploy": "wrangler deploy",
-    "db:migrate": "wrangler d1 migrations apply skill-wiki --remote"
+    "db:migrate": "wrangler d1 migrations apply skill-wiki --remote",
+    "sync:admin": "node scripts/sync-admin.mjs",
+    "export:admin": "node scripts/export-admin.mjs",
+    "hooks:install": "node scripts/install-hooks.mjs",
+    "prepare": "node scripts/install-hooks.mjs"
   },
   "license": "MIT",
   "devDependencies": {

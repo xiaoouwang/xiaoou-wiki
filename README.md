@@ -1,6 +1,6 @@
 # Xiaoou Wiki
 
-Public learning site on **GitHub Pages**. Cloudflare is only the private **database/API** for admin notes — no login on the public pages.
+Public learning site on **GitHub Pages**. Cloudflare holds the **admin-owned database** so content you push from this machine can be synced and later exported as one account.
 
 | Topic | Entry |
 | --- | --- |
@@ -15,25 +15,50 @@ Public learning site on **GitHub Pages**. Cloudflare is only the private **datab
 
 ## Public site
 
+Live: https://xiaoouwang.github.io/xiaoou-wiki/
+
 ```bash
 npm start
 ```
 
-Live: https://xiaoouwang.github.io/xiaoou-wiki/
+No public login. Visitors only see the published site.
 
-## Admin database (Cloudflare)
+## Admin ownership (push → database)
 
-The Worker `xiaoou-wiki-api` stores records in D1. Open unlisted `admin.html` (not linked from the site), unlock with your admin token, then save notes.
+Every `git push` from this computer runs a **pre-push hook** that syncs text content (`data/`, pages, css, js, …) into D1 under the single **admin** identity.
+
+1. Create a local `.env` (gitignored):
+
+```bash
+echo 'ADMIN_TOKEN=your_token_here' > .env
+```
+
+2. Install hooks (also runs on `npm install`):
+
+```bash
+npm run hooks:install
+```
+
+3. Push as usual — sync happens automatically:
+
+```bash
+git push
+```
+
+Manual sync / full export:
+
+```bash
+npm run sync:admin
+npm run export:admin
+```
+
+Unlisted editor for notes: [admin.html](admin.html) (not linked from the public UI).
+
+## API deploy
 
 ```bash
 npm run api:deploy
 npm run db:migrate
-```
-
-Set the token once:
-
-```bash
-npx wrangler secret put ADMIN_TOKEN
 ```
 
 ## Credit

@@ -333,6 +333,13 @@ body[data-sport="self-development"] .topic-switch-link.is-active {
   align-items: center;
   gap: 10px;
   min-width: 0;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+a.brand:hover .brand-name {
+  text-decoration: underline;
 }
 
 .topbar-search {
