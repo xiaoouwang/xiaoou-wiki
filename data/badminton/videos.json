@@ -244,12 +244,12 @@
     {
       "id": "bd6",
       "title": "Low center of gravity, then rise to hit",
-      "description": "Beginner footwork rhythm: stay low while moving, stand up into the shot, then drop low again and recover on a circle path.",
-      "thumbnail": "https://i.ytimg.com/vi/4eFKFjuPfY4/hqdefault.jpg",
-      "file": "videos/heel-side.mp4",
+      "description": "Coach Liu on center-of-gravity control for full-court movement — stay low while moving, rise into the hit, then drop low again. Original: 重心上下前后不会转换？教练：一节课讲透重心控制，全场跑位不再东倒西歪！",
+      "thumbnail": "thumbnails/bd6-4eFKFjuPfY4.jpg",
+      "file": "videos/bd6-4eFKFjuPfY4.mp4",
       "source": {
         "platform": "youtube",
-        "creator": "高校羽球刘老师",
+        "creator": "badminton coach Liu",
         "url": "https://www.youtube.com/watch?v=4eFKFjuPfY4"
       },
       "category": "beginner",
@@ -257,17 +257,17 @@
         "footwork",
         "ready"
       ],
-      "duration": "",
+      "duration": "8:57",
       "addedAt": "2026-09-21",
       "notes": {
-        "abstract": "Court movement and contact use different heights: low while you travel, tall at the hit, then low again to recover.",
+        "abstract": "Beginner footwork height control: low center of gravity while moving, stand up into the hit, then drop low again and recover with circle movement.",
         "points": [
           "When you are moving, keep a low center of gravity.",
           "When you hit, get up into the shot.",
           "After hitting, drop low again and recover with circle movement.",
-          "Use chest after hitting to control the landing position."
+          "Stay balanced front-to-back so you are not tumbling through court transitions."
         ],
-        "conclusion": "If you stay high while running or stay low through contact, your timing and recovery both suffer — change height with the phase."
+        "conclusion": "If you stay high while running or stay low through contact, timing and recovery both suffer — change height with the phase."
       }
     },
     {
