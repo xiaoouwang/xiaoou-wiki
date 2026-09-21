@@ -562,6 +562,13 @@ a.brand:hover .brand-name {
   color: #9a4b3c;
 }
 
+.filters {
+  position: sticky;
+  top: 0;
+  z-index: 55;
+  background: #ffffff;
+}
+
 .filters[hidden] {
   display: none;
 }

@@ -550,6 +550,32 @@ function renderLibrary() {
   els.emptyState.hidden = list.length > 0;
 }
 
+function setSubtag(id, { sync = true } = {}) {
+  const next = id || null;
+  state.activeSubtag = next;
+  state.activeVideoId = null;
+  state.activeResortId = null;
+
+  // If this tag has no items in the current category, jump to a category that does.
+  if (next && !isResortsMode()) {
+    const inCurrent = state.videos.some(
+      (v) => v.category === state.activeCategory && v.subtags.includes(next)
+    );
+    if (!inCurrent) {
+      const match = state.videos.find((v) => v.subtags.includes(next));
+      if (match) state.activeCategory = match.category;
+    }
+  }
+
+  renderCategoryRail();
+  renderSubtagRail();
+  renderLibrary();
+  document
+    .querySelector(`#subtag-rail [data-subtag="${next ?? ""}"]`)
+    ?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  if (sync) syncRoute();
+}
+
 function setCategory(id, { sync = true } = {}) {
   if (!categoryById(id)) return;
   state.activeCategory = id;
@@ -1063,12 +1089,7 @@ function bindEvents() {
     if (!btn || shouldIgnoreNav(e)) return;
     e.preventDefault();
     closeSheet({ sync: false });
-    state.activeSubtag = btn.dataset.subtag || null;
-    state.activeVideoId = null;
-    state.activeResortId = null;
-    renderSubtagRail();
-    renderLibrary();
-    syncRoute();
+    setSubtag(btn.dataset.subtag || null);
   });
 
   document.addEventListener("click", (e) => {
