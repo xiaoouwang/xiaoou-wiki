@@ -1,0 +1,21 @@
+{
+  "name": "xiaoou-wiki-api",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-09-21",
+  "workers_dev": true,
+  "preview_urls": true,
+  "observability": {
+    "enabled": true,
+    "traces": {
+      "enabled": true
+    }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "skill-wiki",
+      "database_id": "6c2c09a9-beaf-48d8-b3f3-f12601a17fae",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

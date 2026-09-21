@@ -1,0 +1,67 @@
+{
+  "series": [
+    {
+      "id": "edge-basics",
+      "title": "Edge & pressure",
+      "summary": "How the board grips, releases, and turns — the theory behind clean edges.",
+      "articles": [
+        {
+          "id": "what-is-an-edge",
+          "title": "What an edge actually does",
+          "readMinutes": 3,
+          "body": "A snowboard edge is a thin metal rail that digs into snow when you tip the board. Grip comes from angle (how much you tip) and pressure (how hard you push into that edge).\n\nBeginners usually skid because the edge angle stays low and pressure is late. The goal is not “more force” — it is earlier, quieter pressure through the front foot so the edge can engage before the turn needs it.\n\nThink of the edge as a tool that either cuts or scrapes. Cutting feels calm and the board tracks. Scraping feels noisy and the tail washes."
+        },
+        {
+          "id": "toe-vs-heel",
+          "title": "Toe-side vs heel-side",
+          "readMinutes": 4,
+          "body": "Toe-side turns use the edge under your toes. Heel-side turns use the edge under your heels. Most riders find one side easier; that is normal.\n\nOn heel-side, keep hips stacked over the board and look downhill. If the hips sit back, the nose loses pressure and the edge chatters.\n\nOn toe-side, avoid folding at the waist. Tip from the ankles and knees first so the edge engages under your feet, not under your chest."
+        },
+        {
+          "id": "pressure-timing",
+          "title": "Pressure timing",
+          "readMinutes": 3,
+          "body": "Good turns load the edge early, hold through the middle, and release smoothly into the next edge. Bad turns dump pressure at the end and skid.\n\nA simple drill: count “one” as you start tipping, “two” as pressure builds, “three” as you release. If “three” feels panicked, you started late.\n\nVideo study tip: watch your front knee. If it collapses inward late in the turn, pressure arrived too late to hold the arc."
+        }
+      ]
+    },
+    {
+      "id": "snow-reading",
+      "title": "Reading snow",
+      "summary": "Texture, light, and terrain cues so you choose speed and turn shape on purpose.",
+      "articles": [
+        {
+          "id": "hardpack-vs-soft",
+          "title": "Hardpack vs soft snow",
+          "readMinutes": 3,
+          "body": "Hardpack rewards a clean edge and punishes late pressure. Soft snow forgives skids but hides obstacles and needs more float in powder.\n\nOn firm mornings, shorten your turn radius and keep the board quieter. On soft afternoons, open the turn and accept a little smear if it keeps speed under control.\n\nIf the board feels grabby, check for ice patches in shade lines — those need intentional edge angle, not hope."
+        },
+        {
+          "id": "flat-light",
+          "title": "Flat light and fall line",
+          "readMinutes": 2,
+          "body": "Flat light removes contrast, so bumps and drops disappear. Slow down, use shorter turns, and follow terrain features you can still see: tree lines, piste markers, other riders’ tracks.\n\nTrust the fall line more than your eyes. Looking far ahead helps, but if the snow is blank, reduce speed until shape returns."
+        }
+      ]
+    },
+    {
+      "id": "resort-sense",
+      "title": "Resort sense",
+      "summary": "How to think about a mountain day: warm-ups, crowds, and choosing terrain that matches your goal.",
+      "articles": [
+        {
+          "id": "warm-up-lap",
+          "title": "The warm-up lap",
+          "readMinutes": 2,
+          "body": "Your first lap is information, not performance. Check snow, bindings, and how your body feels.\n\nRide a run below your max. Link turns with attention to edge change. If something feels off — stance, boot fit, visibility — fix it before you chase a harder line.\n\nPrograms work best when the warm-up video or drill matches the day’s goal: edges, park, or powder."
+        },
+        {
+          "id": "choosing-terrain",
+          "title": "Choosing terrain for practice",
+          "readMinutes": 3,
+          "body": "Practice terrain should be just easy enough that you can focus on one idea. If survival takes all your attention, the drill will not stick.\n\nCarving: quiet blues with consistent pitch.\nPark: small features first, then size up.\nPowder: spaced trees or open bowls before tight glades.\n\nMatch resort choice to the skill you are training — Niseko trees for powder reading, a groomer-heavy resort for edge work."
+        }
+      ]
+    }
+  ]
+}

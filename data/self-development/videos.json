@@ -1,0 +1,263 @@
+{
+  "categories": [
+    {
+      "id": "beginner",
+      "label": "Beginner",
+      "kind": "videos",
+      "color": "#5B8C6A",
+      "subtags": [
+        {
+          "id": "habits",
+          "label": "Habits"
+        },
+        {
+          "id": "focus",
+          "label": "Focus"
+        },
+        {
+          "id": "journaling",
+          "label": "Journaling"
+        },
+        {
+          "id": "sleep",
+          "label": "Sleep"
+        }
+      ]
+    },
+    {
+      "id": "intermediate",
+      "label": "Intermediate",
+      "kind": "videos",
+      "color": "#3D7EA6",
+      "subtags": [
+        {
+          "id": "planning",
+          "label": "Planning"
+        },
+        {
+          "id": "feedback",
+          "label": "Feedback"
+        },
+        {
+          "id": "learning",
+          "label": "Learning"
+        },
+        {
+          "id": "energy",
+          "label": "Energy"
+        }
+      ]
+    },
+    {
+      "id": "advanced",
+      "label": "Advanced",
+      "kind": "videos",
+      "color": "#8B5E4B",
+      "subtags": [
+        {
+          "id": "systems",
+          "label": "Systems"
+        },
+        {
+          "id": "decisions",
+          "label": "Decisions"
+        },
+        {
+          "id": "leadership",
+          "label": "Leadership"
+        },
+        {
+          "id": "resilience",
+          "label": "Resilience"
+        }
+      ]
+    },
+    {
+      "id": "resorts",
+      "label": "Resources",
+      "kind": "resorts",
+      "color": "#6A8BA3",
+      "subtags": [
+        {
+          "id": "templates",
+          "label": "Templates"
+        },
+        {
+          "id": "reading",
+          "label": "Reading"
+        },
+        {
+          "id": "reviews",
+          "label": "Reviews"
+        },
+        {
+          "id": "tools",
+          "label": "Tools"
+        }
+      ]
+    }
+  ],
+  "videos": [
+    {
+      "id": "sd1",
+      "title": "One habit that survives a bad week",
+      "description": "Tiny, obvious, and tied to an existing cue — so it still happens when motivation is gone.",
+      "thumbnail": "thumbnails/strap-in.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Steady Practice",
+        "url": "https://example.com/sd1"
+      },
+      "category": "beginner",
+      "subtags": [
+        "habits"
+      ],
+      "duration": "3:05",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "Habits fail when they depend on motivation; they stick when they are tiny and cued.",
+        "points": [
+          "Attach the habit to something you already do daily.",
+          "Make the first version embarrassingly small.",
+          "Track streaks lightly, not as punishment."
+        ],
+        "conclusion": "If you only do the habit on good days, it is still a mood — shrink it until bad days count."
+      }
+    },
+    {
+      "id": "sd2",
+      "title": "Focus blocks without drama",
+      "description": "25–50 minute blocks, one target, and a shutdown ritual that actually closes the loop.",
+      "thumbnail": "thumbnails/link-edges.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "instagram",
+        "creator": "@deepishwork",
+        "url": "https://example.com/sd2"
+      },
+      "category": "beginner",
+      "subtags": [
+        "focus"
+      ],
+      "duration": "2:40",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "Focus is a protected block with one outcome, not a vibe of “being busy.”",
+        "points": [
+          "Name the single deliverable before you start.",
+          "Silence inputs for the block length you chose.",
+          "End with a one-line note on what remains."
+        ],
+        "conclusion": "Open loops kill the next block — write the residue down before you context-switch."
+      }
+    },
+    {
+      "id": "sd3",
+      "title": "Weekly review in 20 minutes",
+      "description": "A lightweight review: wins, leaks, and one adjustment — not a second job.",
+      "thumbnail": "thumbnails/carve-blues.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Review Light",
+        "url": "https://example.com/sd3"
+      },
+      "category": "intermediate",
+      "subtags": [
+        "planning",
+        "learning"
+      ],
+      "duration": "4:10",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "Weekly reviews work when they are short enough to repeat.",
+        "points": [
+          "List wins so your brain sees progress.",
+          "Name one leak without self-attack.",
+          "Choose a single adjustment for next week."
+        ],
+        "conclusion": "A perfect review you skip is useless — keep it under 20 minutes."
+      }
+    },
+    {
+      "id": "sd4",
+      "title": "Asking for feedback you can use",
+      "description": "Specific questions beat “any thoughts?” — and you decide what to adopt.",
+      "thumbnail": "thumbnails/butter.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Feedback Craft",
+        "url": "https://example.com/sd4"
+      },
+      "category": "intermediate",
+      "subtags": [
+        "feedback"
+      ],
+      "duration": "3:30",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "Useful feedback is solicited with a sharp question and filtered by your goals.",
+        "points": [
+          "Ask about one moment or artifact, not your whole self.",
+          "Prefer observations over vague praise.",
+          "Adopt what matches your aim; discard the rest politely."
+        ],
+        "conclusion": "Unscoped feedback becomes noise — narrow the ask."
+      }
+    },
+    {
+      "id": "sd5",
+      "title": "Decisions with a default and a deadline",
+      "description": "Stop re-opening choices: set a default, a timebox, and a revisit rule.",
+      "thumbnail": "thumbnails/steeps.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "rednote",
+        "creator": "决策笔记",
+        "url": "https://example.com/sd5"
+      },
+      "category": "advanced",
+      "subtags": [
+        "decisions",
+        "systems"
+      ],
+      "duration": "3:55",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "Indecision is often missing defaults and deadlines, not missing information.",
+        "points": [
+          "Write the default if you do nothing.",
+          "Timebox the decision.",
+          "Define when you are allowed to revisit."
+        ],
+        "conclusion": "Revisiting without new information is rumination — close the loop."
+      }
+    }
+  ],
+  "resorts": [
+    {
+      "id": "weekly-template",
+      "name": "Weekly review template",
+      "region": "Template",
+      "summary": "A one-page weekly review you can copy into any notes app.",
+      "intro": "Sections:\n\n1. Wins (3 bullets)\n2. Energy (what drained / what restored)\n3. One leak\n4. Next week’s single focus\n\nKeep it short enough that Sunday-you still does it.",
+      "tags": [
+        "templates",
+        "reviews"
+      ]
+    },
+    {
+      "id": "reading-stack",
+      "name": "Small reading stack",
+      "region": "Reading list",
+      "summary": "Three practical books worth finishing over collecting.",
+      "intro": "Prefer finishing one practical book over collecting ten.\n\nSuggested stance: take notes as actions, not quotes.\n\nIf a chapter does not change a next action, skim faster.",
+      "tags": [
+        "reading",
+        "tools"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,266 @@
+{
+  "categories": [
+    {
+      "id": "beginner",
+      "label": "Beginner",
+      "kind": "videos",
+      "color": "#5B8C6A",
+      "subtags": [
+        {
+          "id": "breath",
+          "label": "Breathing"
+        },
+        {
+          "id": "float",
+          "label": "Floating"
+        },
+        {
+          "id": "kick",
+          "label": "Kick"
+        },
+        {
+          "id": "glide",
+          "label": "Glide"
+        }
+      ]
+    },
+    {
+      "id": "intermediate",
+      "label": "Intermediate",
+      "kind": "videos",
+      "color": "#3D7EA6",
+      "subtags": [
+        {
+          "id": "freestyle",
+          "label": "Freestyle"
+        },
+        {
+          "id": "backstroke",
+          "label": "Backstroke"
+        },
+        {
+          "id": "timing",
+          "label": "Timing"
+        },
+        {
+          "id": "turns",
+          "label": "Turns"
+        }
+      ]
+    },
+    {
+      "id": "advanced",
+      "label": "Advanced",
+      "kind": "videos",
+      "color": "#8B5E4B",
+      "subtags": [
+        {
+          "id": "butterfly",
+          "label": "Butterfly"
+        },
+        {
+          "id": "breaststroke",
+          "label": "Breaststroke"
+        },
+        {
+          "id": "endurance",
+          "label": "Endurance"
+        },
+        {
+          "id": "starts",
+          "label": "Starts"
+        }
+      ]
+    },
+    {
+      "id": "resorts",
+      "label": "Pools",
+      "kind": "resorts",
+      "color": "#6A8BA3",
+      "subtags": [
+        {
+          "id": "lanes",
+          "label": "Lane swim"
+        },
+        {
+          "id": "lessons",
+          "label": "Lessons"
+        },
+        {
+          "id": "open",
+          "label": "Open water"
+        },
+        {
+          "id": "recovery",
+          "label": "Recovery"
+        }
+      ]
+    }
+  ],
+  "videos": [
+    {
+      "id": "sw1",
+      "title": "Float first, swim second",
+      "description": "Relaxed float on back and front before adding propulsion.",
+      "thumbnail": "thumbnails/strap-in.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Water Calm",
+        "url": "https://example.com/sw1"
+      },
+      "category": "beginner",
+      "subtags": [
+        "float",
+        "breath"
+      ],
+      "duration": "3:00",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "Confidence starts with floating and breathing, not with thrashing distance.",
+        "points": [
+          "Practice back float with soft arms.",
+          "Exhale slowly in the water before lifting to inhale.",
+          "Kick only after the float feels quiet."
+        ],
+        "conclusion": "Panic swimming is hard to unlearn — earn calm floats first."
+      }
+    },
+    {
+      "id": "sw2",
+      "title": "Kick that moves you forward",
+      "description": "Long legs, soft knees, and a kick from the hips.",
+      "thumbnail": "thumbnails/link-edges.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "instagram",
+        "creator": "@kickquiet",
+        "url": "https://example.com/sw2"
+      },
+      "category": "beginner",
+      "subtags": [
+        "kick",
+        "glide"
+      ],
+      "duration": "2:40",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "A useful kick is narrow and hip-driven, not a big splashy knee bend.",
+        "points": [
+          "Point the toes and keep the kick underwater.",
+          "Think hips, not frantic knees.",
+          "Glide between kicks on drills."
+        ],
+        "conclusion": "If you go nowhere, shrink the kick and lengthen the body."
+      }
+    },
+    {
+      "id": "sw3",
+      "title": "Freestyle timing without gasping",
+      "description": "Rotate to breathe, catch water, and keep a steady stroke rate.",
+      "thumbnail": "thumbnails/carve-blues.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Stroke Clock",
+        "url": "https://example.com/sw3"
+      },
+      "category": "intermediate",
+      "subtags": [
+        "freestyle",
+        "timing",
+        "breath"
+      ],
+      "duration": "4:30",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "Freestyle breathing belongs inside rotation, not as a separate emergency lift.",
+        "points": [
+          "Turn the head with the body roll.",
+          "Exhale continuously underwater.",
+          "Keep one arm reaching while you breathe."
+        ],
+        "conclusion": "Gasping usually means late exhalation — empty air before you turn."
+      }
+    },
+    {
+      "id": "sw4",
+      "title": "Flip turns that save energy",
+      "description": "Approach, tuck, push, and streamline off the wall.",
+      "thumbnail": "thumbnails/butter.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Wall Craft",
+        "url": "https://example.com/sw4"
+      },
+      "category": "intermediate",
+      "subtags": [
+        "turns"
+      ],
+      "duration": "3:15",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "Good turns trade a messy stop for a fast streamline restart.",
+        "points": [
+          "Judge distance early so you do not glide dead into the wall.",
+          "Tuck tight and plant both feet.",
+          "Push into a long streamline before the first stroke."
+        ],
+        "conclusion": "A weak push wastes the turn — finish underwater with intention."
+      }
+    },
+    {
+      "id": "sw5",
+      "title": "Endurance sets you can actually finish",
+      "description": "Build volume with intervals and easy technique focus.",
+      "thumbnail": "thumbnails/steeps.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Set Builder",
+        "url": "https://example.com/sw5"
+      },
+      "category": "advanced",
+      "subtags": [
+        "endurance",
+        "freestyle"
+      ],
+      "duration": "3:40",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "Endurance grows from repeatable intervals, not from one heroic thrash.",
+        "points": [
+          "Choose a pace you can hold with decent form.",
+          "Rest enough to keep technique honest.",
+          "Stop a set when form collapses — reset shorter."
+        ],
+        "conclusion": "Ugly late lengths teach ugly habits — protect form with rest."
+      }
+    }
+  ],
+  "resorts": [
+    {
+      "id": "lane-etiquette",
+      "name": "Lane swim basics",
+      "region": "Pool guide",
+      "summary": "How to join a lane without chaos.",
+      "intro": "Ask the pace before you drop in. Circle swim counterclockwise unless the pool says otherwise.\n\nPass at the wall when possible. Rest in the corner, not in the middle of the lane.",
+      "tags": [
+        "lanes",
+        "lessons"
+      ]
+    },
+    {
+      "id": "open-water-start",
+      "name": "First open-water session",
+      "region": "Open water",
+      "summary": "Sighting, calm entries, and safety buddy rules.",
+      "intro": "Start near shore with a buddy. Practice sighting every few strokes.\n\nWear a bright cap. Know exit points before you get tired.",
+      "tags": [
+        "open",
+        "recovery"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,264 @@
+{
+  "categories": [
+    {
+      "id": "beginner",
+      "label": "Beginner",
+      "kind": "videos",
+      "color": "#5B8C6A",
+      "subtags": [
+        {
+          "id": "posture",
+          "label": "Posture"
+        },
+        {
+          "id": "reading",
+          "label": "Reading"
+        },
+        {
+          "id": "scales",
+          "label": "Scales"
+        },
+        {
+          "id": "hands",
+          "label": "Hands separate"
+        }
+      ]
+    },
+    {
+      "id": "intermediate",
+      "label": "Intermediate",
+      "kind": "videos",
+      "color": "#3D7EA6",
+      "subtags": [
+        {
+          "id": "pedal",
+          "label": "Pedal"
+        },
+        {
+          "id": "chords",
+          "label": "Chords"
+        },
+        {
+          "id": "rhythm",
+          "label": "Rhythm"
+        },
+        {
+          "id": "repertoire",
+          "label": "Repertoire"
+        }
+      ]
+    },
+    {
+      "id": "advanced",
+      "label": "Advanced",
+      "kind": "videos",
+      "color": "#8B5E4B",
+      "subtags": [
+        {
+          "id": "voicing",
+          "label": "Voicing"
+        },
+        {
+          "id": "tempo",
+          "label": "Tempo"
+        },
+        {
+          "id": "memory",
+          "label": "Memory"
+        },
+        {
+          "id": "performance",
+          "label": "Performance"
+        }
+      ]
+    },
+    {
+      "id": "resorts",
+      "label": "Resources",
+      "kind": "resorts",
+      "color": "#6A8BA3",
+      "subtags": [
+        {
+          "id": "practice",
+          "label": "Practice plans"
+        },
+        {
+          "id": "method",
+          "label": "Methods"
+        },
+        {
+          "id": "gear",
+          "label": "Gear"
+        },
+        {
+          "id": "care",
+          "label": "Hand care"
+        }
+      ]
+    }
+  ],
+  "videos": [
+    {
+      "id": "pn1",
+      "title": "Sitting so the arms can move",
+      "description": "Bench height, distance, and a quiet core so wrists stay free.",
+      "thumbnail": "thumbnails/strap-in.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Keys Lab",
+        "url": "https://example.com/pn1"
+      },
+      "category": "beginner",
+      "subtags": [
+        "posture"
+      ],
+      "duration": "3:10",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "Piano posture is balanced height and distance — not a rigid “correct” pose.",
+        "points": [
+          "Sit so elbows are slightly below the key tops.",
+          "Keep a soft wrist and long fingers.",
+          "Leave space so you can shift laterally without leaning hard."
+        ],
+        "conclusion": "If wrists ache early, check bench height before blaming technique."
+      }
+    },
+    {
+      "id": "pn2",
+      "title": "Hands separate before hands together",
+      "description": "Learn each hand cleanly, then merge at half speed.",
+      "thumbnail": "thumbnails/link-edges.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "instagram",
+        "creator": "@slowkeys",
+        "url": "https://example.com/pn2"
+      },
+      "category": "beginner",
+      "subtags": [
+        "hands",
+        "reading"
+      ],
+      "duration": "2:45",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "Together-too-soon creates guesswork; separate practice builds maps.",
+        "points": [
+          "Master the harder hand alone first.",
+          "Merge at a tempo where both hands stay accurate.",
+          "Only then raise speed in small steps."
+        ],
+        "conclusion": "Speed without a clean map just rehearses mistakes."
+      }
+    },
+    {
+      "id": "pn3",
+      "title": "Five-finger patterns that stick",
+      "description": "Simple scale and pattern drills for even tone.",
+      "thumbnail": "thumbnails/carve-blues.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Even Tone",
+        "url": "https://example.com/pn3"
+      },
+      "category": "beginner",
+      "subtags": [
+        "scales"
+      ],
+      "duration": "4:00",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "Evenness comes from listening, not from pressing harder.",
+        "points": [
+          "Play soft and listen for matching attacks.",
+          "Keep fingers close to the keys.",
+          "Stop when unevenness appears — reset slower."
+        ],
+        "conclusion": "Loud and uneven is not progress — soft and even is."
+      }
+    },
+    {
+      "id": "pn4",
+      "title": "Pedal as color, not blur",
+      "description": "Change pedal with harmony, not with every bar line.",
+      "thumbnail": "thumbnails/butter.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Pedal Sense",
+        "url": "https://example.com/pn4"
+      },
+      "category": "intermediate",
+      "subtags": [
+        "pedal",
+        "chords"
+      ],
+      "duration": "3:50",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "Pedal clarifies harmony when timed to changes, and muddies when held too long.",
+        "points": [
+          "Change on the new harmony, not early.",
+          "Listen for blur and clear it immediately.",
+          "Practice passages without pedal first."
+        ],
+        "conclusion": "If the texture turns cloudy, you are pedaling through a change."
+      }
+    },
+    {
+      "id": "pn5",
+      "title": "Performance run without panic",
+      "description": "Mock run-throughs: start, recover, finish — even after a stumble.",
+      "thumbnail": "thumbnails/steeps.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "rednote",
+        "creator": "上台笔记",
+        "url": "https://example.com/pn5"
+      },
+      "category": "advanced",
+      "subtags": [
+        "performance",
+        "memory"
+      ],
+      "duration": "3:25",
+      "addedAt": "2026-03-01",
+      "notes": {
+        "abstract": "Performance practice trains recovery, not perfection in the practice room only.",
+        "points": [
+          "Do full run-throughs without stopping for tiny errors.",
+          "Mark two restart points you can find under pressure.",
+          "Record one take and review tomorrow."
+        ],
+        "conclusion": "Stopping at every mistake teaches stopping — practice continuing."
+      }
+    }
+  ],
+  "resorts": [
+    {
+      "id": "week-plan",
+      "name": "4-day piano week",
+      "region": "Practice plan",
+      "summary": "A light weekly rotation that balances technique and pieces.",
+      "intro": "Day A: scales + reading\nDay B: repertoire slow\nDay C: hands separate hard spots\nDay D: full run + notes\n\nKeep sessions short enough to stay focused.",
+      "tags": [
+        "practice",
+        "method"
+      ]
+    },
+    {
+      "id": "bench-setup",
+      "name": "Bench & keyboard setup",
+      "region": "Gear",
+      "summary": "Height, distance, and digital vs acoustic basics.",
+      "intro": "Match bench height so wrists stay level. Sit far enough to move laterally.\n\nOn digital pianos, check weighted keys and a sustain pedal that feels consistent.",
+      "tags": [
+        "gear",
+        "care"
+      ]
+    }
+  ]
+}

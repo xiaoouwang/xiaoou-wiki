@@ -1,0 +1,16 @@
+node_modules/
+.wrangler/
+worker/
+migrations/
+.git/
+.vscode/
+.gitignore
+.assetsignore
+wrangler.jsonc
+package.json
+package-lock.json
+README.md
+*.toml
+.DS_Store
+**/node_modules/**
+**/.wrangler/**

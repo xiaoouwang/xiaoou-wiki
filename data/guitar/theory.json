@@ -1,0 +1,36 @@
+{
+  "series": [
+    {
+      "id": "guitar-hands",
+      "title": "Two hands, one time",
+      "summary": "Coordination between fretting and strumming.",
+      "articles": [
+        {
+          "id": "sync",
+          "title": "Right hand leads time",
+          "readMinutes": 3,
+          "body": "When things fall apart, simplify the right hand first. Time lives there.\n\nThen bring the left hand back in at a tempo both can share."
+        },
+        {
+          "id": "economy",
+          "title": "Economy of motion",
+          "readMinutes": 2,
+          "body": "Smaller fretting motions are faster and cleaner. Watch for flying fingers and bring them home."
+        }
+      ]
+    },
+    {
+      "id": "practice-guitar",
+      "title": "Practice that sticks",
+      "summary": "Song goals vs drill goals.",
+      "articles": [
+        {
+          "id": "split",
+          "title": "Split the session",
+          "readMinutes": 2,
+          "body": "Ten minutes of switches, then a song. Mixing both in one chaotic loop slows both."
+        }
+      ]
+    }
+  ]
+}

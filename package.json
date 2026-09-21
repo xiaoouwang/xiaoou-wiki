@@ -1,0 +1,17 @@
+{
+  "name": "xiaoou-wiki",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Xiaoou Wiki — GitHub Pages site with Cloudflare D1 admin API",
+  "scripts": {
+    "dev": "npx --yes serve -l 5173",
+    "start": "npx --yes serve -l 5173",
+    "api:dev": "wrangler dev",
+    "api:deploy": "wrangler deploy",
+    "db:migrate": "wrangler d1 migrations apply skill-wiki --remote"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^4.136.0"
+  }
+}

@@ -1,0 +1,440 @@
+{
+  "categories": [
+    {
+      "id": "beginner",
+      "label": "Beginner",
+      "kind": "videos",
+      "color": "#5B8C6A",
+      "subtags": [
+        {
+          "id": "snowplow",
+          "label": "Snowplow"
+        },
+        {
+          "id": "falling",
+          "label": "Falling"
+        },
+        {
+          "id": "stopping",
+          "label": "Stopping"
+        },
+        {
+          "id": "linking",
+          "label": "Linking turns"
+        }
+      ]
+    },
+    {
+      "id": "intermediate",
+      "label": "Intermediate",
+      "kind": "videos",
+      "color": "#3D7EA6",
+      "subtags": [
+        {
+          "id": "parallel",
+          "label": "Parallel turns"
+        },
+        {
+          "id": "carving",
+          "label": "Carving"
+        },
+        {
+          "id": "poles",
+          "label": "Pole plant"
+        },
+        {
+          "id": "bumps",
+          "label": "Bumps"
+        },
+        {
+          "id": "powder-intro",
+          "label": "Powder intro"
+        }
+      ]
+    },
+    {
+      "id": "advanced",
+      "label": "Advanced",
+      "kind": "videos",
+      "color": "#8B5E4B",
+      "subtags": [
+        {
+          "id": "steeps",
+          "label": "Steeps"
+        },
+        {
+          "id": "trees",
+          "label": "Trees"
+        },
+        {
+          "id": "offpiste",
+          "label": "Off-piste"
+        },
+        {
+          "id": "racing",
+          "label": "Racing"
+        }
+      ]
+    },
+    {
+      "id": "resorts",
+      "label": "Resorts",
+      "kind": "resorts",
+      "color": "#6A8BA3",
+      "subtags": [
+        {
+          "id": "cheap",
+          "label": "Cheap"
+        },
+        {
+          "id": "not-cheap",
+          "label": "Not cheap"
+        },
+        {
+          "id": "trees",
+          "label": "Trees"
+        },
+        {
+          "id": "night",
+          "label": "Night"
+        },
+        {
+          "id": "powder",
+          "label": "Powder"
+        },
+        {
+          "id": "glaciers",
+          "label": "Glaciers"
+        }
+      ]
+    }
+  ],
+  "videos": [
+    {
+      "id": "sk1",
+      "title": "Snowplow that actually stops",
+      "description": "Wide wedge, weight centered, and looking where you want to go. First confidence drill on a gentle green.",
+      "thumbnail": "thumbnails/heel-side.svg",
+      "file": "videos/heel-side.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Ski Basics Lab",
+        "url": "https://www.youtube.com/watch?v=example-plow"
+      },
+      "category": "beginner",
+      "subtags": [
+        "snowplow",
+        "stopping"
+      ],
+      "duration": "3:20",
+      "addedAt": "2026-02-10",
+      "notes": {
+        "abstract": "A snowplow that actually slows you down: wide wedge, centered weight, and eyes where you want to go.",
+        "points": [
+          "Open a stable wedge with weight centered between both skis.",
+          "Look where you want to travel, not at the tips.",
+          "Press evenly to scrub speed before you try to turn."
+        ],
+        "conclusion": "If you are still accelerating, the wedge is too narrow or weight is in the back seat."
+      }
+    },
+    {
+      "id": "sk2",
+      "title": "Linking plow turns",
+      "description": "Tip the skis inside the wedge and move pressure from ski to ski without standing up tall.",
+      "thumbnail": "thumbnails/link-edges.svg",
+      "file": "videos/link-edges.mp4",
+      "source": {
+        "platform": "instagram",
+        "creator": "@plowtoparallel",
+        "url": "https://www.instagram.com/reel/example-link-ski"
+      },
+      "category": "beginner",
+      "subtags": [
+        "linking",
+        "snowplow"
+      ],
+      "duration": "1:05",
+      "addedAt": "2026-01-30",
+      "notes": {
+        "abstract": "Linking plow turns by tipping inside the wedge and moving pressure ski to ski without standing tall.",
+        "points": [
+          "Tip the inside edges of the wedge to start direction change.",
+          "Shift pressure from ski to ski without popping upright.",
+          "Keep the plow shape until the link feels rhythmic."
+        ],
+        "conclusion": "Standing up tall mid-link kills edge engagement — stay compact and tip."
+      }
+    },
+    {
+      "id": "sk3",
+      "title": "How to fall and get up on skis",
+      "description": "Sit down early, keep tips downhill when you stand, and avoid twisting the knees.",
+      "thumbnail": "thumbnails/strap-in.svg",
+      "file": "videos/strap-in.mp4",
+      "source": {
+        "platform": "rednote",
+        "creator": "雪道安全",
+        "url": "https://www.xiaohongshu.com/explore/example-ski-fall"
+      },
+      "category": "beginner",
+      "subtags": [
+        "falling"
+      ],
+      "duration": "2:12",
+      "addedAt": "2026-01-12",
+      "notes": {
+        "abstract": "Falling and getting up on skis: sit early, keep tips downhill when you stand, avoid knee twist.",
+        "points": [
+          "Choose a controlled sit instead of a twisting catch.",
+          "Organize tips downhill before you push up.",
+          "Use poles for help without yanking the knees sideways."
+        ],
+        "conclusion": "Getting up well matters as much as falling well — tips downhill first."
+      }
+    },
+    {
+      "id": "sk4",
+      "title": "Parallel turns on blue runs",
+      "description": "Matching skis after the fall line, quiet upper body, and a clean pole plant rhythm.",
+      "thumbnail": "thumbnails/carve-blues.svg",
+      "file": "videos/carve-blues.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Parallel Path",
+        "url": "https://www.youtube.com/watch?v=example-parallel"
+      },
+      "category": "intermediate",
+      "subtags": [
+        "parallel",
+        "poles"
+      ],
+      "duration": "5:48",
+      "addedAt": "2026-02-18",
+      "notes": {
+        "abstract": "Parallel turns on blues once the plow is reliable: match skis and steer with the outside ski.",
+        "points": [
+          "Start closing the plow gradually as confidence grows.",
+          "Lead with outside-ski pressure through the turn.",
+          "Keep poles quiet and timing simple on blue terrain."
+        ],
+        "conclusion": "If the inside ski leads, you are still in plow habits — emphasis outside ski."
+      }
+    },
+    {
+      "id": "sk5",
+      "title": "Carving arcs without the skid",
+      "description": "Higher edge angles and angulation once parallel is solid. Side-camera study tip included.",
+      "thumbnail": "thumbnails/carve-blues.svg",
+      "file": "videos/carve-blues.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Carve Lab Ski",
+        "url": "https://www.youtube.com/watch?v=example-ski-carve"
+      },
+      "category": "intermediate",
+      "subtags": [
+        "carving"
+      ],
+      "duration": "6:10",
+      "addedAt": "2026-02-22",
+      "notes": {
+        "abstract": "Cleaner carved arcs: tip earlier and hold the edge so the ski tracks instead of skids.",
+        "points": [
+          "Roll onto edge earlier in the turn.",
+          "Hold pressure through the belly of the arc.",
+          "Release smoothly into the next tip without a long flat phase."
+        ],
+        "conclusion": "A carve leaves a thin track; a wide smear means you are still skidding."
+      }
+    },
+    {
+      "id": "sk6",
+      "title": "Mogul line reading",
+      "description": "Absorb and extend, keep hands quiet, and pick a zipper line that matches your speed.",
+      "thumbnail": "thumbnails/park-5050.svg",
+      "file": "videos/park-5050.mp4",
+      "source": {
+        "platform": "instagram",
+        "creator": "@bump.craft",
+        "url": "https://www.instagram.com/reel/example-bumps"
+      },
+      "category": "intermediate",
+      "subtags": [
+        "bumps"
+      ],
+      "duration": "2:40",
+      "addedAt": "2026-03-02",
+      "notes": {
+        "abstract": "Mogul line reading: pick a path early, absorb with the legs, and keep upper body calm.",
+        "points": [
+          "Choose a line before you are on top of the first bump.",
+          "Absorb with ankles and knees; keep the torso quieter.",
+          "Use short turns that match the bump rhythm."
+        ],
+        "conclusion": "Moguls punish late decisions — look two bumps ahead, not at your tips."
+      }
+    },
+    {
+      "id": "sk7",
+      "title": "First powder floats on skis",
+      "description": "Wider stance, centered pressure, and longer turns so tips stay up in soft snow.",
+      "thumbnail": "thumbnails/hakuba-powder.svg",
+      "file": "videos/hakuba-powder.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Soft Snow Ski",
+        "url": "https://www.youtube.com/watch?v=example-ski-powder"
+      },
+      "category": "intermediate",
+      "subtags": [
+        "powder-intro"
+      ],
+      "duration": "4:55",
+      "addedAt": "2026-03-09",
+      "notes": {
+        "abstract": "First powder on skis: slightly aft balance, longer turns, and enough speed to float.",
+        "points": [
+          "Ease weight slightly aft so tips stay alive.",
+          "Lengthen the turn; powder resists quick edge changes.",
+          "Keep enough speed to plane without diving the tips."
+        ],
+        "conclusion": "Submarining usually means too slow or too far forward — float first."
+      }
+    },
+    {
+      "id": "sk8",
+      "title": "Steep hop turns",
+      "description": "Commit to the fall line, hop to release edges, and land ready for the next turn.",
+      "thumbnail": "thumbnails/chamonix-steep.svg",
+      "file": "videos/chamonix-steep.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Alpine Lines Ski",
+        "url": "https://www.youtube.com/watch?v=example-ski-steep"
+      },
+      "category": "advanced",
+      "subtags": [
+        "steeps",
+        "offpiste"
+      ],
+      "duration": "6:44",
+      "addedAt": "2026-03-15",
+      "notes": {
+        "abstract": "Steep hop turns for when a long carve is the wrong tool: quick unweight, land, and set.",
+        "points": [
+          "Unweight both skis together to redirect in tight terrain.",
+          "Land and set the edges before the next hop.",
+          "Keep hops short and controlled above exposure."
+        ],
+        "conclusion": "Hop turns are survival tools — rhythm and commitment beat big swings."
+      }
+    },
+    {
+      "id": "sk9",
+      "title": "Tree skiing speed control",
+      "description": "Short turns, gap reading, and keeping eyes up through the next opening.",
+      "thumbnail": "thumbnails/niseko-trees.svg",
+      "file": "videos/niseko-trees.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Glade Study",
+        "url": "https://www.youtube.com/watch?v=example-ski-trees"
+      },
+      "category": "advanced",
+      "subtags": [
+        "trees",
+        "offpiste"
+      ],
+      "duration": "3:30",
+      "addedAt": "2026-03-19",
+      "notes": {
+        "abstract": "Tree skiing speed control: pick gaps, shorten turns, and never enter without an exit.",
+        "points": [
+          "Scan for gaps and an exit before you commit.",
+          "Use short turns to keep speed honest in tight spacing.",
+          "When trees densify, slow the cadence instead of forcing width."
+        ],
+        "conclusion": "In trees, line choice is the technique — speed without an exit is the danger."
+      }
+    },
+    {
+      "id": "sk10",
+      "title": "Race-inspired short turns",
+      "description": "Early edge, strong outside ski, and a compact pole plant for groomer performance.",
+      "thumbnail": "thumbnails/carve-blues.svg",
+      "file": "videos/carve-blues.mp4",
+      "source": {
+        "platform": "instagram",
+        "creator": "@gate.tempo",
+        "url": "https://www.instagram.com/reel/example-race"
+      },
+      "category": "advanced",
+      "subtags": [
+        "racing",
+        "carving"
+      ],
+      "duration": "2:05",
+      "addedAt": "2026-03-12",
+      "notes": {
+        "abstract": "Race-inspired short turns: quick edge changes, strong outside ski, compact upper body.",
+        "points": [
+          "Snap to the new edge early and often.",
+          "Drive the outside ski while the inside ski stays light.",
+          "Keep the upper body calm so the legs can work fast."
+        ],
+        "conclusion": "Short turns are timing, not muscle — edge early, release clean, repeat."
+      }
+    }
+  ],
+  "resorts": [
+    {
+      "id": "valdisere",
+      "name": "Val d'Isère",
+      "region": "French Alps",
+      "summary": "High-altitude grooming, glacier access, and serious alpine terrain.",
+      "intro": "Val d'Isère suits skiers who want reliable snow and long linked valleys.\n\nBeginner areas exist, but the mountain's personality is intermediate-to-advanced.\n\nPricing sits in the not-cheap range, especially in peak holiday weeks.",
+      "tags": [
+        "not-cheap",
+        "glaciers",
+        "powder"
+      ]
+    },
+    {
+      "id": "stanton",
+      "name": "St. Anton",
+      "region": "Austrian Alps",
+      "summary": "Legendary off-piste culture with lively village energy.",
+      "intro": "St. Anton is a classic introduction to alpine off-piste mindset.\n\nTrees and itineraries reward confident parallel skiers. Hire local knowledge if you leave the marked world.\n\nExpect premium pricing and strong après.",
+      "tags": [
+        "not-cheap",
+        "trees",
+        "powder"
+      ]
+    },
+    {
+      "id": "niseko",
+      "name": "Niseko",
+      "region": "Hokkaido, Japan",
+      "summary": "Powder benchmark with night skiing and tree runs.",
+      "intro": "Niseko works beautifully for skiers chasing soft snow and floodlit evenings.\n\nTree skiing is a highlight after storms. Peak season lodging is expensive near Hirafu.",
+      "tags": [
+        "not-cheap",
+        "trees",
+        "night",
+        "powder"
+      ]
+    },
+    {
+      "id": "formigal",
+      "name": "Formigal-Panticosa",
+      "region": "Spanish Pyrenees",
+      "summary": "Broad terrain with often friendlier pricing than the big Alpine hubs.",
+      "intro": "A solid option when you want variety without Swiss or French peak prices.\n\nGood intermediate grooming and family-friendly zones; advanced lines appear when the snowpack cooperates.",
+      "tags": [
+        "cheap",
+        "powder"
+      ]
+    }
+  ]
+}

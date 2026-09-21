@@ -1,0 +1,36 @@
+{
+  "series": [
+    {
+      "id": "water-sense",
+      "title": "Water sense",
+      "summary": "Balance, streamline, and calm breathing.",
+      "articles": [
+        {
+          "id": "streamline",
+          "title": "Long body first",
+          "readMinutes": 3,
+          "body": "A long, quiet body reduces drag more than extra splashy effort.\n\nDrill streamline pushes off every wall."
+        },
+        {
+          "id": "exhale",
+          "title": "Exhale is the secret inhale",
+          "readMinutes": 2,
+          "body": "Empty air underwater so the breath in can be short and calm.\n\nHolding the breath creates panic lifts."
+        }
+      ]
+    },
+    {
+      "id": "training-swim",
+      "title": "Training sense",
+      "summary": "How to progress without shoulder junk mileage.",
+      "articles": [
+        {
+          "id": "shoulders",
+          "title": "Protect the shoulders",
+          "readMinutes": 2,
+          "body": "Technique volume beats reckless yardage. Pain is a stop sign, not a badge.\n\nBalance freestyle with easy kick and back work."
+        }
+      ]
+    }
+  ]
+}

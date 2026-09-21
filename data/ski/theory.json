@@ -1,0 +1,42 @@
+{
+  "series": [
+    {
+      "id": "ski-stance",
+      "title": "Stance & balance",
+      "summary": "How ski stance, outside-ski pressure, and ankle flexion create control.",
+      "articles": [
+        {
+          "id": "outside-ski",
+          "title": "Trust the outside ski",
+          "readMinutes": 3,
+          "body": "In a turn, most of your pressure belongs on the outside ski. That ski draws the arc; the inside ski guides and balances.\n\nBeginners often stand equally on both skis and skid. Intermediate skiers start tipping earlier so the outside edge can grip before the fall line.\n\nA simple cue: feel the shin against the tongue of the outside boot through the middle of the turn."
+        },
+        {
+          "id": "ankle-flexion",
+          "title": "Ankle flexion first",
+          "readMinutes": 2,
+          "body": "Good ski balance starts in the ankles, not the hips. Flexing the ankles moves you over the skis so edges engage underfoot.\n\nIf you fold only at the waist, tips lighten and the tails wash. Keep the torso quiet and tip from the boots up."
+        }
+      ]
+    },
+    {
+      "id": "ski-snow",
+      "title": "Reading ski snow",
+      "summary": "Hardpack, soft snow, and flat light — how conditions change turn shape.",
+      "articles": [
+        {
+          "id": "hardpack-ski",
+          "title": "Hardpack rewards early edges",
+          "readMinutes": 3,
+          "body": "On firm snow, late pressure becomes a skid. Tip earlier, shorten the radius, and keep hands quiet.\n\nIce patches in shade lines need intentional edge angle — hope is not a strategy."
+        },
+        {
+          "id": "flat-light-ski",
+          "title": "Flat light tactics",
+          "readMinutes": 2,
+          "body": "When contrast disappears, slow down and use shorter turns. Follow trees, markers, and other tracks you can still see.\n\nTrust the fall line more than faded visual detail."
+        }
+      ]
+    }
+  ]
+}

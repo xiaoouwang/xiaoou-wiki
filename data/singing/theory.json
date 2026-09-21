@@ -1,0 +1,36 @@
+{
+  "series": [
+    {
+      "id": "voice-basics",
+      "title": "Voice basics",
+      "summary": "Breath, onset, and why tension migrates to the throat.",
+      "articles": [
+        {
+          "id": "onset",
+          "title": "Clean onset",
+          "readMinutes": 3,
+          "body": "A clean onset starts tone with the breath already moving. Glottal attacks and breathy leaks are the two common extremes.\n\nPractice easy vowels on a gentle sigh-to-tone. If the throat grabs, reduce volume and restart softer."
+        },
+        {
+          "id": "tension",
+          "title": "Where tension hides",
+          "readMinutes": 2,
+          "body": "Jaw, tongue root, and shoulders steal resonance. Scan those three before you “push more support.”\n\nOften the fix is release, not more effort."
+        }
+      ]
+    },
+    {
+      "id": "practice-sense",
+      "title": "Practice sense",
+      "summary": "How to structure short sessions that compound.",
+      "articles": [
+        {
+          "id": "short-sessions",
+          "title": "Short sessions win",
+          "readMinutes": 2,
+          "body": "Twenty focused minutes beat an unfocused hour. Warm, work one target, cool down.\n\nStop while quality is still rising."
+        }
+      ]
+    }
+  ]
+}

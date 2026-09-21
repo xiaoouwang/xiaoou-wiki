@@ -1,0 +1,36 @@
+{
+  "series": [
+    {
+      "id": "court-geometry",
+      "title": "Court geometry",
+      "summary": "Why center base and angles matter more than raw power.",
+      "articles": [
+        {
+          "id": "base",
+          "title": "Protect the base",
+          "readMinutes": 3,
+          "body": "After every shot, your job is recovery toward a useful base. Winners that leave you stranded lose the next exchange.\n\nTrain recovery as part of the stroke."
+        },
+        {
+          "id": "angles",
+          "title": "Hit to space",
+          "readMinutes": 2,
+          "body": "The best stroke is often the one that moves your opponent farthest from their next comfortable contact."
+        }
+      ]
+    },
+    {
+      "id": "training-sense",
+      "title": "Training sense",
+      "summary": "Drills vs games — how to progress without burnout.",
+      "articles": [
+        {
+          "id": "drill-game",
+          "title": "Drill, then play",
+          "readMinutes": 2,
+          "body": "Techniques stabilize in constrained drills, then transfer in conditioned games.\n\nSkipping drills hides footwork holes until match point."
+        }
+      ]
+    }
+  ]
+}

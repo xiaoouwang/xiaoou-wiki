@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Xiaoou Wiki · Admin</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <style>
+      body.admin-page {
+        min-height: 100vh;
+        margin: 0;
+        padding: 24px 16px 48px;
+        background: linear-gradient(180deg, #eef4f8, #f7fafc);
+        color: #243746;
+        font-family: "Avenir Next", "Segoe UI", sans-serif;
+      }
+      .admin-shell {
+        width: min(720px, 100%);
+        margin: 0 auto;
+        display: grid;
+        gap: 16px;
+      }
+      .admin-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 10px 28px rgba(35, 55, 70, 0.08);
+      }
+      .admin-card h1,
+      .admin-card h2 {
+        margin: 0 0 10px;
+      }
+      .admin-field {
+        display: grid;
+        gap: 4px;
+        margin-bottom: 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #5d7384;
+      }
+      .admin-field input,
+      .admin-field textarea,
+      .admin-field select {
+        border: 1px solid rgba(55, 78, 96, 0.18);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font: inherit;
+        color: #243746;
+      }
+      .admin-field textarea {
+        min-height: 110px;
+        resize: vertical;
+      }
+      .admin-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .admin-btn {
+        border: 0;
+        border-radius: 999px;
+        padding: 9px 14px;
+        font-weight: 800;
+        cursor: pointer;
+        background: #3d7ea6;
+        color: #fff;
+      }
+      .admin-btn.secondary {
+        background: rgba(55, 78, 96, 0.1);
+        color: #243746;
+      }
+      .admin-btn.danger {
+        background: #b42318;
+      }
+      .admin-status {
+        font-size: 0.82rem;
+        color: #5d7384;
+      }
+      .admin-status.error {
+        color: #b42318;
+      }
+      .record-list {
+        display: grid;
+        gap: 10px;
+      }
+      .record-item {
+        border: 1px solid rgba(55, 78, 96, 0.12);
+        border-radius: 12px;
+        padding: 12px;
+      }
+      .record-item h3 {
+        margin: 0 0 4px;
+        font-size: 1rem;
+      }
+      .record-meta {
+        margin: 0 0 8px;
+        font-size: 0.72rem;
+        color: #5d7384;
+      }
+      .record-body {
+        white-space: pre-wrap;
+        font-size: 0.88rem;
+        margin: 0 0 10px;
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body class="admin-page">
+    <div class="admin-shell">
+      <section class="admin-card">
+        <h1>Admin</h1>
+        <p class="admin-status">
+          Private editor for Xiaoou Wiki. Not linked from the public site. Uses the Cloudflare D1 database.
+        </p>
+        <div id="gate">
+          <label class="admin-field">
+            <span>Admin token</span>
+            <input id="token-input" type="password" autocomplete="off" placeholder="Bearer token" />
+          </label>
+          <div class="admin-actions">
+            <button class="admin-btn" id="unlock-btn" type="button">Unlock</button>
+          </div>
+          <p class="admin-status error" id="gate-error" hidden></p>
+        </div>
+        <div id="workspace" class="hidden">
+          <div class="admin-actions" style="margin-bottom: 12px">
+            <button class="admin-btn secondary" id="lock-btn" type="button">Lock</button>
+            <span class="admin-status" id="api-label"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-card hidden" id="editor-card">
+        <h2>New record</h2>
+        <label class="admin-field">
+          <span>Topic</span>
+          <select id="topic">
+            <option value="snowboard">Snowboard</option>
+            <option value="ski">Ski</option>
+            <option value="singing">Singing</option>
+            <option value="piano">Piano</option>
+            <option value="guitar">Guitar</option>
+            <option value="badminton">Badminton</option>
+            <option value="swimming">Swimming</option>
+            <option value="self-development">Self-development</option>
+          </select>
+        </label>
+        <label class="admin-field">
+          <span>Kind</span>
+          <input id="kind" value="note" />
+        </label>
+        <label class="admin-field">
+          <span>Title</span>
+          <input id="title" />
+        </label>
+        <label class="admin-field">
+          <span>Body</span>
+          <textarea id="body"></textarea>
+        </label>
+        <div class="admin-actions">
+          <button class="admin-btn" id="save-btn" type="button">Save to database</button>
+          <button class="admin-btn secondary" id="refresh-btn" type="button">Refresh list</button>
+        </div>
+        <p class="admin-status" id="editor-status"></p>
+      </section>
+
+      <section class="admin-card hidden" id="list-card">
+        <h2>Records</h2>
+        <div class="record-list" id="record-list"></div>
+      </section>
+    </div>
+
+    <script>
+      const API_BASE = localStorage.getItem("xiaoou_wiki_api") || "https://xiaoou-wiki-api.singerxo.workers.dev";
+      const TOKEN_KEY = "xiaoou_wiki_admin_token";
+
+      const els = {
+        gate: document.getElementById("gate"),
+        workspace: document.getElementById("workspace"),
+        editorCard: document.getElementById("editor-card"),
+        listCard: document.getElementById("list-card"),
+        tokenInput: document.getElementById("token-input"),
+        unlockBtn: document.getElementById("unlock-btn"),
+        lockBtn: document.getElementById("lock-btn"),
+        gateError: document.getElementById("gate-error"),
+        apiLabel: document.getElementById("api-label"),
+        topic: document.getElementById("topic"),
+        kind: document.getElementById("kind"),
+        title: document.getElementById("title"),
+        body: document.getElementById("body"),
+        saveBtn: document.getElementById("save-btn"),
+        refreshBtn: document.getElementById("refresh-btn"),
+        editorStatus: document.getElementById("editor-status"),
+        recordList: document.getElementById("record-list"),
+      };
+
+      els.apiLabel.textContent = API_BASE;
+
+      async function api(path, options = {}) {
+        const token = sessionStorage.getItem(TOKEN_KEY) || "";
+        const res = await fetch(`${API_BASE}${path}`, {
+          ...options,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            ...(options.headers || {}),
+          },
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        return data;
+      }
+
+      function setUnlocked(on) {
+        els.gate.classList.toggle("hidden", on);
+        els.workspace.classList.toggle("hidden", !on);
+        els.editorCard.classList.toggle("hidden", !on);
+        els.listCard.classList.toggle("hidden", !on);
+      }
+
+      async function unlock() {
+        els.gateError.hidden = true;
+        const token = els.tokenInput.value.trim();
+        if (!token) {
+          els.gateError.textContent = "Enter the admin token.";
+          els.gateError.hidden = false;
+          return;
+        }
+        sessionStorage.setItem(TOKEN_KEY, token);
+        try {
+          await refresh();
+          setUnlocked(true);
+        } catch (err) {
+          sessionStorage.removeItem(TOKEN_KEY);
+          els.gateError.textContent = err.message;
+          els.gateError.hidden = false;
+        }
+      }
+
+      function lock() {
+        sessionStorage.removeItem(TOKEN_KEY);
+        setUnlocked(false);
+        els.tokenInput.value = "";
+      }
+
+      async function refresh() {
+        const topic = els.topic.value;
+        const data = await api(`/api/admin/records?topic=${encodeURIComponent(topic)}`);
+        const records = data.records || [];
+        els.recordList.innerHTML = records.length
+          ? records
+              .map(
+                (r) => `
+            <article class="record-item" data-id="${r.id}">
+              <h3>${escapeHtml(r.title)}</h3>
+              <p class="record-meta">${escapeHtml(r.topic)} · ${escapeHtml(r.kind)} · ${escapeHtml(r.updatedAt)}</p>
+              <p class="record-body">${escapeHtml(r.body)}</p>
+              <div class="admin-actions">
+                <button class="admin-btn danger" type="button" data-delete="${r.id}">Delete</button>
+              </div>
+            </article>`
+              )
+              .join("")
+          : `<p class="admin-status">No records for this topic yet.</p>`;
+      }
+
+      async function save() {
+        els.editorStatus.textContent = "Saving…";
+        try {
+          await api("/api/admin/records", {
+            method: "POST",
+            body: JSON.stringify({
+              topic: els.topic.value,
+              kind: els.kind.value || "note",
+              title: els.title.value,
+              body: els.body.value,
+            }),
+          });
+          els.title.value = "";
+          els.body.value = "";
+          els.editorStatus.textContent = "Saved.";
+          await refresh();
+        } catch (err) {
+          els.editorStatus.textContent = err.message;
+        }
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      }
+
+      els.unlockBtn.addEventListener("click", unlock);
+      els.lockBtn.addEventListener("click", lock);
+      els.saveBtn.addEventListener("click", save);
+      els.refreshBtn.addEventListener("click", () => refresh().catch((e) => (els.editorStatus.textContent = e.message)));
+      els.topic.addEventListener("change", () => refresh().catch(() => {}));
+      els.recordList.addEventListener("click", async (e) => {
+        const id = e.target.dataset?.delete;
+        if (!id) return;
+        if (!confirm("Delete this record?")) return;
+        try {
+          await api(`/api/admin/records/${id}`, { method: "DELETE" });
+          await refresh();
+        } catch (err) {
+          els.editorStatus.textContent = err.message;
+        }
+      });
+
+      if (sessionStorage.getItem(TOKEN_KEY)) {
+        refresh()
+          .then(() => setUnlocked(true))
+          .catch(() => lock());
+      }
+    </script>
+  </body>
+</html>

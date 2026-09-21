@@ -1,0 +1,10 @@
+videos/_sample.mp4
+.DS_Store
+node_modules/
+.wrangler/
+deploy-assets/
+dist/
+.env
+.dev.vars
+*.local
+.vscode/

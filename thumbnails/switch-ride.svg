@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#e4eaf0"/>
+      <stop offset="100%" stop-color="#90a8bc"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#sky)"/>
+  <path d="M0 280 L160 160 L280 240 L420 100 L560 220 L700 140 L800 210 L800 450 L0 450 Z" fill="#4a6278" opacity="0.55"/>
+  <path d="M0 340 L200 240 L340 300 L500 180 L680 290 L800 250 L800 450 L0 450 Z" fill="#fff" opacity="0.55"/>
+  <path d="M0 380 L220 300 L400 350 L620 280 L800 330 L800 450 L0 450 Z" fill="#fff" opacity="0.75"/>
+  <text x="36" y="410" font-family="Georgia,serif" font-size="26" fill="#2a3a48" opacity="0.75">Switch</text>
+</svg>

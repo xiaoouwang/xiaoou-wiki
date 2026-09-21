@@ -1,0 +1,36 @@
+{
+  "series": [
+    {
+      "id": "piano-touch",
+      "title": "Touch & tone",
+      "summary": "How weight and release shape sound at the keyboard.",
+      "articles": [
+        {
+          "id": "weight",
+          "title": "Arm weight, not finger force",
+          "readMinutes": 3,
+          "body": "Tone improves when the arm supports the finger instead of the finger stabbing alone.\n\nPractice soft landings and listen for a round attack."
+        },
+        {
+          "id": "release",
+          "title": "Release is part of the note",
+          "readMinutes": 2,
+          "body": "How you leave a key shapes the end of the sound. Practice intentional releases, not only presses."
+        }
+      ]
+    },
+    {
+      "id": "practice-piano",
+      "title": "Practice structure",
+      "summary": "Short blocks that compound.",
+      "articles": [
+        {
+          "id": "blocks",
+          "title": "Technique then repertoire",
+          "readMinutes": 2,
+          "body": "Open with a small technique block, then spend the rest on repertoire goals.\n\nEnd by writing one note for tomorrow."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "series": [
+    {
+      "id": "attention",
+      "title": "Attention",
+      "summary": "Protecting focus in an interrupt-heavy life.",
+      "articles": [
+        {
+          "id": "inputs",
+          "title": "Cut inputs on purpose",
+          "readMinutes": 3,
+          "body": "Attention is recovered by reducing inputs, not by wishing for discipline.\n\nBatch messages and give deep work a closed door — even a metaphorical one."
+        },
+        {
+          "id": "recovery",
+          "title": "Recovery is part of the work",
+          "readMinutes": 2,
+          "body": "Sleep and walks are not optional DLC. Without recovery, focus blocks become theater."
+        }
+      ]
+    },
+    {
+      "id": "growth-loops",
+      "title": "Growth loops",
+      "summary": "Feedback and review as a loop, not a mood.",
+      "articles": [
+        {
+          "id": "loop",
+          "title": "Action → review → adjust",
+          "readMinutes": 2,
+          "body": "Improvement is a loop: act, review with evidence, adjust one variable.\n\nSkipping review turns motion into busyness."
+        }
+      ]
+    }
+  ]
+}
