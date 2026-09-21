@@ -21,6 +21,10 @@
         {
           "id": "ready",
           "label": "Ready position"
+        },
+        {
+          "id": "net",
+          "label": "Net play"
         }
       ]
     },
@@ -264,6 +268,34 @@
           "Use chest after hitting to control the landing position."
         ],
         "conclusion": "If you stay high while running or stay low through contact, your timing and recovery both suffer — change height with the phase."
+      }
+    },
+    {
+      "id": "bd7",
+      "title": "Net touch: frame set, hand at tape height",
+      "description": "Coach Liu on net technique — frame set, hand level with the tape, stable soft net shots and receives. Original: 网前总被推个跟头？教练：框架摆好、手与网袋平齐，搓球接球全都稳！",
+      "thumbnail": "thumbnails/bd7-eIVa_63TXDg.jpg",
+      "file": "videos/bd7-eIVa_63TXDg.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "badminton coach Liu",
+        "url": "https://www.youtube.com/watch?v=eIVa_63TXDg"
+      },
+      "category": "beginner",
+      "subtags": [
+        "net"
+      ],
+      "duration": "10:44",
+      "addedAt": "2026-09-21",
+      "notes": {
+        "abstract": "Beginner net play: set a stable racket frame, keep the hand near net-tape height, and use soft touch so you are not shoved off balance at the net.",
+        "points": [
+          "Set a stable racket frame before contact — don’t poke with a floppy wrist.",
+          "Keep the hitting hand near net-tape height so soft net shots stay controlled.",
+          "Use a soft rubbing / touch action at the net instead of a hard swing.",
+          "Prepare early for the next contact — recovery starts as you finish the net shot."
+        ],
+        "conclusion": "Watch once for the shape, then drill the same contact with fewer shuttles and cleaner balance."
       }
     }
   ],

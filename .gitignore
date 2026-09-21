@@ -1,4 +1,5 @@
 videos/_sample.mp4
+videos/_meta/
 .DS_Store
 node_modules/
 .wrangler/
