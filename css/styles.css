@@ -1137,10 +1137,14 @@ a.brand:hover .brand-name {
   box-shadow: var(--shadow);
   transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   padding-bottom: calc(16px + var(--safe-bottom));
+  pointer-events: none;
+  visibility: hidden;
 }
 
 .sheet-open {
   transform: translate(-50%, 0);
+  pointer-events: auto;
+  visibility: visible;
 }
 
 .sheet-handle {
@@ -1524,10 +1528,14 @@ a.brand:hover .brand-name {
   box-shadow: var(--shadow);
   transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   padding-bottom: calc(12px + var(--safe-bottom));
+  pointer-events: none;
+  visibility: hidden;
 }
 
 .picker-open {
   transform: translate(-50%, 0);
+  pointer-events: auto;
+  visibility: visible;
 }
 
 .picker-body {

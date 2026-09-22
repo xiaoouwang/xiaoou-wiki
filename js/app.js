@@ -748,7 +748,7 @@ function openProgram(id, { sync = true } = {}) {
 }
 
 function promptProgramName(defaultName = "") {
-  const name = window.prompt("Program name", defaultName || "Morning edges");
+  const name = window.prompt("Program name", defaultName || "My practice plan");
   if (name === null) return null;
   const trimmed = name.trim();
   return trimmed || null;
@@ -861,13 +861,7 @@ function openVideoSheet(video, { sync = true } = {}) {
   state.sheetMode = "video";
   state.activeVideoId = video.id;
   state.activeResortId = null;
-  if (state.activeCategory !== video.category) {
-    state.activeCategory = video.category;
-    state.activeSubtag = null;
-    renderCategoryRail();
-    renderSubtagRail();
-    renderLibrary();
-  }
+  // Do not rebuild the library mid-click — that retargets taps onto sheet buttons.
 
   els.sheetMedia.hidden = false;
   els.sourceCard.hidden = false;
@@ -952,7 +946,16 @@ function openResortSheet(resort, { sync = true } = {}) {
 function showSheet() {
   els.backdrop.hidden = false;
   els.sheet.setAttribute("aria-hidden", "false");
-  requestAnimationFrame(() => els.sheet.classList.add("sheet-open"));
+  // Ignore the opening tap so it cannot hit "Add to program" / picker actions.
+  els.sheet.style.pointerEvents = "none";
+  requestAnimationFrame(() => {
+    els.sheet.classList.add("sheet-open");
+    window.setTimeout(() => {
+      if (els.sheet.classList.contains("sheet-open")) {
+        els.sheet.style.pointerEvents = "";
+      }
+    }, 320);
+  });
 }
 
 function closeSheet({ sync = true } = {}) {
@@ -1027,7 +1030,15 @@ function openPicker() {
 
   els.pickerBackdrop.hidden = false;
   els.picker.setAttribute("aria-hidden", "false");
-  requestAnimationFrame(() => els.picker.classList.add("picker-open"));
+  els.picker.style.pointerEvents = "none";
+  requestAnimationFrame(() => {
+    els.picker.classList.add("picker-open");
+    window.setTimeout(() => {
+      if (els.picker.classList.contains("picker-open")) {
+        els.picker.style.pointerEvents = "";
+      }
+    }, 320);
+  });
 }
 
 function closePicker() {
