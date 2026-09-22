@@ -127,12 +127,12 @@ a.tab {
 }
 
 .site-youtube {
-  color: var(--muted);
+  color: #ff0000;
 }
 
 .site-youtube:hover {
-  color: #c4302b;
-  border-color: color-mix(in srgb, #c4302b 35%, var(--line));
+  color: #cc0000;
+  border-color: color-mix(in srgb, #ff0000 35%, var(--line));
   background: #fff;
 }
 
