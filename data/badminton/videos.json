@@ -49,6 +49,10 @@
         {
           "id": "drive",
           "label": "Drive"
+        },
+        {
+          "id": "footwork",
+          "label": "Footwork"
         }
       ]
     },
@@ -296,6 +300,34 @@
           "Prepare early for the next contact — recovery starts as you finish the net shot."
         ],
         "conclusion": "Watch once for the shape, then drill the same contact with fewer shuttles and cleaner balance."
+      }
+    },
+    {
+      "id": "bd8",
+      "title": "Split step when you can't predict the next shot",
+      "description": "JonLee on timing the split step when the opponent’s next shot is unclear — stay ready without guessing early. Original: HOW TO DO THE SPLIT STEP WHEN YOU CAN'T PREDICT YOUR OPPONENT'S NEXT SHOT【JONLEE李宇轩教练】",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/bd8-crqHjGarIwA.jpg",
+      "file": "https://xiaoou-wiki-api.singerxo.workers.dev/media/videos/bd8-crqHjGarIwA.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "JonLee李宇轩教练",
+        "url": "https://www.youtube.com/watch?v=crqHjGarIwA"
+      },
+      "category": "intermediate",
+      "subtags": [
+        "footwork"
+      ],
+      "duration": "14:19",
+      "addedAt": "2026-09-22",
+      "notes": {
+        "abstract": "Intermediate split-step timing for uncertain rallies: load late enough to react, then push in the real direction instead of guessing early.",
+        "points": [
+          "Time the split step with the opponent’s contact, not with your own guess.",
+          "Stay balanced and ready so either side is still available after the load.",
+          "Push only after you read the shuttle — don’t commit your first step early.",
+          "Recover through center so the next split step starts from a stable base."
+        ],
+        "conclusion": "If you keep guessing the shot before contact, your split step lands late or wrong — wait, load, then push."
       }
     }
   ],
