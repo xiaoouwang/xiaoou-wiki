@@ -2,9 +2,11 @@
  * API-only Worker for Xiaoou Wiki.
  * Public site is on GitHub Pages; Cloudflare holds D1 + R2 media.
  *
- * Public:  GET /media/*, GET /api/health, GET /api/records?topic=
+ * Public:  GET /media/*, GET /api/health, GET /api/records?topic=,
+ *          GET /api/video-notes?topic=
  * Admin:   Authorization: Bearer <ADMIN_TOKEN>
- *          records CRUD, POST /api/admin/sync, GET /api/admin/export
+ *          records CRUD, PUT /api/admin/video-notes,
+ *          POST /api/admin/sync, GET /api/admin/export
  */
 
 const ADMIN_ID = "admin";
@@ -100,6 +102,16 @@ async function handleApi(request, env, url) {
 
   if (path === "/api/records" && request.method === "GET") {
     return listRecords(env, url);
+  }
+
+  if (path === "/api/video-notes" && request.method === "GET") {
+    return listVideoNotes(env, url);
+  }
+
+  if (path === "/api/admin/video-notes" && request.method === "PUT") {
+    const denied = requireAdmin(request, env);
+    if (denied) return denied;
+    return upsertVideoNotes(request, env);
   }
 
   if (path === "/api/admin/records" && request.method === "GET") {
@@ -260,6 +272,78 @@ async function exportAdmin(env) {
       createdAt: s.created_at,
     })),
   });
+}
+
+function videoNotesRecordId(topic, videoId) {
+  return `vn:${topic}:${videoId}`;
+}
+
+function normalizeNotes(raw) {
+  const src = raw && typeof raw === "object" ? raw : {};
+  const abstract = String(src.abstract || "").trim();
+  const conclusion = String(src.conclusion || "").trim();
+  const points = Array.isArray(src.points)
+    ? src.points.map((p) => String(p || "").trim()).filter(Boolean).slice(0, 20)
+    : [];
+  return { abstract, points, conclusion };
+}
+
+async function listVideoNotes(env, url) {
+  const topic = String(url.searchParams.get("topic") || "").trim();
+  if (!topic) return json({ error: "topic is required." }, 400);
+
+  const { results } = await env.DB.prepare(
+    `SELECT id, title, body, updated_at FROM records
+     WHERE topic = ? AND kind = 'video-notes'
+     ORDER BY updated_at DESC LIMIT 500`
+  )
+    .bind(topic)
+    .all();
+
+  const notes = {};
+  for (const row of results || []) {
+    const videoId = String(row.title || "").trim();
+    if (!videoId) continue;
+    try {
+      notes[videoId] = normalizeNotes(JSON.parse(row.body || "{}"));
+    } catch {
+      notes[videoId] = normalizeNotes({});
+    }
+  }
+  return json({ topic, notes });
+}
+
+async function upsertVideoNotes(request, env) {
+  await ensureAdmin(env);
+  const body = await readJson(request);
+  const topic = String(body.topic || "").trim();
+  const videoId = String(body.videoId || "").trim().slice(0, 80);
+  if (!topic || !videoId) return json({ error: "topic and videoId are required." }, 400);
+
+  const notes = normalizeNotes(body.notes);
+  const now = new Date().toISOString();
+  const id = videoNotesRecordId(topic, videoId);
+  const meta = JSON.stringify({ ownerId: ADMIN_ID, videoId });
+  const text = JSON.stringify(notes);
+
+  const existing = await env.DB.prepare("SELECT id FROM records WHERE id = ?").bind(id).first();
+  if (existing) {
+    await env.DB.prepare(
+      `UPDATE records SET kind = 'video-notes', title = ?, body = ?, meta = ?, updated_at = ?
+       WHERE id = ?`
+    )
+      .bind(videoId, text, meta, now, id)
+      .run();
+  } else {
+    await env.DB.prepare(
+      `INSERT INTO records (id, topic, kind, title, body, meta, created_at, updated_at)
+       VALUES (?, ?, 'video-notes', ?, ?, ?, ?, ?)`
+    )
+      .bind(id, topic, videoId, text, meta, now, now)
+      .run();
+  }
+
+  return json({ ok: true, topic, videoId, notes, updatedAt: now });
 }
 
 async function listRecords(env, url) {

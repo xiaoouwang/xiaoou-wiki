@@ -18,6 +18,9 @@ const SITE = {
 };
 
 const PROGRAMS_KEY = `${SITE.sport}-wikipedia-programs`;
+const API_BASE =
+  localStorage.getItem("xiaoou_wiki_api") || "https://xiaoou-wiki-api.singerxo.workers.dev";
+const ADMIN_TOKEN_KEY = "xiaoou_wiki_admin_token";
 
 const state = {
   categories: [],
@@ -35,6 +38,8 @@ const state = {
   activeSeriesId: null,
   activeArticleId: null,
   sheetMode: null,
+  isAdmin: Boolean(localStorage.getItem(ADMIN_TOKEN_KEY)),
+  noteOverrides: {},
 };
 
 const els = {
@@ -980,17 +985,37 @@ function closeSheet({ sync = true } = {}) {
 
 function fillNotesCard(notes) {
   if (!els.notesCard) return;
+  ensureNotesEditor();
+
   const abstract = notes?.abstract?.trim() || "";
   const points = Array.isArray(notes?.points) ? notes.points.filter(Boolean) : [];
   const conclusion = notes?.conclusion?.trim() || "";
   const hasNotes = abstract || points.length || conclusion;
+  const admin = state.isAdmin;
 
-  if (!hasNotes) {
+  if (!hasNotes && !admin) {
     clearNotesCard();
     return;
   }
 
   els.notesCard.hidden = false;
+  els.notesCard.classList.toggle("notes-card-admin", admin);
+
+  if (admin) {
+    els.notesAbstract.hidden = true;
+    els.notesPoints.hidden = true;
+    els.notesConclusion.hidden = true;
+    if (els.notesEditor) {
+      els.notesEditor.hidden = false;
+      els.notesAbstractInput.value = abstract;
+      els.notesPointsInput.value = points.join("\n");
+      els.notesConclusionInput.value = conclusion;
+      els.notesSaveStatus.textContent = "";
+    }
+    return;
+  }
+
+  if (els.notesEditor) els.notesEditor.hidden = true;
   els.notesAbstract.hidden = !abstract;
   els.notesAbstract.textContent = abstract;
   els.notesPoints.hidden = points.length === 0;
@@ -1004,12 +1029,145 @@ function fillNotesCard(notes) {
 function clearNotesCard() {
   if (!els.notesCard) return;
   els.notesCard.hidden = true;
+  els.notesCard.classList.remove("notes-card-admin");
   els.notesAbstract.textContent = "";
   els.notesAbstract.hidden = true;
   els.notesPoints.innerHTML = "";
   els.notesPoints.hidden = true;
   els.notesConclusion.textContent = "";
   els.notesConclusion.hidden = true;
+  if (els.notesEditor) {
+    els.notesEditor.hidden = true;
+    if (els.notesSaveStatus) els.notesSaveStatus.textContent = "";
+  }
+}
+
+function ensureNotesEditor() {
+  if (!els.notesCard || els.notesEditor) return;
+  const editor = document.createElement("div");
+  editor.className = "notes-editor";
+  editor.id = "notes-editor";
+  editor.hidden = true;
+  editor.innerHTML = `
+    <label class="notes-field">
+      <span>Abstract</span>
+      <textarea id="notes-abstract-input" rows="3" placeholder="One-sentence summary"></textarea>
+    </label>
+    <label class="notes-field">
+      <span>Points (one per line)</span>
+      <textarea id="notes-points-input" rows="5" placeholder="Key point"></textarea>
+    </label>
+    <label class="notes-field">
+      <span>Conclusion</span>
+      <textarea id="notes-conclusion-input" rows="2" placeholder="Closing takeaway"></textarea>
+    </label>
+    <div class="notes-editor-actions">
+      <button type="button" class="btn-primary" id="notes-save-btn">Save takeaways</button>
+      <span class="notes-save-status" id="notes-save-status" aria-live="polite"></span>
+    </div>
+  `;
+  els.notesCard.appendChild(editor);
+  els.notesEditor = editor;
+  els.notesAbstractInput = editor.querySelector("#notes-abstract-input");
+  els.notesPointsInput = editor.querySelector("#notes-points-input");
+  els.notesConclusionInput = editor.querySelector("#notes-conclusion-input");
+  els.notesSaveBtn = editor.querySelector("#notes-save-btn");
+  els.notesSaveStatus = editor.querySelector("#notes-save-status");
+  els.notesSaveBtn.addEventListener("click", () => {
+    saveNotesFromEditor().catch((err) => {
+      els.notesSaveStatus.textContent = err.message || "Save failed";
+    });
+  });
+}
+
+function readNotesFromEditor() {
+  return {
+    abstract: String(els.notesAbstractInput?.value || "").trim(),
+    points: String(els.notesPointsInput?.value || "")
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean),
+    conclusion: String(els.notesConclusionInput?.value || "").trim(),
+  };
+}
+
+async function adminApi(path, options = {}) {
+  const token = localStorage.getItem(ADMIN_TOKEN_KEY) || "";
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      ...(options.headers || {}),
+    },
+  });
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 401) {
+    localStorage.removeItem(ADMIN_TOKEN_KEY);
+    state.isAdmin = false;
+  }
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  return data;
+}
+
+async function saveNotesFromEditor() {
+  const video = videoById(state.activeVideoId);
+  if (!video) throw new Error("No video open.");
+  if (!state.isAdmin) throw new Error("Admin login required.");
+
+  const notes = readNotesFromEditor();
+  els.notesSaveStatus.textContent = "Saving…";
+  els.notesSaveBtn.disabled = true;
+  try {
+    await adminApi("/api/admin/video-notes", {
+      method: "PUT",
+      body: JSON.stringify({
+        topic: SITE.sport,
+        videoId: video.id,
+        notes,
+      }),
+    });
+    video.notes = notes;
+    state.noteOverrides[video.id] = notes;
+    els.notesSaveStatus.textContent = "Saved.";
+  } finally {
+    els.notesSaveBtn.disabled = false;
+  }
+}
+
+function applyNoteOverrides(overrides) {
+  state.noteOverrides = overrides && typeof overrides === "object" ? overrides : {};
+  for (const video of state.videos) {
+    const overlay = state.noteOverrides[video.id];
+    if (overlay) video.notes = overlay;
+  }
+}
+
+async function loadNoteOverrides() {
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/video-notes?topic=${encodeURIComponent(SITE.sport)}`
+    );
+    if (!res.ok) return;
+    const data = await res.json();
+    applyNoteOverrides(data.notes || {});
+  } catch {
+    // Static library still works if the API is unreachable.
+  }
+}
+
+async function refreshAdminSession() {
+  const token = localStorage.getItem(ADMIN_TOKEN_KEY);
+  if (!token) {
+    state.isAdmin = false;
+    return;
+  }
+  try {
+    await adminApi(`/api/admin/records?topic=${encodeURIComponent(SITE.sport)}`);
+    state.isAdmin = true;
+  } catch {
+    state.isAdmin = false;
+  }
 }
 
 function openPicker() {
@@ -1345,6 +1503,8 @@ async function init() {
   state.resorts = data.resorts || [];
   state.series = theory.series || [];
   state.activeCategory = "all";
+
+  await Promise.all([loadNoteOverrides(), refreshAdminSession()]);
 
   seedDemoProgram();
   renderCategoryRail();

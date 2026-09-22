@@ -65,6 +65,9 @@
         cursor: pointer;
         background: #3d7ea6;
         color: #fff;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
       }
       .admin-btn.secondary {
         background: rgba(55, 78, 96, 0.1);
@@ -113,7 +116,8 @@
       <section class="admin-card">
         <h1>Admin</h1>
         <p class="admin-status">
-          Private editor for Xiaoou Wiki. Not linked from the public site. Uses the Cloudflare D1 database.
+          Private admin gate for Xiaoou Wiki. Not linked from the public site.
+          After unlock, open any video on the site to edit <strong>Key takeaways</strong>.
         </p>
         <div id="gate">
           <label class="admin-field">
@@ -127,9 +131,13 @@
         </div>
         <div id="workspace" class="hidden">
           <div class="admin-actions" style="margin-bottom: 12px">
+            <a class="admin-btn" id="open-site-btn" href="badminton.html">Edit takeaways on site</a>
             <button class="admin-btn secondary" id="lock-btn" type="button">Lock</button>
             <span class="admin-status" id="api-label"></span>
           </div>
+          <p class="admin-status">
+            Session stays unlocked in this browser. Open a video sheet → Key takeaways becomes editable.
+          </p>
         </div>
       </section>
 
@@ -200,7 +208,7 @@
       els.apiLabel.textContent = API_BASE;
 
       async function api(path, options = {}) {
-        const token = sessionStorage.getItem(TOKEN_KEY) || "";
+        const token = localStorage.getItem(TOKEN_KEY) || "";
         const res = await fetch(`${API_BASE}${path}`, {
           ...options,
           headers: {
@@ -229,19 +237,19 @@
           els.gateError.hidden = false;
           return;
         }
-        sessionStorage.setItem(TOKEN_KEY, token);
+        localStorage.setItem(TOKEN_KEY, token);
         try {
           await refresh();
           setUnlocked(true);
         } catch (err) {
-          sessionStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(TOKEN_KEY);
           els.gateError.textContent = err.message;
           els.gateError.hidden = false;
         }
       }
 
       function lock() {
-        sessionStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(TOKEN_KEY);
         setUnlocked(false);
         els.tokenInput.value = "";
       }
@@ -313,7 +321,7 @@
         }
       });
 
-      if (sessionStorage.getItem(TOKEN_KEY)) {
+      if (localStorage.getItem(TOKEN_KEY)) {
         refresh()
           .then(() => setUnlocked(true))
           .catch(() => lock());

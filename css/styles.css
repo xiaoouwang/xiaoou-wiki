@@ -1292,6 +1292,59 @@ a.brand:hover .brand-name {
   font-weight: 600;
 }
 
+.notes-card-admin .notes-label::after {
+  content: " · editing";
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--muted);
+}
+
+.notes-editor {
+  display: grid;
+  gap: 10px;
+}
+
+.notes-field {
+  display: grid;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.notes-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--text);
+  line-height: 1.45;
+  background: #fff;
+  resize: vertical;
+}
+
+.notes-editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.notes-save-status {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
 .source-card {
   display: grid;
   gap: 2px;
