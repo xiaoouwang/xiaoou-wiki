@@ -53,6 +53,10 @@
         {
           "id": "footwork",
           "label": "Footwork"
+        },
+        {
+          "id": "smash",
+          "label": "Smash"
         }
       ]
     },
@@ -217,6 +221,34 @@
           "Land balanced and ready to recover — the kill isn’t finished until your feet are set."
         ],
         "conclusion": "If jump smashes keep sailing long, you’re swinging through the float — hang first, then kill."
+      }
+    },
+    {
+      "id": "bd10",
+      "title": "Smash without windmilling the arm",
+      "description": "Coach Yangyu on forehand smash mechanics — separate the prep and the whip so power doesn’t leak through a big-arm swing. Original: 90%的人杀球都在轮大臂",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/bd10-Y2UmBpe7b8I.jpg",
+      "file": "https://xiaoou-wiki-api.singerxo.workers.dev/media/videos/bd10-Y2UmBpe7b8I.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "羊羽",
+        "url": "https://www.youtube.com/watch?v=Y2UmBpe7b8I"
+      },
+      "category": "intermediate",
+      "subtags": [
+        "smash"
+      ],
+      "duration": "7:29",
+      "addedAt": "2026-09-22",
+      "notes": {
+        "abstract": "Intermediate smash: split the preparation from the whip so force concentrates into the shuttle instead of dissolving in a big-arm swing.",
+        "points": [
+          "Don’t windmill the whole arm — load early, then accelerate late.",
+          "Keep the prep and the strike as two phases so power doesn’t leak.",
+          "Hit down through the shuttle with a compact whip, not a long circular arm path.",
+          "Replay the coach’s demo slowly and match one phase at a time before adding speed."
+        ],
+        "conclusion": "If smashes feel effortful but soft, you’re swinging with the big arm — separate the phases and whip late."
       }
     }
   ],

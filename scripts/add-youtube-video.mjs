@@ -255,9 +255,11 @@ function main() {
     "yt-dlp",
     [
       "-f",
-      "bv*[ext=mp4][height<=720]+ba[ext=m4a]/b[ext=mp4]/b",
+      "bv*[ext=mp4][height<=720]+ba[ext=m4a]/b[ext=mp4]/b/bv*[height<=720]+ba/b",
       "--merge-output-format",
       "mp4",
+      "--extractor-args",
+      "youtube:player_client=android,web",
       "-o",
       mp4Path,
       "--no-playlist",
