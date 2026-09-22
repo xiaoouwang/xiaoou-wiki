@@ -100,6 +100,15 @@ a.tab {
   padding-bottom: calc(var(--tabbar-h) + var(--safe-bottom) + 12px);
 }
 
+.site-credit-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
+}
+
 .site-credit {
   margin: 0;
   display: flex;
@@ -107,7 +116,7 @@ a.tab {
   align-items: flex-end;
   gap: 1px;
   min-width: 0;
-  width: 100%;
+  flex: 1 1 auto;
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.01em;
@@ -115,6 +124,16 @@ a.tab {
   line-height: 1.2;
   text-align: right;
   text-decoration: none;
+}
+
+.site-youtube {
+  color: var(--muted);
+}
+
+.site-youtube:hover {
+  color: #c4302b;
+  border-color: color-mix(in srgb, #c4302b 35%, var(--line));
+  background: #fff;
 }
 
 .site-credit-name {
@@ -1694,6 +1713,11 @@ a.brand:hover .brand-name {
   .sport-switch {
     flex: 1 1 auto;
     max-width: none;
+  }
+
+  .site-credit-group {
+    flex: 0 0 auto;
+    width: auto;
   }
 
   .site-credit {

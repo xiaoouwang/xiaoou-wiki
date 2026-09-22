@@ -25,7 +25,7 @@ const state = {
   resorts: [],
   series: [],
   programs: loadPrograms(),
-  activeCategory: "beginner",
+  activeCategory: "all",
   activeSubtag: null,
   query: "",
   tab: "library",
@@ -128,6 +128,15 @@ function uid() {
 }
 
 function categoryById(id) {
+  if (id === "all") {
+    return {
+      id: "all",
+      label: "All",
+      kind: "videos",
+      color: "#3d7ea6",
+      subtags: skillTags(),
+    };
+  }
   return state.categories.find((c) => c.id === id);
 }
 
@@ -135,9 +144,23 @@ function activeCategory() {
   return categoryById(state.activeCategory);
 }
 
+function skillTags() {
+  const map = new Map();
+  for (const cat of state.categories) {
+    if (cat.kind !== "videos") continue;
+    for (const tag of cat.subtags || []) {
+      if (!map.has(tag.id)) map.set(tag.id, tag);
+    }
+  }
+  return [...map.values()];
+}
+
 function subtagLabel(categoryId, subtagId) {
-  const cat = categoryById(categoryId);
-  return cat?.subtags.find((s) => s.id === subtagId)?.label || subtagId;
+  const direct = categoryById(categoryId)?.subtags?.find((s) => s.id === subtagId)?.label;
+  if (direct) return direct;
+  return skillTags().find((s) => s.id === subtagId)?.label
+    || state.categories.flatMap((c) => c.subtags || []).find((s) => s.id === subtagId)?.label
+    || subtagId;
 }
 
 function videoById(id) {
@@ -387,10 +410,16 @@ function applyRouteFromUrl() {
       return;
     }
 
-    state.activeCategory = categoryById(category)?.id || state.categories[0]?.id || "beginner";
+    state.activeCategory =
+      category === "all" || categoryById(category)?.id
+        ? category === "all"
+          ? "all"
+          : categoryById(category).id
+        : "all";
     const cat = activeCategory();
+    const tagPool = isResortsMode() ? cat?.subtags || [] : skillTags();
     state.activeSubtag =
-      subtag && cat?.subtags.some((s) => s.id === subtag) ? subtag : null;
+      subtag && tagPool.some((s) => s.id === subtag) ? subtag : null;
     renderCategoryRail();
     renderSubtagRail();
     renderLibrary();
@@ -408,8 +437,10 @@ function isResortsMode() {
 
 function filteredVideos() {
   const q = state.query.trim().toLowerCase();
+  const level = state.activeCategory;
   return state.videos.filter((v) => {
-    if (v.category !== state.activeCategory) return false;
+    // Level and skill tags are independent filters.
+    if (level && level !== "all" && v.category !== level) return false;
     if (state.activeSubtag && !v.subtags.includes(state.activeSubtag)) return false;
     if (!q) return true;
     const source = videoSource(v);
@@ -441,12 +472,17 @@ function filteredResorts() {
 }
 
 function renderCategoryRail() {
-  els.categoryRail.innerHTML = state.categories
+  const levels = [
+    { id: "all", label: "All", color: "#3d7ea6" },
+    ...state.categories.map((cat) => ({ id: cat.id, label: cat.label, color: cat.color })),
+  ];
+
+  els.categoryRail.innerHTML = levels
     .map((cat) => {
       const active = state.activeCategory === cat.id;
       return `<a
         class="chip level-chip${active ? " chip-active" : ""}"
-        href="${libraryHref({ category: cat.id })}"
+        href="${libraryHref({ category: cat.id, subtag: state.activeSubtag })}"
         data-category="${cat.id}"
         style="--chip-color:${cat.color}"
         role="tab"
@@ -458,11 +494,14 @@ function renderCategoryRail() {
 
 function renderSubtagRail() {
   const cat = activeCategory();
-  const subtags = cat?.subtags || [];
+  const subtags = isResortsMode()
+    ? cat?.subtags || []
+    : skillTags();
   const chips = [
-    { id: null, label: "All" },
+    { id: null, label: "All tags" },
     ...subtags.map((s) => ({ id: s.id, label: s.label })),
   ];
+  const chipColor = isResortsMode() ? cat?.color || "var(--accent)" : "var(--accent)";
 
   els.subtagRail.innerHTML = chips
     .map((chip) => {
@@ -471,7 +510,7 @@ function renderSubtagRail() {
         class="chip${active ? " chip-active" : ""}"
         href="${libraryHref({ category: state.activeCategory, subtag: chip.id })}"
         data-subtag="${chip.id ?? ""}"
-        style="--chip-color:${cat?.color || "var(--accent)"}"
+        style="--chip-color:${chipColor}"
         role="tab"
         aria-selected="${active}"
       >${chip.label}</a>`;
@@ -551,35 +590,31 @@ function renderLibrary() {
 }
 
 function setSubtag(id, { sync = true } = {}) {
-  const next = id || null;
-  state.activeSubtag = next;
+  state.activeSubtag = id || null;
   state.activeVideoId = null;
   state.activeResortId = null;
 
-  // If this tag has no items in the current category, jump to a category that does.
-  if (next && !isResortsMode()) {
-    const inCurrent = state.videos.some(
-      (v) => v.category === state.activeCategory && v.subtags.includes(next)
-    );
-    if (!inCurrent) {
-      const match = state.videos.find((v) => v.subtags.includes(next));
-      if (match) state.activeCategory = match.category;
-    }
+  // Skill tags are independent of level — stay on current level (or All).
+  if (state.activeSubtag && isResortsMode()) {
+    state.activeCategory = "all";
   }
 
   renderCategoryRail();
   renderSubtagRail();
   renderLibrary();
   document
-    .querySelector(`#subtag-rail [data-subtag="${next ?? ""}"]`)
+    .querySelector(`#subtag-rail [data-subtag="${state.activeSubtag ?? ""}"]`)
     ?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
   if (sync) syncRoute();
 }
 
 function setCategory(id, { sync = true } = {}) {
-  if (!categoryById(id)) return;
+  if (id !== "all" && !categoryById(id)) return;
+  const prevResorts = isResortsMode();
   state.activeCategory = id;
-  state.activeSubtag = null;
+  const nextResorts = isResortsMode();
+  // Only reset tags when crossing between Courts and video library.
+  if (prevResorts !== nextResorts) state.activeSubtag = null;
   state.activeVideoId = null;
   state.activeResortId = null;
   renderCategoryRail();
