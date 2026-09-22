@@ -1333,7 +1333,7 @@ async function init() {
   state.videos = data.videos;
   state.resorts = data.resorts || [];
   state.series = theory.series || [];
-  state.activeCategory = state.categories[0]?.id || "beginner";
+  state.activeCategory = "all";
 
   seedDemoProgram();
   renderCategoryRail();
