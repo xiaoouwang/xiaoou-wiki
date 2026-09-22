@@ -126,16 +126,6 @@ a.tab {
   text-decoration: none;
 }
 
-.site-youtube {
-  color: #ff0000;
-}
-
-.site-youtube:hover {
-  color: #cc0000;
-  border-color: color-mix(in srgb, #ff0000 35%, var(--line));
-  background: #fff;
-}
-
 .site-credit-name {
   white-space: nowrap;
 }
@@ -450,6 +440,16 @@ a.brand:hover .brand-name {
   cursor: pointer;
   color: var(--text);
   flex: 0 0 auto;
+}
+
+.icon-btn.site-youtube {
+  color: #ff0000;
+}
+
+.icon-btn.site-youtube:hover {
+  color: #cc0000;
+  border-color: color-mix(in srgb, #ff0000 35%, var(--line));
+  background: #fff;
 }
 
 .icon-btn:active {
