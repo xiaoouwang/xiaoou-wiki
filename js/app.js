@@ -38,7 +38,7 @@ const state = {
   activeSeriesId: null,
   activeArticleId: null,
   sheetMode: null,
-  isAdmin: Boolean(localStorage.getItem(ADMIN_TOKEN_KEY)),
+  isAdmin: false,
   noteOverrides: {},
   notesEditMode: false,
 };
@@ -1067,21 +1067,20 @@ function fillNotesCard(notes) {
   }
 
   els.notesCard.hidden = false;
-  els.notesCard.classList.toggle("notes-card-admin", admin);
-  els.notesCard.classList.toggle("notes-card-markers", hasMarkers || admin);
-  state.notesEditMode = Boolean(admin && state.notesEditMode);
+  state.notesEditMode = Boolean(state.isAdmin && state.notesEditMode);
+  els.notesCard.classList.toggle("notes-card-markers", hasMarkers || state.isAdmin);
 
   // Prefer timed markers when present; keep legacy fields for older clips.
-  if (hasMarkers || admin) {
+  if (hasMarkers || state.isAdmin) {
     els.notesAbstract.hidden = true;
     els.notesPoints.hidden = true;
     els.notesConclusion.hidden = true;
-    renderNotesMarkers(markers, { admin, editing: state.notesEditMode });
+    renderNotesMarkers(markers, { admin: state.isAdmin, editing: state.notesEditMode });
     return;
   }
 
+  setNotesAdminChrome(false);
   if (els.notesMarkers) els.notesMarkers.hidden = true;
-  if (els.notesEditor) els.notesEditor.hidden = true;
   els.notesAbstract.hidden = !abstract;
   els.notesAbstract.textContent = abstract;
   els.notesPoints.hidden = points.length === 0;
@@ -1142,17 +1141,27 @@ function ensureNotesShell() {
     els.notesAddMarkerBtn = editor.querySelector("#notes-add-marker");
     els.notesSaveStatus = editor.querySelector("#notes-save-status");
     els.notesEditToggle.addEventListener("click", () => {
+      if (!state.isAdmin) return;
       const markers = getCurrentMarkers();
-      state.notesEditMode = !state.notesEditMode;
+      if (state.notesEditMode) {
+        // Leaving edit mode always writes the current markers to the database.
+        saveNotesFromEditor().catch((err) => {
+          if (els.notesSaveStatus) els.notesSaveStatus.textContent = err.message || "Save failed";
+        });
+        return;
+      }
+      state.notesEditMode = true;
       if (els.notesSaveStatus) els.notesSaveStatus.textContent = "";
-      renderNotesMarkers(markers, { admin: true, editing: state.notesEditMode });
+      renderNotesMarkers(markers, { admin: true, editing: true });
     });
     els.notesSaveBtn.addEventListener("click", () => {
+      if (!state.isAdmin) return;
       saveNotesFromEditor().catch((err) => {
         els.notesSaveStatus.textContent = err.message || "Save failed";
       });
     });
     els.notesAddMarkerBtn.addEventListener("click", () => {
+      if (!state.isAdmin) return;
       const current = getCurrentMarkers();
       const t = getPlayerTime();
       current.push({ time: t, text: "" });
@@ -1175,12 +1184,26 @@ function getCurrentMarkers() {
   return normalizeClientNotes(video?.notes).markers;
 }
 
-function renderNotesMarkers(markers, { admin, editing = false, focusTime = null } = {}) {
+function setNotesAdminChrome(admin, { editing = false } = {}) {
+  const isAdmin = Boolean(admin && state.isAdmin);
+  const showEditor = Boolean(isAdmin && editing);
+  els.notesCard?.classList.toggle("notes-card-admin", isAdmin);
+  if (els.notesEditor) els.notesEditor.hidden = !isAdmin;
+  if (els.notesEditToggle) {
+    els.notesEditToggle.hidden = !isAdmin;
+    els.notesEditToggle.textContent = showEditor ? "Done editing" : "Edit takeaways";
+  }
+  if (els.notesAddMarkerBtn) els.notesAddMarkerBtn.hidden = !isAdmin;
+  if (els.notesSaveBtn) els.notesSaveBtn.hidden = !showEditor;
+  if (!isAdmin && els.notesSaveStatus) els.notesSaveStatus.textContent = "";
+  return { isAdmin, showEditor };
+}
+
+function renderNotesMarkers(markers, { admin = false, editing = false, focusTime = null } = {}) {
   ensureNotesShell();
+  const { isAdmin, showEditor } = setNotesAdminChrome(admin, { editing });
   const sorted = [...markers].sort((a, b) => a.time - b.time || String(a.text).localeCompare(String(b.text)));
-  // Keep an empty list empty — do not auto-spawn a blank marker after delete.
   const rows = sorted;
-  const showEditor = Boolean(admin && editing);
   let focusIndex = -1;
   if (focusTime != null) {
     focusIndex = rows.findIndex((m) => m.time === focusTime && !String(m.text || "").trim());
@@ -1189,14 +1212,14 @@ function renderNotesMarkers(markers, { admin, editing = false, focusTime = null 
 
   els.notesMarkers.hidden = false;
   if (!rows.length) {
-    els.notesMarkers.innerHTML = admin
+    els.notesMarkers.innerHTML = isAdmin
       ? `<p class="notes-empty">No takeaways yet. Add a marker at the current playhead.</p>`
       : "";
   } else {
     els.notesMarkers.innerHTML = rows
       .map((marker, index) => {
         const timeLabel = formatMarkerTime(marker.time);
-        const deleteBtn = admin
+        const deleteBtn = isAdmin
           ? `<button type="button" class="notes-delete-btn" data-action="delete" data-index="${index}">Delete</button>`
           : "";
         if (showEditor) {
@@ -1209,20 +1232,10 @@ function renderNotesMarkers(markers, { admin, editing = false, focusTime = null 
         return `<div class="notes-marker" data-time="${Number(marker.time) || 0}">
         <button type="button" class="notes-time" data-seek="${Number(marker.time) || 0}" aria-label="Jump to ${timeLabel}">${timeLabel}</button>
         <p class="notes-marker-text">${escapeHtml(marker.text)}</p>
-        ${admin ? `<div class="notes-marker-actions">${deleteBtn}</div>` : ""}
+        ${isAdmin ? `<div class="notes-marker-actions">${deleteBtn}</div>` : ""}
       </div>`;
       })
       .join("");
-  }
-
-  if (els.notesEditor) {
-    els.notesEditor.hidden = !admin;
-    if (els.notesEditToggle) {
-      els.notesEditToggle.hidden = false;
-      els.notesEditToggle.textContent = showEditor ? "Done editing" : "Edit takeaways";
-    }
-    if (els.notesAddMarkerBtn) els.notesAddMarkerBtn.hidden = !admin;
-    if (els.notesSaveBtn) els.notesSaveBtn.hidden = !showEditor;
   }
 
   if (showEditor && focusIndex >= 0) {
@@ -1363,13 +1376,16 @@ async function refreshAdminSession() {
   const token = localStorage.getItem(ADMIN_TOKEN_KEY);
   if (!token) {
     state.isAdmin = false;
+    state.notesEditMode = false;
     return;
   }
   try {
     await adminApi(`/api/admin/records?topic=${encodeURIComponent(SITE.sport)}`);
     state.isAdmin = true;
   } catch {
+    localStorage.removeItem(ADMIN_TOKEN_KEY);
     state.isAdmin = false;
+    state.notesEditMode = false;
   }
 }
 
