@@ -1302,6 +1302,121 @@ a.brand:hover .brand-name {
   font-weight: 600;
 }
 
+.notes-markers {
+  display: grid;
+  gap: 0;
+}
+
+.notes-marker {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
+}
+
+.notes-marker:first-child {
+  border-top: 0;
+  padding-top: 2px;
+}
+
+.notes-time {
+  flex: 0 0 auto;
+  min-width: 3.1rem;
+  border: 0;
+  border-radius: 8px;
+  padding: 5px 9px;
+  background: #e11d48;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.notes-time:hover {
+  background: #be123c;
+}
+
+.notes-time:active {
+  transform: scale(0.97);
+}
+
+.notes-marker-text {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.4;
+  padding-top: 3px;
+}
+
+.notes-marker-edit {
+  align-items: center;
+}
+
+.notes-time-input,
+.notes-text-input {
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+}
+
+.notes-time-input {
+  flex: 0 0 4.2rem;
+  width: 4.2rem;
+  padding: 6px 8px;
+  text-align: center;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  background: #e11d48;
+  border-color: #e11d48;
+  color: #fff;
+}
+
+.notes-text-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 7px 10px;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.notes-marker-actions {
+  display: none;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 2px;
+}
+
+.notes-card-admin .notes-marker-actions {
+  display: inline-flex;
+}
+
+.notes-icon-btn {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.notes-icon-btn:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--line) 55%, transparent);
+}
+
 .notes-card-admin .notes-label::after {
   content: " · editing";
   font-weight: 700;
@@ -1313,33 +1428,6 @@ a.brand:hover .brand-name {
 .notes-editor {
   display: grid;
   gap: 10px;
-}
-
-.notes-field {
-  display: grid;
-  gap: 4px;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.notes-field textarea {
-  width: 100%;
-  box-sizing: border-box;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 10px 12px;
-  font: inherit;
-  font-size: 0.86rem;
-  font-weight: 500;
-  letter-spacing: normal;
-  text-transform: none;
-  color: var(--text);
-  line-height: 1.45;
-  background: #fff;
-  resize: vertical;
 }
 
 .notes-editor-actions {

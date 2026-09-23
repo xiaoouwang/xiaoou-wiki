@@ -21,6 +21,10 @@
         {
           "id": "linking",
           "label": "Linking turns"
+        },
+        {
+          "id": "weight-transfer",
+          "label": "Weight transfer"
         }
       ]
     },
@@ -109,7 +113,38 @@
       ]
     }
   ],
-  "videos": [],
+  "videos": [
+    {
+      "id": "sk1",
+      "title": "Weight transfer without bobbing up and down",
+      "description": "Peter on beginner ski weight transfer — use the knees instead of up-and-down body bounce. Original: 【双板教学】不要再做上下身起伏了！试试这个练习方式",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/sk1-I0aLx9_Kook.jpg",
+      "file": "https://xiaoou-wiki-api.singerxo.workers.dev/media/videos/sk1-I0aLx9_Kook.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "Peter 户外生活",
+        "url": "https://www.youtube.com/watch?v=I0aLx9_Kook"
+      },
+      "category": "beginner",
+      "subtags": [
+        "weight-transfer"
+      ],
+      "duration": "4:08",
+      "addedAt": "2026-09-23",
+      "notes": {
+        "markers": [
+          {
+            "time": 146,
+            "text": "上下起伏做 weight transfer。"
+          },
+          {
+            "time": 40,
+            "text": "用膝盖做 weight transfer。"
+          }
+        ]
+      }
+    }
+  ],
   "resorts": [
     {
       "id": "valdisere",

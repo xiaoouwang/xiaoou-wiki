@@ -285,7 +285,29 @@ function normalizeNotes(raw) {
   const points = Array.isArray(src.points)
     ? src.points.map((p) => String(p || "").trim()).filter(Boolean).slice(0, 20)
     : [];
-  return { abstract, points, conclusion };
+  const markers = Array.isArray(src.markers)
+    ? src.markers
+        .map((m) => {
+          if (!m || typeof m !== "object") return null;
+          const text = String(m.text || "").trim();
+          if (!text) return null;
+          const time = parseMarkerTime(m.time);
+          return { time: time == null ? 0 : time, text: text.slice(0, 240) };
+        })
+        .filter(Boolean)
+        .slice(0, 40)
+    : [];
+  return { abstract, points, conclusion, markers };
+}
+
+function parseMarkerTime(raw) {
+  if (typeof raw === "number" && Number.isFinite(raw)) return Math.max(0, Math.round(raw));
+  const s = String(raw ?? "").trim();
+  if (!s) return null;
+  if (/^\d+(\.\d+)?$/.test(s)) return Math.max(0, Math.round(Number(s)));
+  const m = s.match(/^(\d+):([0-5]?\d)$/);
+  if (m) return Number(m[1]) * 60 + Number(m[2]);
+  return null;
 }
 
 async function listVideoNotes(env, url) {

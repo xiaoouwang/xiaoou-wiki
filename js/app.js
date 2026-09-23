@@ -455,6 +455,7 @@ function filteredVideos() {
       v.notes?.abstract,
       v.notes?.conclusion,
       ...(v.notes?.points || []),
+      ...((v.notes?.markers || []).map((m) => m.text)),
       source.platform,
       source.creator,
       ...v.subtags.map((id) => subtagLabel(v.category, id)),
@@ -983,45 +984,97 @@ function closeSheet({ sync = true } = {}) {
   }, 220);
 }
 
+function formatMarkerTime(seconds) {
+  const total = Math.max(0, Math.round(Number(seconds) || 0));
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+function parseMarkerTime(raw) {
+  if (typeof raw === "number" && Number.isFinite(raw)) return Math.max(0, Math.round(raw));
+  const s = String(raw ?? "").trim();
+  if (!s) return null;
+  if (/^\d+(\.\d+)?$/.test(s)) return Math.max(0, Math.round(Number(s)));
+  const m = s.match(/^(\d+):([0-5]?\d)$/);
+  if (m) return Number(m[1]) * 60 + Number(m[2]);
+  return null;
+}
+
+function normalizeClientNotes(notes) {
+  const src = notes && typeof notes === "object" ? notes : {};
+  const markers = Array.isArray(src.markers)
+    ? src.markers
+        .map((m) => {
+          if (!m || typeof m !== "object") return null;
+          const text = String(m.text || "").trim();
+          if (!text) return null;
+          const time = parseMarkerTime(m.time);
+          return { time: time == null ? 0 : time, text };
+        })
+        .filter(Boolean)
+    : [];
+  return {
+    abstract: String(src.abstract || "").trim(),
+    points: Array.isArray(src.points) ? src.points.filter(Boolean) : [],
+    conclusion: String(src.conclusion || "").trim(),
+    markers,
+  };
+}
+
+function seekPlayerTo(seconds) {
+  if (!els.player) return;
+  const t = Math.max(0, Number(seconds) || 0);
+  const apply = () => {
+    try {
+      els.player.currentTime = t;
+    } catch {
+      /* ignore */
+    }
+    els.player.play?.().catch(() => {});
+  };
+  if (els.player.readyState >= 1) apply();
+  else els.player.addEventListener("loadedmetadata", apply, { once: true });
+}
+
 function fillNotesCard(notes) {
   if (!els.notesCard) return;
-  ensureNotesEditor();
+  ensureNotesShell();
 
-  const abstract = notes?.abstract?.trim() || "";
-  const points = Array.isArray(notes?.points) ? notes.points.filter(Boolean) : [];
-  const conclusion = notes?.conclusion?.trim() || "";
-  const hasNotes = abstract || points.length || conclusion;
+  const normalized = normalizeClientNotes(notes);
+  const markers = normalized.markers;
+  const abstract = normalized.abstract;
+  const points = normalized.points;
+  const conclusion = normalized.conclusion;
+  const hasMarkers = markers.length > 0;
+  const hasLegacy = Boolean(abstract || points.length || conclusion);
   const admin = state.isAdmin;
 
-  if (!hasNotes && !admin) {
+  if (!hasMarkers && !hasLegacy && !admin) {
     clearNotesCard();
     return;
   }
 
   els.notesCard.hidden = false;
   els.notesCard.classList.toggle("notes-card-admin", admin);
+  els.notesCard.classList.toggle("notes-card-markers", hasMarkers || admin);
 
-  if (admin) {
+  // Prefer timed markers when present; keep legacy fields for older clips.
+  if (hasMarkers || admin) {
     els.notesAbstract.hidden = true;
     els.notesPoints.hidden = true;
     els.notesConclusion.hidden = true;
-    if (els.notesEditor) {
-      els.notesEditor.hidden = false;
-      els.notesAbstractInput.value = abstract;
-      els.notesPointsInput.value = points.join("\n");
-      els.notesConclusionInput.value = conclusion;
-      els.notesSaveStatus.textContent = "";
-    }
+    if (els.notesEditor) els.notesEditor.hidden = true;
+    renderNotesMarkers(markers, { admin });
     return;
   }
 
+  if (els.notesMarkers) els.notesMarkers.hidden = true;
   if (els.notesEditor) els.notesEditor.hidden = true;
   els.notesAbstract.hidden = !abstract;
   els.notesAbstract.textContent = abstract;
   els.notesPoints.hidden = points.length === 0;
-  els.notesPoints.innerHTML = points
-    .map((point) => `<li>${escapeHtml(point)}</li>`)
-    .join("");
+  els.notesPoints.innerHTML = points.map((point) => `<li>${escapeHtml(point)}</li>`).join("");
   els.notesConclusion.hidden = !conclusion;
   els.notesConclusion.textContent = conclusion;
 }
@@ -1029,66 +1082,136 @@ function fillNotesCard(notes) {
 function clearNotesCard() {
   if (!els.notesCard) return;
   els.notesCard.hidden = true;
-  els.notesCard.classList.remove("notes-card-admin");
+  els.notesCard.classList.remove("notes-card-admin", "notes-card-markers");
   els.notesAbstract.textContent = "";
   els.notesAbstract.hidden = true;
   els.notesPoints.innerHTML = "";
   els.notesPoints.hidden = true;
   els.notesConclusion.textContent = "";
   els.notesConclusion.hidden = true;
+  if (els.notesMarkers) {
+    els.notesMarkers.hidden = true;
+    els.notesMarkers.innerHTML = "";
+  }
   if (els.notesEditor) {
     els.notesEditor.hidden = true;
     if (els.notesSaveStatus) els.notesSaveStatus.textContent = "";
   }
 }
 
-function ensureNotesEditor() {
-  if (!els.notesCard || els.notesEditor) return;
-  const editor = document.createElement("div");
-  editor.className = "notes-editor";
-  editor.id = "notes-editor";
-  editor.hidden = true;
-  editor.innerHTML = `
-    <label class="notes-field">
-      <span>Abstract</span>
-      <textarea id="notes-abstract-input" rows="3" placeholder="One-sentence summary"></textarea>
-    </label>
-    <label class="notes-field">
-      <span>Points (one per line)</span>
-      <textarea id="notes-points-input" rows="5" placeholder="Key point"></textarea>
-    </label>
-    <label class="notes-field">
-      <span>Conclusion</span>
-      <textarea id="notes-conclusion-input" rows="2" placeholder="Closing takeaway"></textarea>
-    </label>
-    <div class="notes-editor-actions">
-      <button type="button" class="btn-primary" id="notes-save-btn">Save takeaways</button>
-      <span class="notes-save-status" id="notes-save-status" aria-live="polite"></span>
-    </div>
-  `;
-  els.notesCard.appendChild(editor);
-  els.notesEditor = editor;
-  els.notesAbstractInput = editor.querySelector("#notes-abstract-input");
-  els.notesPointsInput = editor.querySelector("#notes-points-input");
-  els.notesConclusionInput = editor.querySelector("#notes-conclusion-input");
-  els.notesSaveBtn = editor.querySelector("#notes-save-btn");
-  els.notesSaveStatus = editor.querySelector("#notes-save-status");
-  els.notesSaveBtn.addEventListener("click", () => {
-    saveNotesFromEditor().catch((err) => {
-      els.notesSaveStatus.textContent = err.message || "Save failed";
+function ensureNotesShell() {
+  if (!els.notesCard) return;
+  if (!els.notesMarkers) {
+    const list = document.createElement("div");
+    list.className = "notes-markers";
+    list.id = "notes-markers";
+    list.hidden = true;
+    els.notesCard.appendChild(list);
+    els.notesMarkers = list;
+    list.addEventListener("click", onNotesMarkersClick);
+  }
+  if (!els.notesEditor) {
+    const editor = document.createElement("div");
+    editor.className = "notes-editor";
+    editor.id = "notes-editor";
+    editor.hidden = true;
+    editor.innerHTML = `
+      <div class="notes-editor-actions">
+        <button type="button" class="btn-primary" id="notes-add-marker">Add marker</button>
+        <button type="button" class="btn-primary" id="notes-save-btn">Save takeaways</button>
+        <span class="notes-save-status" id="notes-save-status" aria-live="polite"></span>
+      </div>
+    `;
+    els.notesCard.appendChild(editor);
+    els.notesEditor = editor;
+    els.notesSaveBtn = editor.querySelector("#notes-save-btn");
+    els.notesAddMarkerBtn = editor.querySelector("#notes-add-marker");
+    els.notesSaveStatus = editor.querySelector("#notes-save-status");
+    els.notesSaveBtn.addEventListener("click", () => {
+      saveNotesFromEditor().catch((err) => {
+        els.notesSaveStatus.textContent = err.message || "Save failed";
+      });
     });
-  });
+    els.notesAddMarkerBtn.addEventListener("click", () => {
+      const current = readNotesFromEditor().markers;
+      const t = Math.round(els.player?.currentTime || 0);
+      current.push({ time: t, text: "" });
+      renderNotesMarkers(current, { admin: true });
+    });
+  }
+}
+
+function renderNotesMarkers(markers, { admin }) {
+  ensureNotesShell();
+  const rows = markers.length
+    ? markers
+    : admin
+      ? [{ time: Math.round(els.player?.currentTime || 0), text: "" }]
+      : [];
+
+  els.notesMarkers.hidden = false;
+  els.notesMarkers.innerHTML = rows
+    .map((marker, index) => {
+      const timeLabel = formatMarkerTime(marker.time);
+      if (admin) {
+        return `<div class="notes-marker notes-marker-edit" data-index="${index}">
+          <input class="notes-time-input" type="text" inputmode="numeric" value="${escapeHtml(timeLabel)}" aria-label="Timestamp" />
+          <input class="notes-text-input" type="text" value="${escapeHtml(marker.text)}" placeholder="Brief takeaway" aria-label="Takeaway text" />
+          <div class="notes-marker-actions">
+            <button type="button" class="notes-icon-btn" data-action="copy" data-index="${index}" aria-label="Duplicate marker" title="Duplicate">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="5" y="5" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+            </button>
+            <button type="button" class="notes-icon-btn" data-action="delete" data-index="${index}" aria-label="Delete marker" title="Delete">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>`;
+      }
+      return `<div class="notes-marker">
+        <button type="button" class="notes-time" data-seek="${Number(marker.time) || 0}" aria-label="Jump to ${timeLabel}">${timeLabel}</button>
+        <p class="notes-marker-text">${escapeHtml(marker.text)}</p>
+      </div>`;
+    })
+    .join("");
+
+  if (els.notesEditor) els.notesEditor.hidden = !admin;
+}
+
+function onNotesMarkersClick(e) {
+  const seekBtn = e.target.closest("[data-seek]");
+  if (seekBtn) {
+    e.preventDefault();
+    seekPlayerTo(Number(seekBtn.dataset.seek) || 0);
+    return;
+  }
+  const actionBtn = e.target.closest("[data-action]");
+  if (!actionBtn || !state.isAdmin) return;
+  e.preventDefault();
+  const action = actionBtn.dataset.action;
+  const index = Number(actionBtn.dataset.index);
+  const markers = readNotesFromEditor().markers;
+  if (action === "delete") {
+    markers.splice(index, 1);
+  } else if (action === "copy") {
+    const src = markers[index];
+    if (src) markers.splice(index + 1, 0, { ...src });
+  }
+  renderNotesMarkers(markers, { admin: true });
 }
 
 function readNotesFromEditor() {
-  return {
-    abstract: String(els.notesAbstractInput?.value || "").trim(),
-    points: String(els.notesPointsInput?.value || "")
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter(Boolean),
-    conclusion: String(els.notesConclusionInput?.value || "").trim(),
-  };
+  if (!els.notesMarkers) return { markers: [] };
+  const rows = [...els.notesMarkers.querySelectorAll(".notes-marker-edit")];
+  const markers = rows
+    .map((row) => {
+      const timeRaw = row.querySelector(".notes-time-input")?.value;
+      const text = String(row.querySelector(".notes-text-input")?.value || "").trim();
+      const time = parseMarkerTime(timeRaw);
+      if (!text || time == null) return null;
+      return { time, text };
+    })
+    .filter(Boolean);
+  return { markers };
 }
 
 async function adminApi(path, options = {}) {
@@ -1130,6 +1253,7 @@ async function saveNotesFromEditor() {
     video.notes = notes;
     state.noteOverrides[video.id] = notes;
     els.notesSaveStatus.textContent = "Saved.";
+    renderNotesMarkers(notes.markers, { admin: true });
   } finally {
     els.notesSaveBtn.disabled = false;
   }
