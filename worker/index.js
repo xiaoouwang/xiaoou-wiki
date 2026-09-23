@@ -295,6 +295,7 @@ function normalizeNotes(raw) {
           return { time: time == null ? 0 : time, text: text.slice(0, 240) };
         })
         .filter(Boolean)
+        .sort((a, b) => a.time - b.time || a.text.localeCompare(b.text))
         .slice(0, 40)
     : [];
   return { abstract, points, conclusion, markers };

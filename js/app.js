@@ -1013,6 +1013,7 @@ function normalizeClientNotes(notes) {
           return { time: time == null ? 0 : time, text };
         })
         .filter(Boolean)
+        .sort((a, b) => a.time - b.time || a.text.localeCompare(b.text))
     : [];
   return {
     abstract: String(src.abstract || "").trim(),
@@ -1210,7 +1211,8 @@ function readNotesFromEditor() {
       if (!text || time == null) return null;
       return { time, text };
     })
-    .filter(Boolean);
+    .filter(Boolean)
+    .sort((a, b) => a.time - b.time || a.text.localeCompare(b.text));
   return { markers };
 }
 
