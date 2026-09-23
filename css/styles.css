@@ -1311,7 +1311,7 @@ a.brand:hover .brand-name {
 
 .notes-marker {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
   padding: 10px 0;
   border-top: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
@@ -1354,7 +1354,8 @@ a.brand:hover .brand-name {
   font-size: 0.88rem;
   font-weight: 600;
   line-height: 1.4;
-  padding-top: 3px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .notes-marker-edit {
@@ -1395,7 +1396,8 @@ a.brand:hover .brand-name {
   display: none;
   flex: 0 0 auto;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
+  margin-left: auto;
 }
 
 .notes-card-admin .notes-marker-actions {
@@ -1417,6 +1419,26 @@ a.brand:hover .brand-name {
 .notes-icon-btn:hover {
   color: var(--text);
   background: color-mix(in srgb, var(--line) 55%, transparent);
+}
+
+.notes-delete-btn {
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, #e11d48 35%, var(--line));
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: color-mix(in srgb, #e11d48 8%, #fff);
+  color: #be123c;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.notes-delete-btn:hover {
+  background: #e11d48;
+  border-color: #e11d48;
+  color: #fff;
 }
 
 .notes-card-admin .notes-label::after {

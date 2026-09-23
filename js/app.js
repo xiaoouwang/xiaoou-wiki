@@ -1196,38 +1196,20 @@ function renderNotesMarkers(markers, { admin, editing = false, focusTime = null 
     els.notesMarkers.innerHTML = rows
       .map((marker, index) => {
         const timeLabel = formatMarkerTime(marker.time);
+        const deleteBtn = admin
+          ? `<button type="button" class="notes-delete-btn" data-action="delete" data-index="${index}">Delete</button>`
+          : "";
         if (showEditor) {
           return `<div class="notes-marker notes-marker-edit" data-index="${index}">
           <input class="notes-time-input" type="text" inputmode="numeric" value="${escapeHtml(timeLabel)}" aria-label="Timestamp" />
           <input class="notes-text-input" type="text" value="${escapeHtml(marker.text)}" placeholder="Brief takeaway" aria-label="Takeaway text" />
-          <div class="notes-marker-actions">
-            <button type="button" class="notes-icon-btn" data-action="copy" data-index="${index}" aria-label="Duplicate marker" title="Duplicate">
-              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="5" y="5" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
-            </button>
-            <button type="button" class="notes-icon-btn" data-action="delete" data-index="${index}" aria-label="Delete marker" title="Delete">
-              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            </button>
-          </div>
+          <div class="notes-marker-actions">${deleteBtn}</div>
         </div>`;
         }
         return `<div class="notes-marker" data-time="${Number(marker.time) || 0}">
         <button type="button" class="notes-time" data-seek="${Number(marker.time) || 0}" aria-label="Jump to ${timeLabel}">${timeLabel}</button>
         <p class="notes-marker-text">${escapeHtml(marker.text)}</p>
-        ${
-          admin
-            ? `<div class="notes-marker-actions">
-          <button type="button" class="notes-icon-btn" data-action="edit" data-index="${index}" aria-label="Edit takeaways" title="Edit">
-            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 16.5V20h3.5L17.8 9.7l-3.5-3.5L4 16.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 7l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </button>
-          <button type="button" class="notes-icon-btn" data-action="copy" data-index="${index}" aria-label="Duplicate marker" title="Duplicate">
-            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="5" y="5" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
-          </button>
-          <button type="button" class="notes-icon-btn" data-action="delete" data-index="${index}" aria-label="Delete marker" title="Delete">
-            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </button>
-        </div>`
-            : ""
-        }
+        ${admin ? `<div class="notes-marker-actions">${deleteBtn}</div>` : ""}
       </div>`;
       })
       .join("");
@@ -1253,42 +1235,36 @@ function renderNotesMarkers(markers, { admin, editing = false, focusTime = null 
 }
 
 function onNotesMarkersClick(e) {
+  const actionBtn = e.target.closest("[data-action]");
+  if (actionBtn && state.isAdmin) {
+    e.preventDefault();
+    e.stopPropagation();
+    const action = actionBtn.dataset.action;
+    const index = Number(actionBtn.dataset.index);
+    let markers = getCurrentMarkers();
+
+    if (action === "delete") {
+      if (!Number.isFinite(index) || index < 0 || index >= markers.length) return;
+      markers.splice(index, 1);
+      renderNotesMarkers(markers, { admin: true, editing: state.notesEditMode });
+      persistNotesMarkers(markers)
+        .then((notes) => {
+          state.notesEditMode = false;
+          renderNotesMarkers(notes.markers, { admin: true, editing: false });
+        })
+        .catch((err) => {
+          if (els.notesSaveStatus) els.notesSaveStatus.textContent = err.message || "Delete failed";
+        });
+      return;
+    }
+    return;
+  }
+
   const seekBtn = e.target.closest("[data-seek]");
   if (seekBtn && !e.target.closest(".notes-marker-edit")) {
     e.preventDefault();
     seekPlayerTo(Number(seekBtn.dataset.seek) || 0);
-    return;
   }
-  const actionBtn = e.target.closest("[data-action]");
-  if (!actionBtn || !state.isAdmin) return;
-  e.preventDefault();
-  const action = actionBtn.dataset.action;
-  const index = Number(actionBtn.dataset.index);
-  let markers = getCurrentMarkers();
-
-  if (action === "edit") {
-    state.notesEditMode = true;
-    renderNotesMarkers(markers, { admin: true, editing: true });
-    const row = els.notesMarkers.querySelector(`.notes-marker-edit[data-index="${index}"]`);
-    row?.querySelector(".notes-text-input")?.focus();
-    return;
-  }
-  if (action === "delete") {
-    markers.splice(index, 1);
-    state.notesEditMode = true;
-    renderNotesMarkers(markers, { admin: true, editing: true });
-    // Persist immediately so delete sticks without a separate Save.
-    persistNotesMarkers(markers).catch((err) => {
-      if (els.notesSaveStatus) els.notesSaveStatus.textContent = err.message || "Delete failed";
-    });
-    return;
-  }
-  if (action === "copy") {
-    const src = markers[index];
-    if (src) markers.splice(index + 1, 0, { ...src });
-  }
-  state.notesEditMode = true;
-  renderNotesMarkers(markers, { admin: true, editing: true });
 }
 
 function readNotesFromEditor({ keepEmpty = false } = {}) {
