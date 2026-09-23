@@ -577,13 +577,17 @@ function resortCardHTML(resort) {
 
 function renderLibrary() {
   if (isResortsMode()) {
-    const list = filteredResorts();
-    els.videoList.hidden = true;
-    els.videoList.innerHTML = "";
-    els.resortList.hidden = false;
-    els.resortList.innerHTML = list.map(resortCardHTML).join("");
-    els.resultCount.textContent = `${list.length} resort guide${list.length === 1 ? "" : "s"}`;
-    els.emptyState.hidden = list.length > 0;
+    const resorts = filteredResorts();
+    const videos = filteredVideos().sort((a, b) => b.addedAt.localeCompare(a.addedAt));
+    els.videoList.hidden = videos.length === 0;
+    els.videoList.innerHTML = videos.map(videoCardHTML).join("");
+    els.resortList.hidden = resorts.length === 0;
+    els.resortList.innerHTML = resorts.map(resortCardHTML).join("");
+    const parts = [];
+    if (videos.length) parts.push(`${videos.length} video${videos.length === 1 ? "" : "s"}`);
+    if (resorts.length) parts.push(`${resorts.length} resort guide${resorts.length === 1 ? "" : "s"}`);
+    els.resultCount.textContent = parts.join(" · ") || "0 items";
+    els.emptyState.hidden = videos.length + resorts.length > 0;
     return;
   }
 
@@ -600,11 +604,6 @@ function setSubtag(id, { sync = true } = {}) {
   state.activeSubtag = id || null;
   state.activeVideoId = null;
   state.activeResortId = null;
-
-  // Skill tags are independent of level — stay on current level (or All).
-  if (state.activeSubtag && isResortsMode()) {
-    state.activeCategory = "all";
-  }
 
   renderCategoryRail();
   renderSubtagRail();
@@ -1179,12 +1178,8 @@ function getCurrentMarkers() {
 function renderNotesMarkers(markers, { admin, editing = false, focusTime = null } = {}) {
   ensureNotesShell();
   const sorted = [...markers].sort((a, b) => a.time - b.time || String(a.text).localeCompare(String(b.text)));
-  const rows =
-    sorted.length > 0
-      ? sorted
-      : admin
-        ? [{ time: getPlayerTime(), text: "" }]
-        : [];
+  // Keep an empty list empty — do not auto-spawn a blank marker after delete.
+  const rows = sorted;
   const showEditor = Boolean(admin && editing);
   let focusIndex = -1;
   if (focusTime != null) {
@@ -1193,11 +1188,16 @@ function renderNotesMarkers(markers, { admin, editing = false, focusTime = null 
   }
 
   els.notesMarkers.hidden = false;
-  els.notesMarkers.innerHTML = rows
-    .map((marker, index) => {
-      const timeLabel = formatMarkerTime(marker.time);
-      if (showEditor) {
-        return `<div class="notes-marker notes-marker-edit" data-index="${index}">
+  if (!rows.length) {
+    els.notesMarkers.innerHTML = admin
+      ? `<p class="notes-empty">No takeaways yet. Add a marker at the current playhead.</p>`
+      : "";
+  } else {
+    els.notesMarkers.innerHTML = rows
+      .map((marker, index) => {
+        const timeLabel = formatMarkerTime(marker.time);
+        if (showEditor) {
+          return `<div class="notes-marker notes-marker-edit" data-index="${index}">
           <input class="notes-time-input" type="text" inputmode="numeric" value="${escapeHtml(timeLabel)}" aria-label="Timestamp" />
           <input class="notes-text-input" type="text" value="${escapeHtml(marker.text)}" placeholder="Brief takeaway" aria-label="Takeaway text" />
           <div class="notes-marker-actions">
@@ -1209,8 +1209,8 @@ function renderNotesMarkers(markers, { admin, editing = false, focusTime = null 
             </button>
           </div>
         </div>`;
-      }
-      return `<div class="notes-marker" data-time="${Number(marker.time) || 0}">
+        }
+        return `<div class="notes-marker" data-time="${Number(marker.time) || 0}">
         <button type="button" class="notes-time" data-seek="${Number(marker.time) || 0}" aria-label="Jump to ${timeLabel}">${timeLabel}</button>
         <p class="notes-marker-text">${escapeHtml(marker.text)}</p>
         ${
@@ -1229,8 +1229,9 @@ function renderNotesMarkers(markers, { admin, editing = false, focusTime = null 
             : ""
         }
       </div>`;
-    })
-    .join("");
+      })
+      .join("");
+  }
 
   if (els.notesEditor) {
     els.notesEditor.hidden = !admin;
@@ -1274,7 +1275,15 @@ function onNotesMarkersClick(e) {
   }
   if (action === "delete") {
     markers.splice(index, 1);
-  } else if (action === "copy") {
+    state.notesEditMode = true;
+    renderNotesMarkers(markers, { admin: true, editing: true });
+    // Persist immediately so delete sticks without a separate Save.
+    persistNotesMarkers(markers).catch((err) => {
+      if (els.notesSaveStatus) els.notesSaveStatus.textContent = err.message || "Delete failed";
+    });
+    return;
+  }
+  if (action === "copy") {
     const src = markers[index];
     if (src) markers.splice(index + 1, 0, { ...src });
   }
@@ -1319,31 +1328,38 @@ async function adminApi(path, options = {}) {
   return data;
 }
 
-async function saveNotesFromEditor() {
+async function persistNotesMarkers(markers) {
   const video = videoById(state.activeVideoId);
   if (!video) throw new Error("No video open.");
   if (!state.isAdmin) throw new Error("Admin login required.");
+  const notes = {
+    markers: [...markers]
+      .map((m) => ({
+        time: Number(m.time) || 0,
+        text: String(m.text || "").trim(),
+      }))
+      .filter((m) => m.text)
+      .sort((a, b) => a.time - b.time || a.text.localeCompare(b.text)),
+  };
+  if (els.notesSaveStatus) els.notesSaveStatus.textContent = "Saving…";
+  await adminApi("/api/admin/video-notes", {
+    method: "PUT",
+    body: JSON.stringify({
+      topic: SITE.sport,
+      videoId: video.id,
+      notes,
+    }),
+  });
+  video.notes = notes;
+  state.noteOverrides[video.id] = notes;
+  if (els.notesSaveStatus) els.notesSaveStatus.textContent = "Saved.";
+  return notes;
+}
 
-  const notes = readNotesFromEditor();
-  els.notesSaveStatus.textContent = "Saving…";
-  els.notesSaveBtn.disabled = true;
-  try {
-    await adminApi("/api/admin/video-notes", {
-      method: "PUT",
-      body: JSON.stringify({
-        topic: SITE.sport,
-        videoId: video.id,
-        notes,
-      }),
-    });
-    video.notes = notes;
-    state.noteOverrides[video.id] = notes;
-    state.notesEditMode = false;
-    els.notesSaveStatus.textContent = "Saved.";
-    renderNotesMarkers(notes.markers, { admin: true, editing: false });
-  } finally {
-    els.notesSaveBtn.disabled = false;
-  }
+async function saveNotesFromEditor() {
+  const notes = await persistNotesMarkers(readNotesFromEditor().markers);
+  state.notesEditMode = false;
+  renderNotesMarkers(notes.markers, { admin: true, editing: false });
 }
 
 function applyNoteOverrides(overrides) {

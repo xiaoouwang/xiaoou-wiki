@@ -1302,9 +1302,11 @@ a.brand:hover .brand-name {
   font-weight: 600;
 }
 
-.notes-markers {
-  display: grid;
-  gap: 0;
+.notes-empty {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 
 .notes-marker {
