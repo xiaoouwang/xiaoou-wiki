@@ -810,7 +810,7 @@ function renderResortMapList(resorts) {
       if (e.target.closest("a")) return;
       e.preventDefault();
       const resort = state.worldResorts.find((r) => r.id === el.dataset.focusResort);
-      if (resort) focusResortOnMap(resort);
+      if (resort) focusResortOnMap(resort, { dismissSearch: true });
     });
   });
 }
@@ -916,17 +916,22 @@ function applyResortMapHighlight() {
   scheduleResortMapLabelSync();
 }
 
-function focusResortOnMap(resort) {
+function focusResortOnMap(resort, { dismissSearch = false } = {}) {
   if (!state.resortMap) return;
   state.resortMapFocusId = resort.id;
+  if (dismissSearch && state.resortMapQuery.trim()) {
+    state.resortMapQuery = "";
+    const search = els.resortMapPanel?.querySelector("#resort-map-search");
+    if (search) search.value = "";
+  }
   applyResortMapHighlight();
   state.resortMap.setView([resort.lat, resort.lng], Math.max(state.resortMap.getZoom(), 10), {
     animate: true,
   });
   const marker = state.resortMapMarkerById?.get(resort.id);
   if (marker) marker.openPopup();
-  // Keep list selection in sync without rebuilding the map.
-  if (state.resortMapQuery.trim() || state.resortMapFilter) {
+  // Search picks clear the result list so the map stays unobstructed.
+  if (dismissSearch || state.resortMapFilter) {
     renderResortMapList(searchListResorts());
   }
 }
