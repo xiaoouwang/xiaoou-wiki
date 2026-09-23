@@ -98,28 +98,5 @@
     }
   ],
   "videos": [],
-  "resorts": [
-    {
-      "id": "first-month",
-      "name": "First-month song set",
-      "region": "Song picks",
-      "summary": "Three songs that teach changes without crushing motivation.",
-      "intro": "Pick songs with mostly open chords and slow tempos.\n\nRotate: one comfort song, one stretch song, one rhythm drill.\n\nRecord weekly so progress is visible.",
-      "tags": [
-        "songs",
-        "practice"
-      ]
-    },
-    {
-      "id": "string-care",
-      "name": "String & neck care",
-      "region": "Care",
-      "summary": "Wipe-down, humidity basics, and when to change strings.",
-      "intro": "Wipe strings after playing. Avoid extreme dryness or damp storage.\n\nChange strings when tone dulls or tuning becomes unstable — not only when they snap.",
-      "tags": [
-        "care",
-        "gear"
-      ]
-    }
-  ]
+  "resorts": []
 }

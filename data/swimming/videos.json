@@ -98,28 +98,5 @@
     }
   ],
   "videos": [],
-  "resorts": [
-    {
-      "id": "lane-etiquette",
-      "name": "Lane swim basics",
-      "region": "Pool guide",
-      "summary": "How to join a lane without chaos.",
-      "intro": "Ask the pace before you drop in. Circle swim counterclockwise unless the pool says otherwise.\n\nPass at the wall when possible. Rest in the corner, not in the middle of the lane.",
-      "tags": [
-        "lanes",
-        "lessons"
-      ]
-    },
-    {
-      "id": "open-water-start",
-      "name": "First open-water session",
-      "region": "Open water",
-      "summary": "Sighting, calm entries, and safety buddy rules.",
-      "intro": "Start near shore with a buddy. Practice sighting every few strokes.\n\nWear a bright cap. Know exit points before you get tired.",
-      "tags": [
-        "open",
-        "recovery"
-      ]
-    }
-  ]
+  "resorts": []
 }

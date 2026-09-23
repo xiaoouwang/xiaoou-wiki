@@ -145,54 +145,5 @@
       }
     }
   ],
-  "resorts": [
-    {
-      "id": "valdisere",
-      "name": "Val d'Isère",
-      "region": "French Alps",
-      "summary": "High-altitude grooming, glacier access, and serious alpine terrain.",
-      "intro": "Val d'Isère suits skiers who want reliable snow and long linked valleys.\n\nBeginner areas exist, but the mountain's personality is intermediate-to-advanced.\n\nPricing sits in the not-cheap range, especially in peak holiday weeks.",
-      "tags": [
-        "not-cheap",
-        "glaciers",
-        "powder"
-      ]
-    },
-    {
-      "id": "stanton",
-      "name": "St. Anton",
-      "region": "Austrian Alps",
-      "summary": "Legendary off-piste culture with lively village energy.",
-      "intro": "St. Anton is a classic introduction to alpine off-piste mindset.\n\nTrees and itineraries reward confident parallel skiers. Hire local knowledge if you leave the marked world.\n\nExpect premium pricing and strong après.",
-      "tags": [
-        "not-cheap",
-        "trees",
-        "powder"
-      ]
-    },
-    {
-      "id": "niseko",
-      "name": "Niseko",
-      "region": "Hokkaido, Japan",
-      "summary": "Powder benchmark with night skiing and tree runs.",
-      "intro": "Niseko works beautifully for skiers chasing soft snow and floodlit evenings.\n\nTree skiing is a highlight after storms. Peak season lodging is expensive near Hirafu.",
-      "tags": [
-        "not-cheap",
-        "trees",
-        "night",
-        "powder"
-      ]
-    },
-    {
-      "id": "formigal",
-      "name": "Formigal-Panticosa",
-      "region": "Spanish Pyrenees",
-      "summary": "Broad terrain with often friendlier pricing than the big Alpine hubs.",
-      "intro": "A solid option when you want variety without Swiss or French peak prices.\n\nGood intermediate grooming and family-friendly zones; advanced lines appear when the snowpack cooperates.",
-      "tags": [
-        "cheap",
-        "powder"
-      ]
-    }
-  ]
+  "resorts": []
 }

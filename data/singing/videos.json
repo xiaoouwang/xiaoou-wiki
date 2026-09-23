@@ -98,27 +98,5 @@
     }
   ],
   "videos": [],
-  "resorts": [
-    {
-      "id": "daily-warmup",
-      "name": "Daily 12-minute warm-up",
-      "region": "Practice resource",
-      "summary": "A short sequence you can repeat before repertoire.",
-      "intro": "Use this as a default warm-up when you have little time.\n\n1) Easy sirens\n2) Lip trills on five-note patterns\n3) One comfortable song phrase at half voice\n\nStop if the throat feels scratchy — switch to hums and hydration.",
-      "tags": [
-        "warmups",
-        "practice"
-      ]
-    },
-    {
-      "id": "voice-care",
-      "name": "Voice care week",
-      "region": "Health resource",
-      "summary": "Hydration, rest, and when to stop singing.",
-      "intro": "Voice care is boring until you need it.\n\nHydrate early in the day, not only mid-rehearsal. Sleep beats another late run-through when the voice is tired.\n\nPain, persistent hoarseness, or sudden range loss means rest and, if needed, a professional — not more pushing.",
-      "tags": [
-        "care"
-      ]
-    }
-  ]
+  "resorts": []
 }

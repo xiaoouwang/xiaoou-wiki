@@ -98,28 +98,5 @@
     }
   ],
   "videos": [],
-  "resorts": [
-    {
-      "id": "weekly-template",
-      "name": "Weekly review template",
-      "region": "Template",
-      "summary": "A one-page weekly review you can copy into any notes app.",
-      "intro": "Sections:\n\n1. Wins (3 bullets)\n2. Energy (what drained / what restored)\n3. One leak\n4. Next week’s single focus\n\nKeep it short enough that Sunday-you still does it.",
-      "tags": [
-        "templates",
-        "reviews"
-      ]
-    },
-    {
-      "id": "reading-stack",
-      "name": "Small reading stack",
-      "region": "Reading list",
-      "summary": "Three practical books worth finishing over collecting.",
-      "intro": "Prefer finishing one practical book over collecting ten.\n\nSuggested stance: take notes as actions, not quotes.\n\nIf a chapter does not change a next action, skim faster.",
-      "tags": [
-        "reading",
-        "tools"
-      ]
-    }
-  ]
+  "resorts": []
 }

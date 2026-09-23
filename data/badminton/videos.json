@@ -252,30 +252,5 @@
       }
     }
   ],
-  "resorts": [
-    {
-      "id": "club-hall",
-      "name": "Community indoor hall",
-      "region": "City courts",
-      "summary": "Beginner-friendly booking, multiple courts, evening peaking times.",
-      "intro": "Look for halls with clear court lines, decent lighting, and a way to book a court rather than only drop-in chaos.\n\nEvenings fill fast — early slots are better for drills.\n\nBring non-marking shoes; many halls are strict.",
-      "tags": [
-        "indoor",
-        "beginner-friendly",
-        "club"
-      ]
-    },
-    {
-      "id": "comp-center",
-      "name": "Competition training center",
-      "region": "Regional courts",
-      "summary": "Faster play, coaching lanes, and higher court fees.",
-      "intro": "Competition centers suit intermediate players who want pace and structured drills.\n\nExpect stricter etiquette and less casual multi-shuttle chaos.\n\nGood for match practice once basics are stable.",
-      "tags": [
-        "competition",
-        "indoor",
-        "club"
-      ]
-    }
-  ]
+  "resorts": []
 }
