@@ -1026,6 +1026,14 @@ function normalizeClientNotes(notes) {
   };
 }
 
+function getPlayerTime() {
+  const player = els.player;
+  if (!player) return 0;
+  const t = Number(player.currentTime);
+  if (!Number.isFinite(t) || t < 0) return 0;
+  return Math.floor(t);
+}
+
 function seekPlayerTo(seconds) {
   if (!els.player) return;
   const t = Math.max(0, Number(seconds) || 0);
@@ -1147,12 +1155,10 @@ function ensureNotesShell() {
     });
     els.notesAddMarkerBtn.addEventListener("click", () => {
       const current = getCurrentMarkers();
-      const t = Math.round(els.player?.currentTime || 0);
+      const t = getPlayerTime();
       current.push({ time: t, text: "" });
       state.notesEditMode = true;
-      renderNotesMarkers(current, { admin: true, editing: true });
-      const inputs = els.notesMarkers.querySelectorAll(".notes-text-input");
-      inputs[inputs.length - 1]?.focus();
+      renderNotesMarkers(current, { admin: true, editing: true, focusTime: t });
     });
   }
 }
@@ -1170,16 +1176,21 @@ function getCurrentMarkers() {
   return normalizeClientNotes(video?.notes).markers;
 }
 
-function renderNotesMarkers(markers, { admin, editing = false }) {
+function renderNotesMarkers(markers, { admin, editing = false, focusTime = null } = {}) {
   ensureNotesShell();
   const sorted = [...markers].sort((a, b) => a.time - b.time || String(a.text).localeCompare(String(b.text)));
   const rows =
     sorted.length > 0
       ? sorted
       : admin
-        ? [{ time: Math.round(els.player?.currentTime || 0), text: "" }]
+        ? [{ time: getPlayerTime(), text: "" }]
         : [];
   const showEditor = Boolean(admin && editing);
+  let focusIndex = -1;
+  if (focusTime != null) {
+    focusIndex = rows.findIndex((m) => m.time === focusTime && !String(m.text || "").trim());
+    if (focusIndex < 0) focusIndex = rows.findIndex((m) => m.time === focusTime);
+  }
 
   els.notesMarkers.hidden = false;
   els.notesMarkers.innerHTML = rows
@@ -1229,6 +1240,14 @@ function renderNotesMarkers(markers, { admin, editing = false }) {
     }
     if (els.notesAddMarkerBtn) els.notesAddMarkerBtn.hidden = !admin;
     if (els.notesSaveBtn) els.notesSaveBtn.hidden = !showEditor;
+  }
+
+  if (showEditor && focusIndex >= 0) {
+    const row = els.notesMarkers.querySelector(`.notes-marker-edit[data-index="${focusIndex}"]`);
+    const textInput = row?.querySelector(".notes-text-input");
+    const timeInput = row?.querySelector(".notes-time-input");
+    if (timeInput) timeInput.value = formatMarkerTime(rows[focusIndex].time);
+    textInput?.focus();
   }
 }
 
