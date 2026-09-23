@@ -44,11 +44,16 @@ const state = {
   worldResorts: [],
   resortMap: null,
   resortMapMarkers: null,
-  resortMapFilter: null, // null | "visited" | "not-yet"
+  resortMapFilter: null, // null | "visited" | "not-yet" | "ucpa"
   resortMapCountry: null,
   resortMapRegion: null,
   resortMapDepartment: null,
   resortMapQuery: "",
+  resortMapFocusId: null,
+  resortMapPrevFocusId: null,
+  resortMapMarkerById: null,
+  resortMapCanvas: null,
+  resortMapLabelRaf: 0,
 };
 
 const els = {
@@ -590,6 +595,9 @@ function ensureMapPanel() {
       <button type="button" class="map-legend-btn" data-map-filter="not-yet" aria-pressed="false">
         <i class="map-legend-dot map-legend-dot-other" aria-hidden="true"></i> Not yet
       </button>
+      <button type="button" class="map-legend-btn" data-map-filter="ucpa" aria-pressed="false">
+        <i class="map-legend-dot map-legend-dot-ucpa" aria-hidden="true"></i> UCPA
+      </button>
     </div>
     <div class="resort-map-list" id="resort-map-list" hidden></div>
     <div class="resort-map-frame">
@@ -620,6 +628,7 @@ function bindResortMapControls(panel) {
   panel.querySelectorAll("[data-map-filter]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const next = btn.dataset.mapFilter;
+      state.resortMapFocusId = null;
       setResortMapFilter(state.resortMapFilter === next ? null : next);
     });
   });
@@ -631,11 +640,14 @@ function bindResortMapControls(panel) {
         state.resortMapCountry = value;
         state.resortMapRegion = null;
         state.resortMapDepartment = null;
+        state.resortMapFocusId = null;
       } else if (key === "region") {
         state.resortMapRegion = value;
         state.resortMapDepartment = null;
+        state.resortMapFocusId = null;
       } else if (key === "department") {
         state.resortMapDepartment = value;
+        state.resortMapFocusId = null;
       }
       if (isMapMode()) renderLibrary();
     });
@@ -645,7 +657,9 @@ function bindResortMapControls(panel) {
     search.value = state.resortMapQuery || "";
     search.addEventListener("input", () => {
       state.resortMapQuery = search.value;
-      if (isMapMode()) renderLibrary();
+      if (!isMapMode()) return;
+      // Search updates the result list only — map keeps surrounding resorts.
+      renderResortMapList(searchListResorts());
     });
   }
 }
@@ -712,21 +726,30 @@ function renderResortMapGeoFilters() {
   regionSel.closest(".resort-map-geo-field")?.classList.toggle("is-disabled", regionSel.disabled);
 }
 
-function filteredWorldResorts() {
-  const q = state.resortMapQuery.trim().toLowerCase();
+function mapVisibleResorts() {
   return state.worldResorts.filter((r) => {
     if (state.resortMapFilter === "visited" && !r.visited) return false;
     if (state.resortMapFilter === "not-yet" && r.visited) return false;
+    if (state.resortMapFilter === "ucpa" && !r.ucpa) return false;
     if (state.resortMapCountry && r.country !== state.resortMapCountry) return false;
     if (state.resortMapRegion && r.region !== state.resortMapRegion) return false;
     if (state.resortMapDepartment && r.department !== state.resortMapDepartment) return false;
-    if (!q) return true;
-    return [r.name, r.region, r.department, r.country, r.area]
+    return true;
+  });
+}
+
+function searchListResorts() {
+  const q = state.resortMapQuery.trim().toLowerCase();
+  const base = mapVisibleResorts();
+  if (!q && !state.resortMapFilter) return [];
+  if (!q) return base;
+  return base.filter((r) =>
+    [r.name, r.region, r.department, r.country, r.area]
       .filter(Boolean)
       .join(" ")
       .toLowerCase()
-      .includes(q);
-  });
+      .includes(q)
+  );
 }
 
 function renderResortMapList(resorts) {
@@ -743,9 +766,11 @@ function renderResortMapList(resorts) {
   }
 
   let title;
-  if (state.resortMapFilter === "visited") title = `Visited · ${resorts.length}`;
+  if (q) title = `Search · ${resorts.length}`;
+  else if (state.resortMapFilter === "visited") title = `Visited · ${resorts.length}`;
   else if (state.resortMapFilter === "not-yet") title = `Not yet · ${resorts.length}`;
-  else title = `Search · ${resorts.length}`;
+  else if (state.resortMapFilter === "ucpa") title = `UCPA · ${resorts.length}`;
+  else title = `${resorts.length} resorts`;
 
   const sorted = [...resorts].sort((a, b) => a.name.localeCompare(b.name));
   list.hidden = false;
@@ -764,9 +789,10 @@ function renderResortMapList(resorts) {
                       r.website.replace(/^https?:\/\//, "").replace(/\/$/, "")
                     )}</a>`
                   : `<span class="resort-map-list-link is-missing">No website listed</span>`;
-                return `<li class="resort-map-list-item${r.visited ? " is-visited" : ""}">
+                const focused = r.id === state.resortMapFocusId ? " is-focused" : "";
+                return `<li class="resort-map-list-item${r.visited ? " is-visited" : ""}${r.ucpa ? " is-ucpa" : ""}${focused}" data-focus-resort="${escapeHtml(r.id)}">
             <div class="resort-map-list-main">
-              <span class="resort-map-list-name">${escapeHtml(r.name)}</span>
+              <span class="resort-map-list-name">${escapeHtml(r.name)}${r.ucpa ? `<span class="map-list-badge">UCPA</span>` : ""}</span>
               <span class="resort-map-list-place">${escapeHtml(place)}</span>
               ${site}
             </div>
@@ -779,9 +805,11 @@ function renderResortMapList(resorts) {
     </ul>
   `;
 
-  list.querySelectorAll("[data-focus-resort]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const resort = state.worldResorts.find((r) => r.id === btn.dataset.focusResort);
+  list.querySelectorAll("[data-focus-resort]").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      if (e.target.closest("a")) return;
+      e.preventDefault();
+      const resort = state.worldResorts.find((r) => r.id === el.dataset.focusResort);
       if (resort) focusResortOnMap(resort);
     });
   });
@@ -796,39 +824,216 @@ function syncResortMapLegend() {
   });
 }
 
+function markerStyleFor(resort, focused) {
+  if (focused) {
+    return {
+      radius: 11,
+      color: "#8a1f1f",
+      weight: 2.5,
+      fillColor: "#e23b3b",
+      fillOpacity: 1,
+    };
+  }
+  if (resort.visited) {
+    return {
+      radius: 8,
+      color: "#8a4b12",
+      weight: 1.5,
+      fillColor: "#e08a2a",
+      fillOpacity: 0.95,
+    };
+  }
+  if (resort.ucpa && state.resortMapFilter === "ucpa") {
+    return {
+      radius: 7,
+      color: "#0f5c45",
+      weight: 1.5,
+      fillColor: "#1f9d6a",
+      fillOpacity: 0.92,
+    };
+  }
+  return {
+    radius: 6,
+    color: "#1e4a6e",
+    weight: 1.5,
+    fillColor: "#3d7ea6",
+    fillOpacity: 0.82,
+  };
+}
+
+function resortMapLabelClass(resort, focused) {
+  if (focused) return "resort-map-label is-focused";
+  if (resort.visited) return "resort-map-label is-visited";
+  if (resort.ucpa && state.resortMapFilter === "ucpa") return "resort-map-label is-ucpa";
+  return "resort-map-label";
+}
+
+function setMarkerPermanentLabel(marker, resort, focused) {
+  if (marker._permanentLabel) return;
+  marker.unbindTooltip();
+  marker.bindTooltip(escapeHtml(resort.name), {
+    permanent: true,
+    direction: "top",
+    offset: [0, focused ? -10 : -6],
+    opacity: 1,
+    className: resortMapLabelClass(resort, focused),
+  });
+  marker._permanentLabel = true;
+}
+
+function clearMarkerPermanentLabel(marker) {
+  if (!marker._permanentLabel) return;
+  marker.unbindTooltip();
+  marker._permanentLabel = false;
+}
+
+function refreshMarkerStyle(marker, resort, focused) {
+  marker.setStyle(markerStyleFor(resort, focused));
+  if (marker._permanentLabel) {
+    marker.unbindTooltip();
+    marker._permanentLabel = false;
+    setMarkerPermanentLabel(marker, resort, focused);
+  }
+}
+
+function applyResortMapHighlight() {
+  const byId = state.resortMapMarkerById;
+  if (!byId) return;
+  const prevId = state.resortMapPrevFocusId;
+  const nextId = state.resortMapFocusId;
+  if (prevId && prevId !== nextId) {
+    const prev = byId.get(prevId);
+    if (prev?.resortData) refreshMarkerStyle(prev, prev.resortData, false);
+  }
+  if (nextId) {
+    const next = byId.get(nextId);
+    if (next?.resortData) {
+      refreshMarkerStyle(next, next.resortData, true);
+      setMarkerPermanentLabel(next, next.resortData, true);
+    }
+  }
+  state.resortMapPrevFocusId = nextId;
+  scheduleResortMapLabelSync();
+}
+
 function focusResortOnMap(resort) {
   if (!state.resortMap) return;
-  state.resortMap.setView([resort.lat, resort.lng], 11);
-  state.resortMapMarkers?.eachLayer((layer) => {
-    const ll = layer.getLatLng?.();
-    if (ll && Math.abs(ll.lat - resort.lat) < 0.0001 && Math.abs(ll.lng - resort.lng) < 0.0001) {
-      layer.openPopup();
-    }
+  state.resortMapFocusId = resort.id;
+  applyResortMapHighlight();
+  state.resortMap.setView([resort.lat, resort.lng], Math.max(state.resortMap.getZoom(), 10), {
+    animate: true,
   });
+  const marker = state.resortMapMarkerById?.get(resort.id);
+  if (marker) marker.openPopup();
+  // Keep list selection in sync without rebuilding the map.
+  if (state.resortMapQuery.trim() || state.resortMapFilter) {
+    renderResortMapList(searchListResorts());
+  }
 }
 
 function resortMapPopupHTML(resort) {
   const place = [resort.department, resort.region, resort.country].filter(Boolean).join(" · ");
-  const visited = resort.visited
-    ? `<span class="map-popup-badge">Visited</span>`
-    : "";
+  const badges = [
+    resort.visited ? `<span class="map-popup-badge">Visited</span>` : "",
+    resort.ucpa ? `<span class="map-popup-badge map-popup-badge-ucpa">UCPA</span>` : "",
+  ].join("");
   const site = resort.website
     ? `<a class="map-popup-link" href="${escapeHtml(resort.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(
         resort.website.replace(/^https?:\/\//, "").replace(/\/$/, "")
       )}</a>`
     : "";
+  const ucpaLink = resort.ucpa
+    ? `<a class="map-popup-link" href="https://www.ucpa-vacances.com/" target="_blank" rel="noopener noreferrer">ucpa-vacances.com</a>`
+    : "";
   return `<div class="map-popup">
-    <div class="map-popup-title">${escapeHtml(resort.name)}${visited}</div>
+    <div class="map-popup-title">${escapeHtml(resort.name)}${badges}</div>
     <div class="map-popup-place">${escapeHtml(place)}</div>
     ${site}
+    ${ucpaLink}
   </div>`;
 }
 
-async function renderWorldResortMap(resorts) {
+function shouldShowResortLabels(count) {
+  if (!state.resortMap) return count <= 80;
+  const z = state.resortMap.getZoom();
+  if (count <= 60) return true;
+  if (count <= 200) return z >= 7;
+  return z >= 9;
+}
+
+const RESORT_MAP_MAX_LABELS = 90;
+
+function scheduleResortMapLabelSync() {
+  if (state.resortMapLabelRaf) return;
+  state.resortMapLabelRaf = requestAnimationFrame(() => {
+    state.resortMapLabelRaf = 0;
+    syncResortMapLabelVisibility();
+  });
+}
+
+/** Toggle in-view labels without rebuilding markers (avoids zoom freezes). */
+function syncResortMapLabelVisibility() {
+  if (!isMapMode() || !state.resortMap || !state.resortMapMarkerById) return;
+  const byId = state.resortMapMarkerById;
+  const count = byId.size;
+  const want = shouldShowResortLabels(count);
+  els.resortMapEl?.classList.toggle("resort-map-dense", !want);
+
+  // World view: keep dots canvas-only; only ensure focused label stays.
+  if (!want) {
+    if (state.resortMapFocusId) {
+      const focused = byId.get(state.resortMapFocusId);
+      if (focused?.resortData) setMarkerPermanentLabel(focused, focused.resortData, true);
+    }
+    for (const [id, marker] of byId) {
+      if (id === state.resortMapFocusId) continue;
+      clearMarkerPermanentLabel(marker);
+    }
+    return;
+  }
+
+  const bounds = state.resortMap.getBounds().pad(0.05);
+  const candidates = [];
+
+  for (const [id, marker] of byId) {
+    const resort = marker.resortData;
+    if (!resort) continue;
+    const focused = id === state.resortMapFocusId;
+    if (focused) {
+      setMarkerPermanentLabel(marker, resort, true);
+      continue;
+    }
+    if (!bounds.contains(marker.getLatLng())) {
+      clearMarkerPermanentLabel(marker);
+      continue;
+    }
+    candidates.push(marker);
+  }
+
+  candidates.sort((a, b) => Number(b.resortData.visited) - Number(a.resortData.visited));
+  candidates.forEach((marker, i) => {
+    if (i < RESORT_MAP_MAX_LABELS) setMarkerPermanentLabel(marker, marker.resortData, false);
+    else clearMarkerPermanentLabel(marker);
+  });
+}
+
+function fitMapToFrance() {
+  const fr = state.worldResorts.filter((r) => r.country === "France");
+  if (fr.length > 1) {
+    state.resortMap.fitBounds(
+      fr.map((r) => [r.lat, r.lng]),
+      { padding: [28, 28], maxZoom: 7 }
+    );
+  } else {
+    state.resortMap.setView([46.6, 2.5], 6);
+  }
+}
+
+async function renderWorldResortMap(mapResorts, { preserveView = false } = {}) {
   ensureMapPanel();
   renderResortMapGeoFilters();
   syncResortMapLegend();
-  renderResortMapList(resorts);
+  renderResortMapList(searchListResorts());
   try {
     const L = await loadLeaflet();
     if (!isMapMode()) return;
@@ -838,51 +1043,87 @@ async function renderWorldResortMap(resorts) {
         scrollWheelZoom: true,
         zoomControl: true,
         worldCopyJump: true,
-      }).setView([30, 10], 2);
+        preferCanvas: true,
+      });
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 18,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        updateWhenZooming: false,
+        keepBuffer: 2,
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · resorts <a href="https://openskimap.org/">OpenSkiMap</a>',
       }).addTo(state.resortMap);
 
       state.resortMapMarkers = L.layerGroup().addTo(state.resortMap);
+      state.resortMapCanvas = L.canvas({ padding: 0.5 });
+      state.resortMap.on("zoomend", scheduleResortMapLabelSync);
+      state.resortMap.on("moveend", () => {
+        if (shouldShowResortLabels(state.resortMapMarkerById?.size || 0)) {
+          scheduleResortMapLabelSync();
+        }
+      });
     }
 
     state.resortMapMarkers.clearLayers();
+    state.resortMapMarkerById = new Map();
+    state.resortMapPrevFocusId = null;
     const bounds = [];
-    const ordered = [...resorts].sort((a, b) => Number(a.visited) - Number(b.visited));
+    const ordered = [...mapResorts].sort((a, b) => Number(a.visited) - Number(b.visited));
     for (const resort of ordered) {
-      const visited = !!resort.visited;
+      const focused = resort.id === state.resortMapFocusId;
       const marker = L.circleMarker([resort.lat, resort.lng], {
-        radius: visited ? 8 : 6,
-        color: visited ? "#8a4b12" : "#1e4a6e",
-        weight: 1.5,
-        fillColor: visited ? "#e08a2a" : "#3d7ea6",
-        fillOpacity: visited ? 0.95 : 0.82,
+        ...markerStyleFor(resort, focused),
+        renderer: state.resortMapCanvas,
       });
-      marker.bindPopup(resortMapPopupHTML(resort), { maxWidth: 280 });
-      marker.bindTooltip(escapeHtml(resort.name), {
-        permanent: true,
-        direction: "top",
-        offset: [0, -6],
-        opacity: 1,
-        className: visited ? "resort-map-label is-visited" : "resort-map-label",
+      marker.resortData = resort;
+      marker._permanentLabel = false;
+      marker.bindPopup(() => resortMapPopupHTML(resort), { maxWidth: 280 });
+      marker.on("mouseover", () => {
+        if (marker._permanentLabel || marker.getTooltip()) return;
+        marker.bindTooltip(escapeHtml(resort.name), {
+          direction: "top",
+          offset: [0, -6],
+          opacity: 1,
+          className: "resort-map-label",
+        });
+        marker.openTooltip();
+      });
+      marker.on("mouseout", () => {
+        if (marker._permanentLabel) return;
+        marker.unbindTooltip();
+      });
+      marker.on("click", () => {
+        state.resortMapFocusId = resort.id;
+        applyResortMapHighlight();
       });
       state.resortMapMarkers.addLayer(marker);
+      state.resortMapMarkerById.set(resort.id, marker);
       bounds.push([resort.lat, resort.lng]);
     }
 
     requestAnimationFrame(() => {
       state.resortMap.invalidateSize();
-      const tight =
-        state.resortMapFilter === "visited" ||
-        state.resortMapCountry ||
-        state.resortMapRegion ||
-        state.resortMapQuery.trim().length > 0;
-      if (bounds.length > 1) {
-        state.resortMap.fitBounds(bounds, { padding: [28, 28], maxZoom: tight ? 8 : 4 });
-      } else if (bounds.length === 1) state.resortMap.setView(bounds[0], 9);
-      else state.resortMap.setView([30, 10], 2);
+      syncResortMapLabelVisibility();
+      if (preserveView) return;
+      if (state.resortMapFocusId && state.resortMapMarkerById.has(state.resortMapFocusId)) {
+        const focused = state.worldResorts.find((r) => r.id === state.resortMapFocusId);
+        if (focused) {
+          state.resortMap.setView([focused.lat, focused.lng], Math.max(state.resortMap.getZoom(), 10));
+          state.resortMapMarkerById.get(focused.id)?.openPopup();
+          return;
+        }
+      }
+      const geoFiltered = !!(state.resortMapCountry || state.resortMapRegion || state.resortMapDepartment);
+      const visitOnly = state.resortMapFilter === "visited" || state.resortMapFilter === "ucpa";
+      if (visitOnly && bounds.length) {
+        state.resortMap.fitBounds(bounds, { padding: [28, 28], maxZoom: 9 });
+      } else if (geoFiltered && bounds.length > 1) {
+        state.resortMap.fitBounds(bounds, { padding: [28, 28], maxZoom: 8 });
+      } else if (geoFiltered && bounds.length === 1) {
+        state.resortMap.setView(bounds[0], 9);
+      } else {
+        fitMapToFrance();
+      }
     });
   } catch (err) {
     console.error(err);
@@ -1004,7 +1245,7 @@ function renderLibrary() {
     els.emptyState.hidden = true;
     els.resultCount.textContent = "";
     els.resultCount.parentElement?.setAttribute("hidden", "");
-    const resorts = filteredWorldResorts();
+    const resorts = mapVisibleResorts();
     ensureMapPanel();
     els.resortMapPanel.hidden = false;
     renderWorldResortMap(resorts);
@@ -1017,6 +1258,7 @@ function renderLibrary() {
   state.resortMapRegion = null;
   state.resortMapDepartment = null;
   state.resortMapQuery = "";
+  state.resortMapFocusId = null;
   els.resultCount.parentElement?.removeAttribute("hidden");
 
   if (isResortsMode()) {

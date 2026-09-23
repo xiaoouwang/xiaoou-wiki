@@ -13,6 +13,7 @@
     "export:admin": "node scripts/export-admin.mjs",
     "add:video": "node scripts/add-youtube-video.mjs",
     "media:upload": "node scripts/upload-media-r2.mjs",
+    "import:resorts": "python3 scripts/import-openskimap.py",
     "hooks:install": "node scripts/install-hooks.mjs",
     "prepare": "node scripts/install-hooks.mjs"
   },
