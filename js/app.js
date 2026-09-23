@@ -40,6 +40,7 @@ const state = {
   sheetMode: null,
   isAdmin: Boolean(localStorage.getItem(ADMIN_TOKEN_KEY)),
   noteOverrides: {},
+  notesEditMode: false,
 };
 
 const els = {
@@ -867,6 +868,7 @@ function openVideoSheet(video, { sync = true } = {}) {
   state.sheetMode = "video";
   state.activeVideoId = video.id;
   state.activeResortId = null;
+  state.notesEditMode = false;
   // Do not rebuild the library mid-click — that retargets taps onto sheet buttons.
 
   els.sheetMedia.hidden = false;
@@ -971,6 +973,7 @@ function closeSheet({ sync = true } = {}) {
   state.activeVideoId = null;
   state.activeResortId = null;
   state.sheetMode = null;
+  state.notesEditMode = false;
   if (sync) syncRoute({ replace: true });
   setTimeout(() => {
     if (!els.picker.classList.contains("picker-open")) {
@@ -1059,14 +1062,14 @@ function fillNotesCard(notes) {
   els.notesCard.hidden = false;
   els.notesCard.classList.toggle("notes-card-admin", admin);
   els.notesCard.classList.toggle("notes-card-markers", hasMarkers || admin);
+  state.notesEditMode = Boolean(admin && state.notesEditMode);
 
   // Prefer timed markers when present; keep legacy fields for older clips.
   if (hasMarkers || admin) {
     els.notesAbstract.hidden = true;
     els.notesPoints.hidden = true;
     els.notesConclusion.hidden = true;
-    if (els.notesEditor) els.notesEditor.hidden = true;
-    renderNotesMarkers(markers, { admin });
+    renderNotesMarkers(markers, { admin, editing: state.notesEditMode });
     return;
   }
 
@@ -1084,6 +1087,7 @@ function clearNotesCard() {
   if (!els.notesCard) return;
   els.notesCard.hidden = true;
   els.notesCard.classList.remove("notes-card-admin", "notes-card-markers");
+  state.notesEditMode = false;
   els.notesAbstract.textContent = "";
   els.notesAbstract.hidden = true;
   els.notesPoints.innerHTML = "";
@@ -1118,43 +1122,70 @@ function ensureNotesShell() {
     editor.hidden = true;
     editor.innerHTML = `
       <div class="notes-editor-actions">
-        <button type="button" class="btn-primary" id="notes-add-marker">Add marker</button>
-        <button type="button" class="btn-primary" id="notes-save-btn">Save takeaways</button>
+        <button type="button" class="btn-primary" id="notes-edit-toggle">Edit takeaways</button>
+        <button type="button" class="btn-primary" id="notes-add-marker" hidden>Add marker</button>
+        <button type="button" class="btn-primary" id="notes-save-btn" hidden>Save takeaways</button>
         <span class="notes-save-status" id="notes-save-status" aria-live="polite"></span>
       </div>
     `;
     els.notesCard.appendChild(editor);
     els.notesEditor = editor;
+    els.notesEditToggle = editor.querySelector("#notes-edit-toggle");
     els.notesSaveBtn = editor.querySelector("#notes-save-btn");
     els.notesAddMarkerBtn = editor.querySelector("#notes-add-marker");
     els.notesSaveStatus = editor.querySelector("#notes-save-status");
+    els.notesEditToggle.addEventListener("click", () => {
+      const markers = getCurrentMarkers();
+      state.notesEditMode = !state.notesEditMode;
+      if (els.notesSaveStatus) els.notesSaveStatus.textContent = "";
+      renderNotesMarkers(markers, { admin: true, editing: state.notesEditMode });
+    });
     els.notesSaveBtn.addEventListener("click", () => {
       saveNotesFromEditor().catch((err) => {
         els.notesSaveStatus.textContent = err.message || "Save failed";
       });
     });
     els.notesAddMarkerBtn.addEventListener("click", () => {
-      const current = readNotesFromEditor().markers;
+      const current = getCurrentMarkers();
       const t = Math.round(els.player?.currentTime || 0);
       current.push({ time: t, text: "" });
-      renderNotesMarkers(current, { admin: true });
+      state.notesEditMode = true;
+      renderNotesMarkers(current, { admin: true, editing: true });
+      const inputs = els.notesMarkers.querySelectorAll(".notes-text-input");
+      inputs[inputs.length - 1]?.focus();
     });
   }
 }
 
-function renderNotesMarkers(markers, { admin }) {
+function getCurrentMarkers() {
+  if (els.notesMarkers?.querySelector(".notes-marker-edit")) {
+    return readNotesFromEditor({ keepEmpty: true }).markers;
+  }
+  const fromDom = [...(els.notesMarkers?.querySelectorAll(".notes-marker[data-time]") || [])].map((row) => ({
+    time: Number(row.dataset.time) || 0,
+    text: String(row.querySelector(".notes-marker-text")?.textContent || "").trim(),
+  }));
+  if (fromDom.length) return fromDom.sort((a, b) => a.time - b.time || a.text.localeCompare(b.text));
+  const video = videoById(state.activeVideoId);
+  return normalizeClientNotes(video?.notes).markers;
+}
+
+function renderNotesMarkers(markers, { admin, editing = false }) {
   ensureNotesShell();
-  const rows = markers.length
-    ? markers
-    : admin
-      ? [{ time: Math.round(els.player?.currentTime || 0), text: "" }]
-      : [];
+  const sorted = [...markers].sort((a, b) => a.time - b.time || String(a.text).localeCompare(String(b.text)));
+  const rows =
+    sorted.length > 0
+      ? sorted
+      : admin
+        ? [{ time: Math.round(els.player?.currentTime || 0), text: "" }]
+        : [];
+  const showEditor = Boolean(admin && editing);
 
   els.notesMarkers.hidden = false;
   els.notesMarkers.innerHTML = rows
     .map((marker, index) => {
       const timeLabel = formatMarkerTime(marker.time);
-      if (admin) {
+      if (showEditor) {
         return `<div class="notes-marker notes-marker-edit" data-index="${index}">
           <input class="notes-time-input" type="text" inputmode="numeric" value="${escapeHtml(timeLabel)}" aria-label="Timestamp" />
           <input class="notes-text-input" type="text" value="${escapeHtml(marker.text)}" placeholder="Brief takeaway" aria-label="Takeaway text" />
@@ -1168,19 +1199,42 @@ function renderNotesMarkers(markers, { admin }) {
           </div>
         </div>`;
       }
-      return `<div class="notes-marker">
+      return `<div class="notes-marker" data-time="${Number(marker.time) || 0}">
         <button type="button" class="notes-time" data-seek="${Number(marker.time) || 0}" aria-label="Jump to ${timeLabel}">${timeLabel}</button>
         <p class="notes-marker-text">${escapeHtml(marker.text)}</p>
+        ${
+          admin
+            ? `<div class="notes-marker-actions">
+          <button type="button" class="notes-icon-btn" data-action="edit" data-index="${index}" aria-label="Edit takeaways" title="Edit">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 16.5V20h3.5L17.8 9.7l-3.5-3.5L4 16.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 7l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <button type="button" class="notes-icon-btn" data-action="copy" data-index="${index}" aria-label="Duplicate marker" title="Duplicate">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="5" y="5" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+          </button>
+          <button type="button" class="notes-icon-btn" data-action="delete" data-index="${index}" aria-label="Delete marker" title="Delete">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+        </div>`
+            : ""
+        }
       </div>`;
     })
     .join("");
 
-  if (els.notesEditor) els.notesEditor.hidden = !admin;
+  if (els.notesEditor) {
+    els.notesEditor.hidden = !admin;
+    if (els.notesEditToggle) {
+      els.notesEditToggle.hidden = false;
+      els.notesEditToggle.textContent = showEditor ? "Done editing" : "Edit takeaways";
+    }
+    if (els.notesAddMarkerBtn) els.notesAddMarkerBtn.hidden = !admin;
+    if (els.notesSaveBtn) els.notesSaveBtn.hidden = !showEditor;
+  }
 }
 
 function onNotesMarkersClick(e) {
   const seekBtn = e.target.closest("[data-seek]");
-  if (seekBtn) {
+  if (seekBtn && !e.target.closest(".notes-marker-edit")) {
     e.preventDefault();
     seekPlayerTo(Number(seekBtn.dataset.seek) || 0);
     return;
@@ -1190,17 +1244,26 @@ function onNotesMarkersClick(e) {
   e.preventDefault();
   const action = actionBtn.dataset.action;
   const index = Number(actionBtn.dataset.index);
-  const markers = readNotesFromEditor().markers;
+  let markers = getCurrentMarkers();
+
+  if (action === "edit") {
+    state.notesEditMode = true;
+    renderNotesMarkers(markers, { admin: true, editing: true });
+    const row = els.notesMarkers.querySelector(`.notes-marker-edit[data-index="${index}"]`);
+    row?.querySelector(".notes-text-input")?.focus();
+    return;
+  }
   if (action === "delete") {
     markers.splice(index, 1);
   } else if (action === "copy") {
     const src = markers[index];
     if (src) markers.splice(index + 1, 0, { ...src });
   }
-  renderNotesMarkers(markers, { admin: true });
+  state.notesEditMode = true;
+  renderNotesMarkers(markers, { admin: true, editing: true });
 }
 
-function readNotesFromEditor() {
+function readNotesFromEditor({ keepEmpty = false } = {}) {
   if (!els.notesMarkers) return { markers: [] };
   const rows = [...els.notesMarkers.querySelectorAll(".notes-marker-edit")];
   const markers = rows
@@ -1208,12 +1271,13 @@ function readNotesFromEditor() {
       const timeRaw = row.querySelector(".notes-time-input")?.value;
       const text = String(row.querySelector(".notes-text-input")?.value || "").trim();
       const time = parseMarkerTime(timeRaw);
-      if (!text || time == null) return null;
+      if (time == null) return null;
+      if (!text && !keepEmpty) return null;
       return { time, text };
     })
     .filter(Boolean)
     .sort((a, b) => a.time - b.time || a.text.localeCompare(b.text));
-  return { markers };
+  return { markers: keepEmpty ? markers : markers.filter((m) => m.text) };
 }
 
 async function adminApi(path, options = {}) {
@@ -1230,6 +1294,7 @@ async function adminApi(path, options = {}) {
   if (res.status === 401) {
     localStorage.removeItem(ADMIN_TOKEN_KEY);
     state.isAdmin = false;
+    state.notesEditMode = false;
   }
   if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
   return data;
@@ -1254,8 +1319,9 @@ async function saveNotesFromEditor() {
     });
     video.notes = notes;
     state.noteOverrides[video.id] = notes;
+    state.notesEditMode = false;
     els.notesSaveStatus.textContent = "Saved.";
-    renderNotesMarkers(notes.markers, { admin: true });
+    renderNotesMarkers(notes.markers, { admin: true, editing: false });
   } finally {
     els.notesSaveBtn.disabled = false;
   }

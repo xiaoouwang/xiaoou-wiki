@@ -1435,6 +1435,12 @@ a.brand:hover .brand-name {
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
+  margin-top: 4px;
+}
+
+.notes-editor-actions .btn-primary {
+  font-size: 0.78rem;
+  padding: 8px 12px;
 }
 
 .notes-save-status {
