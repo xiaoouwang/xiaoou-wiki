@@ -48,6 +48,7 @@ const state = {
   resortMapCountry: null,
   resortMapRegion: null,
   resortMapDepartment: null,
+  resortMapQuery: "",
 };
 
 const els = {
@@ -538,7 +539,13 @@ function loadLeaflet() {
 }
 
 function ensureMapPanel() {
-  if (els.resortMapPanel && els.resortMapEl && els.resortMapList && els.resortMapGeo) {
+  if (
+    els.resortMapPanel &&
+    els.resortMapEl &&
+    els.resortMapList &&
+    els.resortMapGeo &&
+    els.resortMapPanel.querySelector("#resort-map-search")
+  ) {
     if (!els.resortMapPanel.dataset.bound) bindResortMapControls(els.resortMapPanel);
     return;
   }
@@ -550,6 +557,18 @@ function ensureMapPanel() {
   panel.className = "resort-map-panel";
   panel.hidden = true;
   panel.innerHTML = `
+    <div class="resort-map-search">
+      <label class="resort-map-search-field">
+        <span>Search resort</span>
+        <input
+          id="resort-map-search"
+          type="search"
+          placeholder="e.g. Chamonix, Niseko, Aspen…"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </label>
+    </div>
     <div class="resort-map-geo" id="resort-map-geo">
       <label class="resort-map-geo-field">
         <span>Country</span>
@@ -621,6 +640,14 @@ function bindResortMapControls(panel) {
       if (isMapMode()) renderLibrary();
     });
   });
+  const search = panel.querySelector("#resort-map-search");
+  if (search) {
+    search.value = state.resortMapQuery || "";
+    search.addEventListener("input", () => {
+      state.resortMapQuery = search.value;
+      if (isMapMode()) renderLibrary();
+    });
+  }
 }
 
 function setResortMapFilter(filter) {
@@ -657,6 +684,10 @@ function fillGeoSelect(select, values, current, allLabel) {
 
 function renderResortMapGeoFilters() {
   ensureMapPanel();
+  const search = els.resortMapPanel.querySelector("#resort-map-search");
+  if (search && search.value !== (state.resortMapQuery || "")) {
+    search.value = state.resortMapQuery || "";
+  }
   const countrySel = els.resortMapPanel.querySelector("#resort-map-country");
   const regionSel = els.resortMapPanel.querySelector("#resort-map-region");
   const deptSel = els.resortMapPanel.querySelector("#resort-map-department");
@@ -682,7 +713,7 @@ function renderResortMapGeoFilters() {
 }
 
 function filteredWorldResorts() {
-  const q = state.query.trim().toLowerCase();
+  const q = state.resortMapQuery.trim().toLowerCase();
   return state.worldResorts.filter((r) => {
     if (state.resortMapFilter === "visited" && !r.visited) return false;
     if (state.resortMapFilter === "not-yet" && r.visited) return false;
@@ -703,16 +734,18 @@ function renderResortMapList(resorts) {
   const list = els.resortMapList;
   if (!list) return;
 
-  if (!state.resortMapFilter) {
+  const q = state.resortMapQuery.trim();
+  const showList = !!state.resortMapFilter || q.length > 0;
+  if (!showList) {
     list.hidden = true;
     list.innerHTML = "";
     return;
   }
 
-  const title =
-    state.resortMapFilter === "visited"
-      ? `Visited · ${resorts.length}`
-      : `Not yet · ${resorts.length}`;
+  let title;
+  if (state.resortMapFilter === "visited") title = `Visited · ${resorts.length}`;
+  else if (state.resortMapFilter === "not-yet") title = `Not yet · ${resorts.length}`;
+  else title = `Search · ${resorts.length}`;
 
   const sorted = [...resorts].sort((a, b) => a.name.localeCompare(b.name));
   list.hidden = false;
@@ -721,15 +754,17 @@ function renderResortMapList(resorts) {
       <p class="resort-map-list-title">${title}</p>
     </div>
     <ul class="resort-map-list-items">
-      ${sorted
-        .map((r) => {
-          const place = [r.department, r.region, r.country].filter(Boolean).join(" · ");
-          const site = r.website
-            ? `<a class="resort-map-list-link" href="${escapeHtml(r.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(
-                r.website.replace(/^https?:\/\//, "").replace(/\/$/, "")
-              )}</a>`
-            : `<span class="resort-map-list-link is-missing">No website listed</span>`;
-          return `<li class="resort-map-list-item${r.visited ? " is-visited" : ""}">
+      ${
+        sorted.length
+          ? sorted
+              .map((r) => {
+                const place = [r.department, r.region, r.country].filter(Boolean).join(" · ");
+                const site = r.website
+                  ? `<a class="resort-map-list-link" href="${escapeHtml(r.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(
+                      r.website.replace(/^https?:\/\//, "").replace(/\/$/, "")
+                    )}</a>`
+                  : `<span class="resort-map-list-link is-missing">No website listed</span>`;
+                return `<li class="resort-map-list-item${r.visited ? " is-visited" : ""}">
             <div class="resort-map-list-main">
               <span class="resort-map-list-name">${escapeHtml(r.name)}</span>
               <span class="resort-map-list-place">${escapeHtml(place)}</span>
@@ -737,8 +772,10 @@ function renderResortMapList(resorts) {
             </div>
             <button type="button" class="resort-map-list-focus" data-focus-resort="${escapeHtml(r.id)}" aria-label="Show ${escapeHtml(r.name)} on map">Map</button>
           </li>`;
-        })
-        .join("")}
+              })
+              .join("")
+          : `<li class="resort-map-list-empty">No resorts match.</li>`
+      }
     </ul>
   `;
 
@@ -824,15 +861,26 @@ async function renderWorldResortMap(resorts) {
         fillOpacity: visited ? 0.95 : 0.82,
       });
       marker.bindPopup(resortMapPopupHTML(resort), { maxWidth: 280 });
+      marker.bindTooltip(escapeHtml(resort.name), {
+        permanent: true,
+        direction: "top",
+        offset: [0, -6],
+        opacity: 1,
+        className: visited ? "resort-map-label is-visited" : "resort-map-label",
+      });
       state.resortMapMarkers.addLayer(marker);
       bounds.push([resort.lat, resort.lng]);
     }
 
     requestAnimationFrame(() => {
       state.resortMap.invalidateSize();
-      const tight = state.resortMapFilter === "visited" || state.resortMapCountry || state.resortMapRegion;
+      const tight =
+        state.resortMapFilter === "visited" ||
+        state.resortMapCountry ||
+        state.resortMapRegion ||
+        state.resortMapQuery.trim().length > 0;
       if (bounds.length > 1) {
-        state.resortMap.fitBounds(bounds, { padding: [24, 24], maxZoom: tight ? 8 : 4 });
+        state.resortMap.fitBounds(bounds, { padding: [28, 28], maxZoom: tight ? 8 : 4 });
       } else if (bounds.length === 1) state.resortMap.setView(bounds[0], 9);
       else state.resortMap.setView([30, 10], 2);
     });
@@ -968,6 +1016,7 @@ function renderLibrary() {
   state.resortMapCountry = null;
   state.resortMapRegion = null;
   state.resortMapDepartment = null;
+  state.resortMapQuery = "";
   els.resultCount.parentElement?.removeAttribute("hidden");
 
   if (isResortsMode()) {

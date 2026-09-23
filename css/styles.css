@@ -699,6 +699,54 @@ a.brand:hover .brand-name {
   margin: 4px 0 20px;
 }
 
+.resort-map-search {
+  margin: 0 0 10px;
+}
+
+.resort-map-search-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.resort-map-search-field span {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #5b7386;
+}
+
+.resort-map-search-field input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, #d7e0e8);
+  background: #fff;
+  color: #1e2f3c;
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.resort-map-search-field input::placeholder {
+  color: #8a9aa8;
+  font-weight: 500;
+}
+
+.resort-map-search-field input:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  outline-offset: 1px;
+}
+
+.resort-map-list-empty {
+  padding: 14px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #5b7386;
+}
+
 .resort-map-geo {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -929,6 +977,30 @@ a.brand:hover .brand-name {
   height: min(68vh, 560px);
   min-height: 340px;
   z-index: 0;
+}
+
+.resort-map .resort-map-label {
+  background: rgba(255, 255, 255, 0.92);
+  border: 0;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(30, 47, 60, 0.18);
+  color: #1e2f3c;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.15;
+  padding: 2px 6px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.resort-map .resort-map-label.is-visited {
+  background: #e08a2a;
+  color: #fff;
+}
+
+.resort-map .resort-map-label::before {
+  display: none;
 }
 
 .resort-map .leaflet-popup-content {
