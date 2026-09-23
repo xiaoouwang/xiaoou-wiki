@@ -73,4 +73,4 @@ npm run db:migrate
 
 ## Credit
 
-Design by [Xiaoou Wang](https://xiaoouwang.github.io/) — PhD in AI, national ski and snowboarding instructor.
+Design by [Xiaoou Wang](https://xiaoouwang.github.io/) — PhD in AI, National ski and snowboarding instructor.
