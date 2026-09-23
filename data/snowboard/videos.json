@@ -21,6 +21,10 @@
         {
           "id": "linking",
           "label": "Linking turns"
+        },
+        {
+          "id": "weight-transfer",
+          "label": "Weight transfer"
         }
       ]
     },
@@ -109,7 +113,34 @@
       ]
     }
   ],
-  "videos": [],
+  "videos": [
+    {
+      "id": "v1",
+      "title": "Stand up to change edge",
+      "description": "Henry Cai on snowboard edge change — stand up through the transition to save energy and make turns easier. Instagram: Stand up and change edge, it saves energy and makes turning easier!",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/v1-Ddgr27BJ3fQ.jpg",
+      "file": "https://xiaoou-wiki-api.singerxo.workers.dev/media/videos/v1-Ddgr27BJ3fQ.mp4",
+      "source": {
+        "platform": "instagram",
+        "creator": "Henry Cai",
+        "url": "https://www.instagram.com/p/Ddgr27BJ3fQ/"
+      },
+      "category": "beginner",
+      "subtags": [
+        "weight-transfer"
+      ],
+      "duration": "0:30",
+      "addedAt": "2026-09-23",
+      "notes": {
+        "markers": [
+          {
+            "time": 0,
+            "text": "Stand up and change edge — saves energy and makes turning easier."
+          }
+        ]
+      }
+    }
+  ],
   "resorts": [
     {
       "id": "niseko",
