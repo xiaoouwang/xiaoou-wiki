@@ -638,6 +638,11 @@ a.brand:hover .brand-name {
   padding: 0 16px 10px;
 }
 
+.subtag-rail[hidden],
+.resort-map-panel[hidden] {
+  display: none !important;
+}
+
 .level-rail::-webkit-scrollbar,
 .resort-rail::-webkit-scrollbar,
 .tag-rail::-webkit-scrollbar,
@@ -688,6 +693,305 @@ a.brand:hover .brand-name {
 
 .level-chip.chip-active {
   box-shadow: 0 2px 10px color-mix(in srgb, var(--chip-color, var(--accent)) 30%, transparent);
+}
+
+.resort-map-panel {
+  margin: 4px 0 20px;
+}
+
+.resort-map-geo {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 10px;
+}
+
+.resort-map-geo-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.resort-map-geo-field span {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #5b7386;
+}
+
+.resort-map-geo-field select {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, #d7e0e8);
+  background: #fff;
+  color: #1e2f3c;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.resort-map-geo-field select:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  outline-offset: 1px;
+}
+
+.resort-map-geo-field.is-disabled {
+  opacity: 0.55;
+}
+
+@media (max-width: 640px) {
+  .resort-map-geo {
+    grid-template-columns: 1fr;
+  }
+}
+
+.resort-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 0 0 10px;
+}
+
+.map-legend-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 0;
+  background: #f3f6f8;
+  color: #5b7386;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  outline: 1px solid color-mix(in srgb, #5b7386 18%, transparent);
+  outline-offset: -1px;
+  transition: background 0.15s ease, color 0.15s ease, outline-color 0.15s ease;
+}
+
+.map-legend-btn:hover {
+  background: #e8eef3;
+  color: #1e2f3c;
+}
+
+.map-legend-btn.is-active {
+  background: #1e2f3c;
+  color: #fff;
+  outline-color: transparent;
+}
+
+.map-legend-btn.is-active .map-legend-dot-visited {
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.55);
+}
+
+.map-legend-btn.is-active .map-legend-dot-other {
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.55);
+}
+
+.map-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.map-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: inset 0 0 0 1.5px rgba(30, 47, 60, 0.25);
+}
+
+.map-legend-dot-visited {
+  background: #e08a2a;
+  box-shadow: inset 0 0 0 1.5px #8a4b12;
+}
+
+.map-legend-dot-other {
+  background: #3d7ea6;
+  box-shadow: inset 0 0 0 1.5px #1e4a6e;
+}
+
+.resort-map-list {
+  margin: 0 0 12px;
+  max-height: min(42vh, 340px);
+  overflow: auto;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 16%, #d7e0e8);
+  background: #fff;
+}
+
+.resort-map-list-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 10px 12px 8px;
+  background: #fff;
+  border-bottom: 1px solid #e7eef3;
+}
+
+.resort-map-list-title {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #1e2f3c;
+}
+
+.resort-map-list-items {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0 8px;
+}
+
+.resort-map-list-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0f4f7;
+}
+
+.resort-map-list-item:last-child {
+  border-bottom: 0;
+}
+
+.resort-map-list-item.is-visited .resort-map-list-name {
+  color: #8a4b12;
+}
+
+.resort-map-list-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.resort-map-list-name {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #1e2f3c;
+}
+
+.resort-map-list-place {
+  font-size: 0.74rem;
+  color: #5b7386;
+}
+
+.resort-map-list-link {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #1e5a86;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  word-break: break-all;
+}
+
+.resort-map-list-focus {
+  flex: 0 0 auto;
+  height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: #eef3f7;
+  color: #1e2f3c;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.resort-map-list-focus:hover {
+  background: #dfe8ef;
+}
+
+.resort-map-list[hidden] {
+  display: none !important;
+}
+
+.resort-map-frame {
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, #d7e0e8);
+  box-shadow: 0 8px 24px color-mix(in srgb, #1e2f3c 8%, transparent);
+  background: #e8eef3;
+}
+
+.resort-map {
+  width: 100%;
+  height: min(68vh, 560px);
+  min-height: 340px;
+  z-index: 0;
+}
+
+.resort-map .leaflet-popup-content {
+  margin: 10px 12px;
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  color: #1e2f3c;
+}
+
+.resort-map .leaflet-popup-content strong,
+.map-popup-title {
+  font-weight: 800;
+}
+
+.map-popup-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.map-popup-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #e08a2a;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.map-popup-place {
+  color: #5b7386;
+  font-size: 0.78rem;
+  margin-bottom: 6px;
+}
+
+.map-popup-link {
+  color: #1e5a86;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  word-break: break-all;
+}
+
+.map-popup-link:hover {
+  color: #0f3d5c;
+}
+
+.resort-map-list-link.is-missing {
+  color: #8a9aa8;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.view-meta[hidden] {
+  display: none !important;
 }
 
 /* —— Views —— */

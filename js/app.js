@@ -41,6 +41,13 @@ const state = {
   isAdmin: false,
   noteOverrides: {},
   notesEditMode: false,
+  worldResorts: [],
+  resortMap: null,
+  resortMapMarkers: null,
+  resortMapFilter: null, // null | "visited" | "not-yet"
+  resortMapCountry: null,
+  resortMapRegion: null,
+  resortMapDepartment: null,
 };
 
 const els = {
@@ -51,6 +58,11 @@ const els = {
   resortList: document.getElementById("resort-list"),
   resultCount: document.getElementById("result-count"),
   emptyState: document.getElementById("empty-state"),
+  viewLibrary: document.getElementById("view-library"),
+  resortMapPanel: null,
+  resortMapEl: null,
+  resortMapList: null,
+  resortMapGeo: null,
   theoryShortcut: document.getElementById("theory-shortcut"),
   theoryHome: document.getElementById("theory-home"),
   seriesList: document.getElementById("series-list"),
@@ -133,6 +145,10 @@ function uid() {
   return `p_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
 }
 
+function supportsResortMap() {
+  return SITE.sport === "ski" || SITE.sport === "snowboard";
+}
+
 function categoryById(id) {
   if (id === "all") {
     return {
@@ -143,11 +159,28 @@ function categoryById(id) {
       subtags: skillTags(),
     };
   }
+  if (id === "resort-map" && supportsResortMap()) {
+    return {
+      id: "resort-map",
+      label: "Resort Map",
+      kind: "map",
+      color: "#5B7C99",
+      subtags: [],
+    };
+  }
   return state.categories.find((c) => c.id === id);
 }
 
 function activeCategory() {
   return categoryById(state.activeCategory);
+}
+
+function isResortsMode() {
+  return activeCategory()?.kind === "resorts";
+}
+
+function isMapMode() {
+  return activeCategory()?.kind === "map";
 }
 
 function skillTags() {
@@ -423,7 +456,7 @@ function applyRouteFromUrl() {
           : categoryById(category).id
         : "all";
     const cat = activeCategory();
-    const tagPool = isResortsMode() ? cat?.subtags || [] : skillTags();
+    const tagPool = isMapMode() ? [] : isResortsMode() ? cat?.subtags || [] : skillTags();
     state.activeSubtag =
       subtag && tagPool.some((s) => s.id === subtag) ? subtag : null;
     renderCategoryRail();
@@ -435,10 +468,6 @@ function applyRouteFromUrl() {
     syncingRoute = false;
     updateDocumentTitle();
   }
-}
-
-function isResortsMode() {
-  return activeCategory()?.kind === "resorts";
 }
 
 function filteredVideos() {
@@ -478,11 +507,348 @@ function filteredResorts() {
   });
 }
 
+let leafletReady = null;
+
+function loadLeaflet() {
+  if (window.L) return Promise.resolve(window.L);
+  if (leafletReady) return leafletReady;
+
+  leafletReady = new Promise((resolve, reject) => {
+    const cssId = "leaflet-css";
+    if (!document.getElementById(cssId)) {
+      const link = document.createElement("link");
+      link.id = cssId;
+      link.rel = "stylesheet";
+      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      link.integrity = "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=";
+      link.crossOrigin = "";
+      document.head.appendChild(link);
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    script.integrity = "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=";
+    script.crossOrigin = "";
+    script.onload = () => resolve(window.L);
+    script.onerror = () => reject(new Error("Failed to load Leaflet"));
+    document.head.appendChild(script);
+  });
+
+  return leafletReady;
+}
+
+function ensureMapPanel() {
+  if (els.resortMapPanel && els.resortMapEl && els.resortMapList && els.resortMapGeo) {
+    if (!els.resortMapPanel.dataset.bound) bindResortMapControls(els.resortMapPanel);
+    return;
+  }
+
+  document.getElementById("resort-map-panel")?.remove();
+
+  const panel = document.createElement("div");
+  panel.id = "resort-map-panel";
+  panel.className = "resort-map-panel";
+  panel.hidden = true;
+  panel.innerHTML = `
+    <div class="resort-map-geo" id="resort-map-geo">
+      <label class="resort-map-geo-field">
+        <span>Country</span>
+        <select id="resort-map-country" data-geo="country"></select>
+      </label>
+      <label class="resort-map-geo-field">
+        <span>Region</span>
+        <select id="resort-map-region" data-geo="region"></select>
+      </label>
+      <label class="resort-map-geo-field">
+        <span>Department</span>
+        <select id="resort-map-department" data-geo="department"></select>
+      </label>
+    </div>
+    <div class="resort-map-legend" role="group" aria-label="Resort visit filter">
+      <button type="button" class="map-legend-btn" data-map-filter="visited" aria-pressed="false">
+        <i class="map-legend-dot map-legend-dot-visited" aria-hidden="true"></i> Visited
+      </button>
+      <button type="button" class="map-legend-btn" data-map-filter="not-yet" aria-pressed="false">
+        <i class="map-legend-dot map-legend-dot-other" aria-hidden="true"></i> Not yet
+      </button>
+    </div>
+    <div class="resort-map-list" id="resort-map-list" hidden></div>
+    <div class="resort-map-frame">
+      <div id="resort-map" class="resort-map" role="img" aria-label="Map of ski resorts around the world"></div>
+    </div>
+  `;
+
+  const host = els.viewLibrary || document.getElementById("view-library");
+  const empty = els.emptyState;
+  if (empty && empty.parentNode === host) host.insertBefore(panel, empty);
+  else host.appendChild(panel);
+
+  els.resortMapPanel = panel;
+  els.resortMapEl = panel.querySelector("#resort-map");
+  els.resortMapList = panel.querySelector("#resort-map-list");
+  els.resortMapGeo = panel.querySelector("#resort-map-geo");
+  if (state.resortMap) {
+    state.resortMap.remove();
+    state.resortMap = null;
+    state.resortMapMarkers = null;
+  }
+  bindResortMapControls(panel);
+}
+
+function bindResortMapControls(panel) {
+  if (panel.dataset.bound) return;
+  panel.dataset.bound = "1";
+  panel.querySelectorAll("[data-map-filter]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const next = btn.dataset.mapFilter;
+      setResortMapFilter(state.resortMapFilter === next ? null : next);
+    });
+  });
+  panel.querySelectorAll("[data-geo]").forEach((sel) => {
+    sel.addEventListener("change", () => {
+      const key = sel.dataset.geo;
+      const value = sel.value || null;
+      if (key === "country") {
+        state.resortMapCountry = value;
+        state.resortMapRegion = null;
+        state.resortMapDepartment = null;
+      } else if (key === "region") {
+        state.resortMapRegion = value;
+        state.resortMapDepartment = null;
+      } else if (key === "department") {
+        state.resortMapDepartment = value;
+      }
+      if (isMapMode()) renderLibrary();
+    });
+  });
+}
+
+function setResortMapFilter(filter) {
+  state.resortMapFilter = filter;
+  if (!isMapMode()) return;
+  renderLibrary();
+}
+
+function resortGeoPool(level) {
+  // Base pool for cascading options (ignore visit filter & search for option lists)
+  return state.worldResorts.filter((r) => {
+    if (level !== "country" && state.resortMapCountry && r.country !== state.resortMapCountry) return false;
+    if (level === "department" && state.resortMapRegion && r.region !== state.resortMapRegion) return false;
+    return true;
+  });
+}
+
+function uniqueSorted(values) {
+  return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
+}
+
+function fillGeoSelect(select, values, current, allLabel) {
+  if (!select) return;
+  const opts = [`<option value="">${allLabel}</option>`]
+    .concat(values.map((v) => `<option value="${escapeHtml(v)}"${v === current ? " selected" : ""}>${escapeHtml(v)}</option>`));
+  select.innerHTML = opts.join("");
+  // Keep selection valid
+  if (current && !values.includes(current)) {
+    select.value = "";
+  } else {
+    select.value = current || "";
+  }
+}
+
+function renderResortMapGeoFilters() {
+  ensureMapPanel();
+  const countrySel = els.resortMapPanel.querySelector("#resort-map-country");
+  const regionSel = els.resortMapPanel.querySelector("#resort-map-region");
+  const deptSel = els.resortMapPanel.querySelector("#resort-map-department");
+
+  const countries = uniqueSorted(state.worldResorts.map((r) => r.country));
+  fillGeoSelect(countrySel, countries, state.resortMapCountry, "All countries");
+
+  const regions = uniqueSorted(resortGeoPool("region").map((r) => r.region));
+  fillGeoSelect(regionSel, state.resortMapCountry ? regions : [], state.resortMapRegion, "All regions");
+  regionSel.disabled = !state.resortMapCountry;
+
+  const departments = uniqueSorted(resortGeoPool("department").map((r) => r.department));
+  const deptUseful = !(state.resortMapRegion && departments.length === 1 && departments[0] === state.resortMapRegion);
+  fillGeoSelect(
+    deptSel,
+    state.resortMapCountry && deptUseful ? departments : [],
+    state.resortMapDepartment,
+    "All departments"
+  );
+  deptSel.disabled = !state.resortMapCountry || !deptUseful;
+  deptSel.closest(".resort-map-geo-field")?.classList.toggle("is-disabled", deptSel.disabled);
+  regionSel.closest(".resort-map-geo-field")?.classList.toggle("is-disabled", regionSel.disabled);
+}
+
+function filteredWorldResorts() {
+  const q = state.query.trim().toLowerCase();
+  return state.worldResorts.filter((r) => {
+    if (state.resortMapFilter === "visited" && !r.visited) return false;
+    if (state.resortMapFilter === "not-yet" && r.visited) return false;
+    if (state.resortMapCountry && r.country !== state.resortMapCountry) return false;
+    if (state.resortMapRegion && r.region !== state.resortMapRegion) return false;
+    if (state.resortMapDepartment && r.department !== state.resortMapDepartment) return false;
+    if (!q) return true;
+    return [r.name, r.region, r.department, r.country, r.area]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase()
+      .includes(q);
+  });
+}
+
+function renderResortMapList(resorts) {
+  ensureMapPanel();
+  const list = els.resortMapList;
+  if (!list) return;
+
+  if (!state.resortMapFilter) {
+    list.hidden = true;
+    list.innerHTML = "";
+    return;
+  }
+
+  const title =
+    state.resortMapFilter === "visited"
+      ? `Visited · ${resorts.length}`
+      : `Not yet · ${resorts.length}`;
+
+  const sorted = [...resorts].sort((a, b) => a.name.localeCompare(b.name));
+  list.hidden = false;
+  list.innerHTML = `
+    <div class="resort-map-list-head">
+      <p class="resort-map-list-title">${title}</p>
+    </div>
+    <ul class="resort-map-list-items">
+      ${sorted
+        .map((r) => {
+          const place = [r.department, r.region, r.country].filter(Boolean).join(" · ");
+          const site = r.website
+            ? `<a class="resort-map-list-link" href="${escapeHtml(r.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(
+                r.website.replace(/^https?:\/\//, "").replace(/\/$/, "")
+              )}</a>`
+            : `<span class="resort-map-list-link is-missing">No website listed</span>`;
+          return `<li class="resort-map-list-item${r.visited ? " is-visited" : ""}">
+            <div class="resort-map-list-main">
+              <span class="resort-map-list-name">${escapeHtml(r.name)}</span>
+              <span class="resort-map-list-place">${escapeHtml(place)}</span>
+              ${site}
+            </div>
+            <button type="button" class="resort-map-list-focus" data-focus-resort="${escapeHtml(r.id)}" aria-label="Show ${escapeHtml(r.name)} on map">Map</button>
+          </li>`;
+        })
+        .join("")}
+    </ul>
+  `;
+
+  list.querySelectorAll("[data-focus-resort]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const resort = state.worldResorts.find((r) => r.id === btn.dataset.focusResort);
+      if (resort) focusResortOnMap(resort);
+    });
+  });
+}
+
+function syncResortMapLegend() {
+  ensureMapPanel();
+  els.resortMapPanel?.querySelectorAll("[data-map-filter]").forEach((btn) => {
+    const active = btn.dataset.mapFilter === state.resortMapFilter;
+    btn.classList.toggle("is-active", active);
+    btn.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+}
+
+function focusResortOnMap(resort) {
+  if (!state.resortMap) return;
+  state.resortMap.setView([resort.lat, resort.lng], 11);
+  state.resortMapMarkers?.eachLayer((layer) => {
+    const ll = layer.getLatLng?.();
+    if (ll && Math.abs(ll.lat - resort.lat) < 0.0001 && Math.abs(ll.lng - resort.lng) < 0.0001) {
+      layer.openPopup();
+    }
+  });
+}
+
+function resortMapPopupHTML(resort) {
+  const place = [resort.department, resort.region, resort.country].filter(Boolean).join(" · ");
+  const visited = resort.visited
+    ? `<span class="map-popup-badge">Visited</span>`
+    : "";
+  const site = resort.website
+    ? `<a class="map-popup-link" href="${escapeHtml(resort.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(
+        resort.website.replace(/^https?:\/\//, "").replace(/\/$/, "")
+      )}</a>`
+    : "";
+  return `<div class="map-popup">
+    <div class="map-popup-title">${escapeHtml(resort.name)}${visited}</div>
+    <div class="map-popup-place">${escapeHtml(place)}</div>
+    ${site}
+  </div>`;
+}
+
+async function renderWorldResortMap(resorts) {
+  ensureMapPanel();
+  renderResortMapGeoFilters();
+  syncResortMapLegend();
+  renderResortMapList(resorts);
+  try {
+    const L = await loadLeaflet();
+    if (!isMapMode()) return;
+
+    if (!state.resortMap) {
+      state.resortMap = L.map(els.resortMapEl, {
+        scrollWheelZoom: true,
+        zoomControl: true,
+        worldCopyJump: true,
+      }).setView([30, 10], 2);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(state.resortMap);
+
+      state.resortMapMarkers = L.layerGroup().addTo(state.resortMap);
+    }
+
+    state.resortMapMarkers.clearLayers();
+    const bounds = [];
+    const ordered = [...resorts].sort((a, b) => Number(a.visited) - Number(b.visited));
+    for (const resort of ordered) {
+      const visited = !!resort.visited;
+      const marker = L.circleMarker([resort.lat, resort.lng], {
+        radius: visited ? 8 : 6,
+        color: visited ? "#8a4b12" : "#1e4a6e",
+        weight: 1.5,
+        fillColor: visited ? "#e08a2a" : "#3d7ea6",
+        fillOpacity: visited ? 0.95 : 0.82,
+      });
+      marker.bindPopup(resortMapPopupHTML(resort), { maxWidth: 280 });
+      state.resortMapMarkers.addLayer(marker);
+      bounds.push([resort.lat, resort.lng]);
+    }
+
+    requestAnimationFrame(() => {
+      state.resortMap.invalidateSize();
+      const tight = state.resortMapFilter === "visited" || state.resortMapCountry || state.resortMapRegion;
+      if (bounds.length > 1) {
+        state.resortMap.fitBounds(bounds, { padding: [24, 24], maxZoom: tight ? 8 : 4 });
+      } else if (bounds.length === 1) state.resortMap.setView(bounds[0], 9);
+      else state.resortMap.setView([30, 10], 2);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 function renderCategoryRail() {
   const levels = [
     { id: "all", label: "All", color: "#3d7ea6" },
     ...state.categories.map((cat) => ({ id: cat.id, label: cat.label, color: cat.color })),
   ];
+  if (supportsResortMap()) {
+    levels.push({ id: "resort-map", label: "Resort Map", color: "#5B7C99" });
+  }
 
   els.categoryRail.innerHTML = levels
     .map((cat) => {
@@ -500,6 +866,12 @@ function renderCategoryRail() {
 }
 
 function renderSubtagRail() {
+  if (isMapMode()) {
+    els.subtagRail.hidden = true;
+    els.subtagRail.innerHTML = "";
+    return;
+  }
+  els.subtagRail.hidden = false;
   const cat = activeCategory();
   const subtags = isResortsMode()
     ? cat?.subtags || []
@@ -576,6 +948,28 @@ function resortCardHTML(resort) {
 }
 
 function renderLibrary() {
+  if (isMapMode()) {
+    els.videoList.hidden = true;
+    els.videoList.innerHTML = "";
+    els.resortList.hidden = true;
+    els.resortList.innerHTML = "";
+    els.emptyState.hidden = true;
+    els.resultCount.textContent = "";
+    els.resultCount.parentElement?.setAttribute("hidden", "");
+    const resorts = filteredWorldResorts();
+    ensureMapPanel();
+    els.resortMapPanel.hidden = false;
+    renderWorldResortMap(resorts);
+    return;
+  }
+
+  if (els.resortMapPanel) els.resortMapPanel.hidden = true;
+  state.resortMapFilter = null;
+  state.resortMapCountry = null;
+  state.resortMapRegion = null;
+  state.resortMapDepartment = null;
+  els.resultCount.parentElement?.removeAttribute("hidden");
+
   if (isResortsMode()) {
     const resorts = filteredResorts();
     const videos = filteredVideos().sort((a, b) => b.addedAt.localeCompare(a.addedAt));
@@ -616,11 +1010,11 @@ function setSubtag(id, { sync = true } = {}) {
 
 function setCategory(id, { sync = true } = {}) {
   if (id !== "all" && !categoryById(id)) return;
-  const prevResorts = isResortsMode();
+  const prevMode = activeCategory()?.kind || "videos";
   state.activeCategory = id;
-  const nextResorts = isResortsMode();
-  // Only reset tags when crossing between Courts and video library.
-  if (prevResorts !== nextResorts) state.activeSubtag = null;
+  const nextMode = activeCategory()?.kind || "videos";
+  // Reset tags when switching between video library, resorts, and map.
+  if (prevMode !== nextMode) state.activeSubtag = null;
   state.activeVideoId = null;
   state.activeResortId = null;
   renderCategoryRail();
@@ -1710,10 +2104,10 @@ function bindEvents() {
 }
 
 async function init() {
-  const [videosRes, theoryRes] = await Promise.all([
-    fetch(SITE.videosUrl),
-    fetch(SITE.theoryUrl),
-  ]);
+  const fetches = [fetch(SITE.videosUrl), fetch(SITE.theoryUrl)];
+  if (supportsResortMap()) fetches.push(fetch("data/world-resorts.json"));
+
+  const [videosRes, theoryRes, resortsRes] = await Promise.all(fetches);
   const data = await videosRes.json();
   const theory = await theoryRes.json();
 
@@ -1722,6 +2116,9 @@ async function init() {
   state.resorts = data.resorts || [];
   state.series = theory.series || [];
   state.activeCategory = "all";
+  if (supportsResortMap() && resortsRes?.ok) {
+    state.worldResorts = await resortsRes.json();
+  }
 
   await Promise.all([loadNoteOverrides(), refreshAdminSession()]);
 
