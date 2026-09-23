@@ -1,9 +1,9 @@
-videos/_sample.mp4
-videos/_meta/
-videos/bd*-*.mp4
-thumbnails/bd*-*.jpg
-thumbnails/bd*-*.jpeg
-thumbnails/bd*-*.webp
+# Local media downloads — served from Cloudflare R2, not GitHub
+videos/**
+!videos/.gitkeep
+thumbnails/**
+!thumbnails/.gitkeep
+
 .DS_Store
 node_modules/
 .wrangler/
