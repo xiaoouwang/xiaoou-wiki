@@ -351,6 +351,87 @@ a.brand:hover .brand-name {
   text-decoration: underline;
 }
 
+/* —— Motto ticker (under title bar) —— */
+.motto-bar {
+  position: relative;
+  overflow: hidden;
+  margin: 0 0 4px;
+  padding: 6px 0 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+}
+
+.motto-track {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  width: max-content;
+  animation: motto-scroll 36s linear infinite;
+  will-change: transform;
+}
+
+.motto-bar:hover .motto-track {
+  animation-play-state: paused;
+}
+
+.motto {
+  margin: 0;
+  white-space: nowrap;
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #4a5d6c;
+}
+
+.motto-dot {
+  flex: 0 0 auto;
+  color: #9bb0bf;
+  font-size: 1.1rem;
+  line-height: 1;
+  opacity: 0.75;
+}
+
+@keyframes motto-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motto-track {
+    animation: none;
+    flex-wrap: wrap;
+    width: auto;
+    max-width: 100%;
+    justify-content: center;
+    row-gap: 0.35rem;
+    padding: 0 16px;
+  }
+
+  .motto[aria-hidden="true"],
+  .motto-dot[aria-hidden="true"] + .motto[aria-hidden="true"],
+  .motto-track > .motto-dot:nth-child(n + 4) {
+    display: none;
+  }
+}
+
 .topbar-search {
   grid-area: search;
 }
@@ -2275,6 +2356,15 @@ a.brand:hover .brand-name {
     background: linear-gradient(180deg, #ffffff 0%, #ffffff 100%);
     border-bottom: 0;
     backdrop-filter: blur(14px);
+  }
+
+  .motto-bar {
+    margin: 0 24px 10px;
+    padding: 4px 0 10px;
+  }
+
+  .motto {
+    font-size: 1rem;
   }
 
   .brand {

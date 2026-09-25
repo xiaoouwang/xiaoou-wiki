@@ -57,6 +57,18 @@
         {
           "id": "smash",
           "label": "Smash"
+        },
+        {
+          "id": "backhand",
+          "label": "Backhand"
+        },
+        {
+          "id": "finger-power",
+          "label": "Finger power"
+        },
+        {
+          "id": "under-pressure",
+          "label": "Under pressure"
         }
       ]
     },
@@ -249,6 +261,71 @@
           "Replay the coach’s demo slowly and match one phase at a time before adding speed."
         ],
         "conclusion": "If smashes feel effortful but soft, you’re swinging with the big arm — separate the phases and whip late."
+      }
+    },
+    {
+      "id": "bd11",
+      "title": "Compact swing under pressure",
+      "description": "Coach Liu on power without a huge swing — beginners learn with amplitude, advanced players stay compact so they recover faster under pressure. Original: 动作越大越好发力？教练告诉你真相：入门靠幅度，高手靠紧凑！",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/bd11-RF-sij9TkbU.jpg",
+      "file": "https://xiaoou-wiki-api.singerxo.workers.dev/media/videos/bd11-RF-sij9TkbU.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "badminton coach Liu",
+        "url": "https://www.youtube.com/watch?v=RF-sij9TkbU"
+      },
+      "category": "intermediate",
+      "subtags": [
+        "under-pressure"
+      ],
+      "duration": "6:42",
+      "addedAt": "2026-09-24",
+      "notes": {
+        "markers": [
+          {
+            "time": 51,
+            "text": "引拍准备"
+          },
+          {
+            "time": 150,
+            "text": "被动抽球小引拍"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bd12",
+      "title": "Backhand clear: grip to finger power",
+      "description": "Coach Liu Hui on intermediate backhand high clear — from grip setup through frame prep to finger power. Original: 保姆级反手高远球：90%的人都错在这一步！从握拍到发力一次讲透",
+      "thumbnail": "https://i.ytimg.com/vi/Y2ru-baM2gc/hqdefault.jpg",
+      "file": "https://i.ytimg.com/vi/Y2ru-baM2gc/hqdefault.jpg",
+      "source": {
+        "platform": "youtube",
+        "creator": "刘辉羽毛球",
+        "url": "https://www.youtube.com/watch?v=Y2ru-baM2gc"
+      },
+      "category": "intermediate",
+      "subtags": [
+        "backhand",
+        "finger-power"
+      ],
+      "duration": "31:34",
+      "addedAt": "2026-09-25",
+      "notes": {
+        "markers": [
+          {
+            "time": 56,
+            "text": "架拍重要，是因为和提前导拍的关系。"
+          },
+          {
+            "time": 142,
+            "text": "不能右脚落地以后再击球。"
+          },
+          {
+            "time": 242,
+            "text": "捻动与手指发力的细节非常重要。"
+          }
+        ]
       }
     }
   ],
