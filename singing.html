@@ -142,6 +142,7 @@
     data-default-description="Singing Wikipedia: beginner to advanced singing tutorials, guides, theory series, and training programs. Part of Skill Wikipedia — Snowboard, Ski, Singing, Piano, Guitar, Badminton, Swimming, Self-development."
     data-videos-url="data/singing/videos.json"
     data-theory-url="data/singing/theory.json"
+    data-ideas-url="data/singing/ideas.json"
   >
     <div class="app">
       <header class="topbar">
@@ -265,6 +266,14 @@
           </svg>
           <span>Programs</span>
         </a>
+        <a class="tab" href="?tab=resource" data-tab="resource">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M7 4h8a3 3 0 0 1 3 3v13H10a3 3 0 0 0-3 3V4z" />
+            <path d="M7 4v16" stroke-linecap="round" />
+            <path d="M11 8h5M11 12h5M11 16h3" stroke-linecap="round" />
+          </svg>
+          <span>Resource</span>
+        </a>
       </nav>
 
       <div class="search-bar" id="search-bar" hidden>
@@ -292,6 +301,7 @@
             <li><a href="?tab=library&amp;category=resorts">Guides &amp; resources</a></li>
             <li><a href="?tab=theory">Theory series</a></li>
             <li><a href="?tab=programs">Exercise programs</a></li>
+            <li><a href="?tab=resource">Resource</a></li>
             <li><a href="index.html">Snowboard Wikipedia</a></li>
             <li><a href="ski.html">Ski Wikipedia</a></li>
             <li><a href="piano.html">Piano Wikipedia</a></li>
@@ -332,7 +342,7 @@
 
         <section class="view" id="view-programs" data-view="programs">
           <div id="programs-home">
-            <div class="section-head">
+            <div class="section-head" id="programs-section-head">
               <p class="count">Your exercise programs</p>
               <button class="text-btn" id="new-program-btn" type="button">New</button>
             </div>
@@ -348,6 +358,23 @@
             <p class="count" id="program-detail-count"></p>
             <div class="program-steps" id="program-steps"></div>
             <p class="empty" id="program-steps-empty" hidden>No steps yet. Open a video and tap Add to program.</p>
+          </div>
+        </section>
+
+        <section class="view" id="view-resource" data-view="resource">
+          <div id="resource-home">
+            <div class="ideas-home" id="ideas-home">
+              <p class="count" id="ideas-count">Ideas &amp; resources</p>
+              <div class="series-list" id="ideas-cards"></div>
+            </div>
+          </div>
+          <div id="resource-detail" hidden>
+            <div class="section-head">
+              <button class="text-btn" id="resource-back" type="button">← Back</button>
+            </div>
+            <p class="article-kicker" id="resource-detail-kicker"></p>
+            <h2 class="program-detail-title" id="resource-detail-title"></h2>
+            <div class="article-body ideas-detail-body" id="ideas-detail-body"></div>
           </div>
         </section>
       </main>

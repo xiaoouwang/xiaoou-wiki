@@ -1,74 +1,50 @@
 {
   "categories": [
     {
-      "id": "beginner",
-      "label": "Beginner",
+      "id": "testimonials",
+      "label": "Testimonials",
       "kind": "videos",
       "color": "#5B8C6A",
       "subtags": [
         {
-          "id": "habits",
-          "label": "Habits"
+          "id": "family",
+          "label": "Family"
         },
         {
-          "id": "focus",
-          "label": "Focus"
+          "id": "relationships",
+          "label": "Relationships"
         },
         {
-          "id": "journaling",
-          "label": "Journaling"
+          "id": "identity",
+          "label": "Identity"
         },
         {
-          "id": "sleep",
-          "label": "Sleep"
+          "id": "healing",
+          "label": "Healing"
         }
       ]
     },
     {
-      "id": "intermediate",
-      "label": "Intermediate",
+      "id": "reaction",
+      "label": "Reaction",
       "kind": "videos",
       "color": "#3D7EA6",
       "subtags": [
         {
-          "id": "planning",
-          "label": "Planning"
+          "id": "books",
+          "label": "Books"
         },
         {
-          "id": "feedback",
-          "label": "Feedback"
+          "id": "talks",
+          "label": "Talks"
         },
         {
-          "id": "learning",
-          "label": "Learning"
+          "id": "culture",
+          "label": "Culture"
         },
         {
-          "id": "energy",
-          "label": "Energy"
-        }
-      ]
-    },
-    {
-      "id": "advanced",
-      "label": "Advanced",
-      "kind": "videos",
-      "color": "#8B5E4B",
-      "subtags": [
-        {
-          "id": "systems",
-          "label": "Systems"
-        },
-        {
-          "id": "decisions",
-          "label": "Decisions"
-        },
-        {
-          "id": "leadership",
-          "label": "Leadership"
-        },
-        {
-          "id": "resilience",
-          "label": "Resilience"
+          "id": "ideas",
+          "label": "Ideas"
         }
       ]
     },
@@ -97,6 +73,36 @@
       ]
     }
   ],
-  "videos": [],
+  "videos": [
+    {
+      "id": "sd1",
+      "title": "Family of origin: why we stop calling our parents",
+      "description": "German Pie with six overseas guests on parent–child bonds — neglect, control, betrayal, and why many people heal alone. Original: 原生家庭 | 我们为什么不想要再联系父母？",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/sd1-iINY8V0PvF8.jpg",
+      "file": "https://xiaoou-wiki-api.singerxo.workers.dev/media/videos/sd1-iINY8V0PvF8.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "German Pie",
+        "url": "https://www.youtube.com/watch?v=iINY8V0PvF8"
+      },
+      "category": "testimonials",
+      "subtags": [
+        "family",
+        "healing"
+      ],
+      "duration": "26:46",
+      "addedAt": "2026-09-25",
+      "notes": {
+        "abstract": "Six people living abroad share how their first intimate relationship — with their parents — still shapes whether they want contact, distance, or repair.",
+        "points": [
+          "Your first bond with parents often becomes the template for later closeness and fear.",
+          "Neglect, put-downs, and betrayal can push adult children toward silence rather than confrontation.",
+          "Parents rarely change on demand — distance and self-healing are common responses, not failures.",
+          "Cutting physical contact does not always end the question of how to relate to them."
+        ],
+        "conclusion": "Listen for what each guest protects when they pull away — then notice which pattern shows up in your own family contact."
+      }
+    }
+  ],
   "resorts": []
 }

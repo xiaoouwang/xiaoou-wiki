@@ -15,6 +15,10 @@ const SITE = {
     "",
   videosUrl: document.body.dataset.videosUrl || "data/snowboard/videos.json",
   theoryUrl: document.body.dataset.theoryUrl || "data/snowboard/theory.json",
+  ideasUrl:
+    document.body.dataset.ideasUrl ||
+    document.body.dataset.videoIdeasUrl ||
+    `data/${document.body.dataset.sport || "snowboard"}/ideas.json`,
 };
 
 const PROGRAMS_KEY = `${SITE.sport}-wikipedia-programs`;
@@ -27,6 +31,7 @@ const state = {
   videos: [],
   resorts: [],
   series: [],
+  videoIdeas: null, // ideas & resources notebook (pinned note + optional idea cards)
   programs: loadPrograms(),
   activeCategory: "all",
   activeSubtag: null,
@@ -35,6 +40,7 @@ const state = {
   activeVideoId: null,
   activeResortId: null,
   activeProgramId: null,
+  activeIdeaId: null,
   activeSeriesId: null,
   activeArticleId: null,
   sheetMode: null,
@@ -93,6 +99,15 @@ const els = {
   newProgramBtn: document.getElementById("new-program-btn"),
   programBack: document.getElementById("program-back"),
   programDelete: document.getElementById("program-delete"),
+  resourceHome: document.getElementById("resource-home"),
+  resourceDetail: document.getElementById("resource-detail"),
+  resourceBack: document.getElementById("resource-back"),
+  resourceDetailTitle: document.getElementById("resource-detail-title"),
+  resourceDetailKicker: document.getElementById("resource-detail-kicker"),
+  ideasHome: document.getElementById("ideas-home"),
+  ideasCards: document.getElementById("ideas-cards"),
+  ideasCount: document.getElementById("ideas-count"),
+  ideasDetailBody: document.getElementById("ideas-detail-body"),
   searchToggle: document.getElementById("search-toggle"),
   searchBar: document.getElementById("search-bar"),
   searchInput: document.getElementById("search-input"),
@@ -262,6 +277,13 @@ function programsHref({ program } = {}) {
   });
 }
 
+function resourceHref({ idea } = {}) {
+  return hrefFor({
+    tab: "resource",
+    idea: idea || undefined,
+  });
+}
+
 function buildRouteParams() {
   const params = {};
   params.tab = state.tab || "library";
@@ -276,6 +298,8 @@ function buildRouteParams() {
     if (state.activeArticleId) params.article = state.activeArticleId;
   } else if (state.tab === "programs") {
     if (state.activeProgramId) params.program = state.activeProgramId;
+  } else if (state.tab === "resource") {
+    if (state.activeIdeaId) params.idea = state.activeIdeaId;
   }
 
   return params;
@@ -341,6 +365,9 @@ function buildSeoDescription() {
   if (state.tab === "programs") {
     return `Build ${topic} exercise programs from library videos on ${SITE.title}.`;
   }
+  if (state.tab === "resource") {
+    return `Ideas and resources for ${topic} on ${SITE.title} — pinned notes and working links.`;
+  }
   const cat = categoryById(state.activeCategory);
   if (cat) {
     if (cat.kind === "resorts") {
@@ -370,10 +397,18 @@ function updateDocumentSeo() {
   } else if (state.tab === "programs" && state.activeProgramId) {
     const program = programById(state.activeProgramId);
     if (program) title = `${program.name} · ${base}`;
+  } else if (state.tab === "resource" && state.activeIdeaId) {
+    if (state.activeIdeaId === "full") title = `Pinned note · ${base}`;
+    else {
+      const idea = videoIdeaById(state.activeIdeaId);
+      if (idea) title = `${idea.number}. ${idea.title} · ${base}`;
+    }
   } else if (state.tab === "theory") {
     title = `Theory · ${base}`;
   } else if (state.tab === "programs") {
     title = `Programs · ${base}`;
+  } else if (state.tab === "resource") {
+    title = `Resource · ${base}`;
   } else {
     const cat = categoryById(state.activeCategory);
     if (cat) title = `${cat.label} · ${base}`;
@@ -408,6 +443,7 @@ function applyRouteFromUrl() {
   const seriesId = params.get("series");
   const articleId = params.get("article");
   const programId = params.get("program");
+  const ideaId = params.get("idea");
 
   syncingRoute = true;
   try {
@@ -452,6 +488,14 @@ function applyRouteFromUrl() {
       setTab("programs", { sync: false });
       if (programId && programById(programId)) openProgram(programId, { sync: false });
       else showProgramsHome({ sync: false });
+      return;
+    }
+
+    if (tab === "resource") {
+      state.activeIdeaId = null;
+      setTab("resource", { sync: false });
+      if (ideaId) openResourceIdea(ideaId, { sync: false });
+      else showResourceHome({ sync: false });
       return;
     }
 
@@ -1375,6 +1419,152 @@ function openArticle(articleId, { sync = true } = {}) {
   if (sync) syncRoute();
 }
 
+function hasIdeasNotebook() {
+  return !!state.videoIdeas;
+}
+
+function videoIdeaById(id) {
+  return state.videoIdeas?.ideas?.find((idea) => idea.id === id) || null;
+}
+
+function linkifyEscapedText(escaped) {
+  return escaped.replace(
+    /(https?:\/\/[^\s<]+)/g,
+    '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+  );
+}
+
+function paragraphsFromList(lines) {
+  return (lines || [])
+    .map((para) => String(para || "").trim())
+    .filter(Boolean)
+    .map((para) => {
+      const withBreaks = linkifyEscapedText(escapeHtml(para)).replaceAll("\n", "<br />");
+      return `<p>${withBreaks}</p>`;
+    })
+    .join("");
+}
+
+function fullVideoIdeasHTML(doc) {
+  const ideasHtml = (doc.ideas || [])
+    .map(
+      (idea) => `
+      <section class="ideas-full-section">
+        <h3>${idea.number}. ${escapeHtml(idea.title)}</h3>
+        ${paragraphsFromList(idea.body)}
+      </section>`
+    )
+    .join("");
+  return [
+    paragraphsFromList(doc.intro),
+    doc.thread ? `<blockquote class="ideas-thread">${escapeHtml(doc.thread)}</blockquote>` : "",
+    paragraphsFromList(doc.introAfter),
+    ideasHtml,
+    doc.arc
+      ? `<section class="ideas-full-section"><h3>Arc</h3><p>${escapeHtml(doc.arc.fr || "")}</p><p class="ideas-arc-en">${escapeHtml(doc.arc.en || "")}</p></section>`
+      : "",
+    paragraphsFromList(doc.closing),
+  ].join("");
+}
+
+function renderResourceHome() {
+  const doc = state.videoIdeas;
+  if (!els.ideasCards) return;
+
+  if (!doc) {
+    if (els.ideasCount) els.ideasCount.textContent = "Ideas & resources";
+    els.ideasCards.innerHTML = `<p class="empty">No pinned note yet.</p>`;
+    return;
+  }
+
+  const n = doc.ideas?.length || 0;
+  if (els.ideasCount) {
+    els.ideasCount.textContent =
+      n > 0 ? `1 pinned note · ${n} idea${n === 1 ? "" : "s"}` : "Ideas & resources";
+  }
+
+  const summary = doc.summary || "Working notes, links, and resources for this topic.";
+  const pinned = `<a class="series-card idea-pinned-card" href="${resourceHref({ idea: "full" })}" data-idea-id="full">
+      <p class="idea-pin-label">Pinned</p>
+      <h3 class="series-card-title">${escapeHtml(doc.title || "Ideas & resources")}</h3>
+      <p class="series-card-summary">${escapeHtml(summary)}</p>
+    </a>`;
+
+  const ideaCards = (doc.ideas || [])
+    .map(
+      (idea) => `<a class="series-card" href="${resourceHref({ idea: idea.id })}" data-idea-id="${escapeHtml(idea.id)}">
+        <h3 class="series-card-title">${idea.number}. ${escapeHtml(idea.title)}</h3>
+        <p class="series-card-summary">${escapeHtml(idea.teaser || "Open this idea")}</p>
+      </a>`
+    )
+    .join("");
+
+  els.ideasCards.innerHTML = pinned + ideaCards;
+}
+
+function showResourceHome({ sync = true } = {}) {
+  state.activeIdeaId = null;
+  if (els.resourceHome) els.resourceHome.hidden = false;
+  if (els.resourceDetail) els.resourceDetail.hidden = true;
+  if (els.ideasDetailBody) els.ideasDetailBody.innerHTML = "";
+  renderResourceHome();
+  if (sync) syncRoute();
+}
+
+function openResourceIdea(id, { sync = true } = {}) {
+  if (!hasIdeasNotebook()) {
+    showResourceHome({ sync });
+    return;
+  }
+  if (id === "full") {
+    showResourceHome({ sync: false });
+    openVideoIdeasDocSheet({ sync });
+    return;
+  }
+  const idea = videoIdeaById(id);
+  if (!idea) {
+    showResourceHome({ sync });
+    return;
+  }
+  closeSheet({ sync: false });
+  state.activeIdeaId = id;
+  if (els.resourceHome) els.resourceHome.hidden = true;
+  if (els.resourceDetail) els.resourceDetail.hidden = false;
+  if (els.resourceDetailKicker) {
+    els.resourceDetailKicker.textContent = `Idea ${idea.number} of ${state.videoIdeas.ideas?.length || 0}`;
+  }
+  if (els.resourceDetailTitle) els.resourceDetailTitle.textContent = idea.title;
+  if (els.ideasDetailBody) els.ideasDetailBody.innerHTML = paragraphsFromList(idea.body);
+  if (sync) syncRoute();
+}
+
+function openVideoIdeasDocSheet({ sync = true } = {}) {
+  const doc = state.videoIdeas;
+  if (!doc) return;
+
+  state.sheetMode = "ideas-doc";
+  state.activeVideoId = null;
+  state.activeResortId = null;
+  state.activeIdeaId = "full";
+  state.notesEditMode = false;
+  stopPlayer();
+
+  els.sheetMedia.hidden = true;
+  els.sourceCard.hidden = true;
+  els.sheetActions.hidden = true;
+  if (els.notesCard) els.notesCard.hidden = true;
+  if (els.sheetTags) els.sheetTags.innerHTML = "";
+
+  els.sheetMeta.innerHTML = `<span class="level-pill" style="--level-color:#5B8C6A">Pinned note</span>`;
+  els.sheetTitle.textContent = doc.title || "Ideas & resources";
+  els.sheetDesc.className = "sheet-intro ideas-sheet-body";
+  els.sheetDesc.innerHTML = fullVideoIdeasHTML(doc);
+
+  showSheet();
+  els.sheet.scrollTop = 0;
+  if (sync) syncRoute();
+}
+
 function renderProgramsHome() {
   const list = [...state.programs].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   els.programList.innerHTML = list
@@ -1514,6 +1704,10 @@ function setTab(tab, { sync = true } = {}) {
     if (state.activeProgramId) openProgram(state.activeProgramId, { sync: false });
     else showProgramsHome({ sync: false });
   }
+  if (tab === "resource") {
+    if (state.activeIdeaId) openResourceIdea(state.activeIdeaId, { sync: false });
+    else showResourceHome({ sync: false });
+  }
   if (tab === "theory") {
     if (state.activeArticleId) openArticle(state.activeArticleId, { sync: false });
     else if (state.activeSeriesId) openSeries(state.activeSeriesId, { sync: false });
@@ -1523,6 +1717,7 @@ function setTab(tab, { sync = true } = {}) {
     state.activeSeriesId = null;
     state.activeArticleId = null;
     state.activeProgramId = null;
+    state.activeIdeaId = null;
   }
   if (sync) syncRoute();
 }
@@ -1656,6 +1851,7 @@ function showSheet() {
 }
 
 function closeSheet({ sync = true } = {}) {
+  const wasIdeasDoc = state.sheetMode === "ideas-doc";
   stopPlayer();
   els.sheet.classList.remove("sheet-open");
   els.sheet.setAttribute("aria-hidden", "true");
@@ -1663,6 +1859,9 @@ function closeSheet({ sync = true } = {}) {
   state.activeResortId = null;
   state.sheetMode = null;
   state.notesEditMode = false;
+  if (wasIdeasDoc && state.activeIdeaId === "full") {
+    state.activeIdeaId = null;
+  }
   if (sync) syncRoute({ replace: true });
   setTimeout(() => {
     if (!els.picker.classList.contains("picker-open")) {
@@ -1672,6 +1871,7 @@ function closeSheet({ sync = true } = {}) {
     els.sourceCard.hidden = false;
     els.sheetActions.hidden = false;
     els.sheetDesc.className = "";
+    els.sheetDesc.innerHTML = "";
     clearNotesCard();
   }, 220);
 }
@@ -2255,10 +2455,18 @@ function bindEvents() {
       e.preventDefault();
       setTab("programs", { sync: false });
       openProgram(programCard.dataset.programId);
+      return;
+    }
+
+    const ideaCard = e.target.closest("a[data-idea-id]");
+    if (ideaCard) {
+      e.preventDefault();
+      setTab("resource", { sync: false });
+      openResourceIdea(ideaCard.dataset.ideaId);
     }
   });
 
-  els.programSteps.addEventListener("click", (e) => {
+  els.programSteps?.addEventListener("click", (e) => {
     const move = e.target.closest("[data-move]");
     if (move) {
       moveStep(Number(move.dataset.index), move.dataset.move === "up" ? -1 : 1);
@@ -2268,7 +2476,7 @@ function bindEvents() {
     if (remove) removeStep(Number(remove.dataset.remove));
   });
 
-  els.newProgramBtn.addEventListener("click", () => {
+  els.newProgramBtn?.addEventListener("click", () => {
     const name = promptProgramName();
     if (!name) return;
     openProgram(createProgram(name).id);
@@ -2278,7 +2486,11 @@ function bindEvents() {
     e.preventDefault();
     showProgramsHome();
   });
-  els.programDelete.addEventListener("click", deleteActiveProgram);
+  els.programDelete?.addEventListener("click", deleteActiveProgram);
+  els.resourceBack?.addEventListener("click", (e) => {
+    e.preventDefault();
+    showResourceHome();
+  });
 
   els.theoryShortcut?.addEventListener("click", () => {
     showTheoryHome({ sync: false });
@@ -2304,6 +2516,9 @@ function bindEvents() {
       }
       if (tab.dataset.tab === "programs") {
         state.activeProgramId = null;
+      }
+      if (tab.dataset.tab === "resource") {
+        state.activeIdeaId = null;
       }
       setTab(tab.dataset.tab);
     });
@@ -2340,7 +2555,9 @@ function bindEvents() {
     else closeSheet();
   });
 
-  els.sheetAddProgram.addEventListener("click", openPicker);
+  if (els.sheetAddProgram) {
+    els.sheetAddProgram.addEventListener("click", openPicker);
+  }
   els.pickerBackdrop.addEventListener("click", closePicker);
   els.pickerCancel.addEventListener("click", closePicker);
 
@@ -2402,8 +2619,11 @@ function bindEvents() {
 async function init() {
   const fetches = [fetch(SITE.videosUrl), fetch(SITE.theoryUrl)];
   if (supportsResortMap()) fetches.push(fetch("data/world-resorts.json"));
+  const ideasFetchIndex = SITE.ideasUrl ? fetches.length : -1;
+  if (ideasFetchIndex >= 0) fetches.push(fetch(SITE.ideasUrl));
 
-  const [videosRes, theoryRes, resortsRes] = await Promise.all(fetches);
+  const results = await Promise.all(fetches);
+  const [videosRes, theoryRes] = results;
   const data = await videosRes.json();
   const theory = await theoryRes.json();
 
@@ -2412,8 +2632,13 @@ async function init() {
   state.resorts = data.resorts || [];
   state.series = theory.series || [];
   state.activeCategory = "all";
-  if (supportsResortMap() && resortsRes?.ok) {
-    state.worldResorts = await resortsRes.json();
+  if (supportsResortMap()) {
+    const resortsRes = results[2];
+    if (resortsRes?.ok) state.worldResorts = await resortsRes.json();
+  }
+  if (ideasFetchIndex >= 0) {
+    const ideasRes = results[ideasFetchIndex];
+    if (ideasRes?.ok) state.videoIdeas = await ideasRes.json();
   }
 
   await Promise.all([loadNoteOverrides(), refreshAdminSession()]);
@@ -2443,6 +2668,7 @@ function updateTabHrefs() {
     if (name === "library") tab.setAttribute("href", libraryHref({ category: state.activeCategory }));
     else if (name === "theory") tab.setAttribute("href", theoryHref());
     else if (name === "programs") tab.setAttribute("href", programsHref());
+    else if (name === "resource") tab.setAttribute("href", resourceHref());
   });
 }
 

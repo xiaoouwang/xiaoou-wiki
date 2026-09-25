@@ -75,6 +75,7 @@ a.resort-card,
 a.series-card,
 a.article-card,
 a.program-card,
+a.idea-card,
 a.step-main {
   text-decoration: none;
 }
@@ -84,6 +85,7 @@ a.resort-card,
 a.series-card,
 a.article-card,
 a.program-card,
+a.idea-card,
 a.step-main {
   color: inherit;
 }
@@ -2080,6 +2082,75 @@ a.brand:hover .brand-name {
   margin: 0;
   font-size: 0.75rem;
   color: var(--muted);
+}
+
+/* —— YouTube video ideas (self-development) —— */
+.ideas-home {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.idea-pinned-card {
+  border-color: color-mix(in srgb, #5b8c6a 35%, var(--line));
+  background: color-mix(in srgb, #5b8c6a 7%, rgba(255, 255, 255, 0.92));
+}
+
+.idea-pin-label {
+  margin: 0 0 6px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #5b8c6a;
+}
+
+.ideas-thread {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-left: 3px solid color-mix(in srgb, var(--accent) 55%, #5b8c6a);
+  background: color-mix(in srgb, #5b8c6a 8%, #fff);
+  border-radius: 0 10px 10px 0;
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: 1.02rem;
+  font-style: italic;
+  line-height: 1.45;
+  color: #243746;
+}
+
+.ideas-arc-en {
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-style: italic;
+  color: #3d5566;
+}
+
+.ideas-full-section {
+  margin: 22px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.ideas-full-section h3 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  font-weight: 750;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+}
+
+.ideas-sheet-body .ideas-full-section:first-of-type {
+  margin-top: 8px;
+}
+
+.ideas-sheet-body a,
+.ideas-detail-body a {
+  color: #1f6b8a;
+  text-decoration: underline;
+  word-break: break-word;
+}
+
+.ideas-detail-body {
+  padding-bottom: 28px;
 }
 
 .program-detail-title {

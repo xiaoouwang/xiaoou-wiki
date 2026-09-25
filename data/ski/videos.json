@@ -87,6 +87,10 @@
       "color": "#6A8BA3",
       "subtags": [
         {
+          "id": "guides",
+          "label": "Guides"
+        },
+        {
           "id": "cheap",
           "label": "Cheap"
         },
