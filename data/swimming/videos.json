@@ -21,6 +21,10 @@
         {
           "id": "glide",
           "label": "Glide"
+        },
+        {
+          "id": "treading",
+          "label": "Treading"
         }
       ]
     },
@@ -97,6 +101,59 @@
       ]
     }
   ],
-  "videos": [],
+  "videos": [
+    {
+      "id": "sw1",
+      "title": "Treading water with Zheng Hang",
+      "description": "Zheng Hang on water treading (踩水). Original: 踩水-郑航 — 有木有一起游的",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/sw1-6aac0e9c000000002502ce0b.jpg",
+      "file": "https://xiaoou-wiki-api.singerxo.workers.dev/media/videos/sw1-6aac0e9c000000002502ce0b.mp4",
+      "source": {
+        "platform": "rednote",
+        "creator": "郑航",
+        "url": "https://www.xiaohongshu.com/explore/6aac0e9c000000002502ce0b"
+      },
+      "category": "beginner",
+      "subtags": [
+        "treading"
+      ],
+      "duration": "1:24",
+      "addedAt": "2026-10-02",
+      "notes": {
+        "markers": [
+          {
+            "time": 0,
+            "text": "Treading water (踩水) drill — stay upright and keep a steady kick/hand rhythm."
+          }
+        ]
+      }
+    },
+    {
+      "id": "sw2",
+      "title": "Treading: put weight in the core, not the legs",
+      "description": "Rednote drill for treading that feels heavy and sinky — center of gravity in the core/hips, not the legs. Original: 踩水又累又沉？全网首发1分钟邪修搞定✅",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/sw2-6a7b22cc000000002202f48b.jpg",
+      "file": "https://xiaoou-wiki-api.singerxo.workers.dev/media/videos/sw2-6a7b22cc000000002202f48b.mp4",
+      "source": {
+        "platform": "rednote",
+        "creator": "Xiaohongshu",
+        "url": "https://www.xiaohongshu.com/explore/6a7b22cc000000002202f48b"
+      },
+      "category": "beginner",
+      "subtags": [
+        "treading"
+      ],
+      "duration": "1:08",
+      "addedAt": "2026-10-02",
+      "notes": {
+        "markers": [
+          {
+            "time": 0,
+            "text": "If treading feels exhausting and you still sink, the weight is wrong — keep it in the core/hips, not the legs."
+          }
+        ]
+      }
+    }
+  ],
   "resorts": []
 }

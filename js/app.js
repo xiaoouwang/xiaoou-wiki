@@ -125,6 +125,8 @@ const els = {
   notesAbstract: document.getElementById("notes-abstract"),
   notesPoints: document.getElementById("notes-points"),
   notesConclusion: document.getElementById("notes-conclusion"),
+  ownVideoCard: document.getElementById("own-video-card"),
+  ownVideoBody: document.getElementById("own-video-body"),
   sourceCard: document.getElementById("source-card"),
   sourceCreator: document.getElementById("source-creator"),
   sourcePlatform: document.getElementById("source-platform"),
@@ -1553,6 +1555,7 @@ function openVideoIdeasDocSheet({ sync = true } = {}) {
   els.sourceCard.hidden = true;
   els.sheetActions.hidden = true;
   if (els.notesCard) els.notesCard.hidden = true;
+  clearOwnVideoCard();
   if (els.sheetTags) els.sheetTags.innerHTML = "";
 
   els.sheetMeta.innerHTML = `<span class="level-pill" style="--level-color:#5B8C6A">Pinned note</span>`;
@@ -1780,6 +1783,7 @@ function openVideoSheet(video, { sync = true } = {}) {
     .join("");
 
   fillNotesCard(video.notes);
+  fillOwnVideoCard(video.myYoutubeVideo);
 
   els.sourceCreator.textContent = source.creator || "Unknown creator";
   els.sourcePlatform.textContent = platform
@@ -1816,6 +1820,7 @@ function openResortSheet(resort, { sync = true } = {}) {
   els.sourceCard.hidden = true;
   els.sheetActions.hidden = true;
   clearNotesCard();
+  clearOwnVideoCard();
 
   els.sheetMeta.innerHTML = cat
     ? `<span class="level-pill" style="--level-color:${cat.color}">Resort guide</span>
@@ -1873,6 +1878,7 @@ function closeSheet({ sync = true } = {}) {
     els.sheetDesc.className = "";
     els.sheetDesc.innerHTML = "";
     clearNotesCard();
+    clearOwnVideoCard();
   }, 220);
 }
 
@@ -1998,6 +2004,37 @@ function clearNotesCard() {
     els.notesEditor.hidden = true;
     if (els.notesSaveStatus) els.notesSaveStatus.textContent = "";
   }
+}
+
+function normalizeOwnVideoBody(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) {
+    return raw.map((p) => String(p || "").trim()).filter(Boolean);
+  }
+  if (typeof raw === "string") {
+    return raw
+      .split(/\n\s*\n/)
+      .map((p) => p.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
+function fillOwnVideoCard(raw) {
+  if (!els.ownVideoCard || !els.ownVideoBody) return;
+  const paras = normalizeOwnVideoBody(raw);
+  if (!paras.length) {
+    clearOwnVideoCard();
+    return;
+  }
+  els.ownVideoCard.hidden = false;
+  els.ownVideoBody.innerHTML = paras.map((p) => `<p>${escapeHtml(p)}</p>`).join("");
+}
+
+function clearOwnVideoCard() {
+  if (!els.ownVideoCard) return;
+  els.ownVideoCard.hidden = true;
+  if (els.ownVideoBody) els.ownVideoBody.innerHTML = "";
 }
 
 function ensureNotesShell() {

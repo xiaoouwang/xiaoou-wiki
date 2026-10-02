@@ -7,22 +7,6 @@
       "color": "#5B8C6A",
       "subtags": [
         {
-          "id": "edge-change",
-          "label": "Edge changing"
-        },
-        {
-          "id": "falling",
-          "label": "Falling"
-        },
-        {
-          "id": "strap-in",
-          "label": "Strap-in"
-        },
-        {
-          "id": "linking",
-          "label": "Linking turns"
-        },
-        {
           "id": "weight-transfer",
           "label": "Weight transfer"
         }
@@ -33,50 +17,24 @@
       "label": "Intermediate",
       "kind": "videos",
       "color": "#3D7EA6",
-      "subtags": [
-        {
-          "id": "carving",
-          "label": "Carving"
-        },
-        {
-          "id": "butter",
-          "label": "Butter"
-        },
-        {
-          "id": "switch",
-          "label": "Switch"
-        },
-        {
-          "id": "park-basic",
-          "label": "Park basics"
-        },
-        {
-          "id": "powder-intro",
-          "label": "Powder intro"
-        }
-      ]
+      "subtags": []
     },
     {
       "id": "advanced",
       "label": "Advanced",
       "kind": "videos",
       "color": "#8B5E4B",
+      "subtags": []
+    },
+    {
+      "id": "travel",
+      "label": "Travel",
+      "kind": "videos",
+      "color": "#7A6B8A",
       "subtags": [
         {
-          "id": "steeps",
-          "label": "Steeps"
-        },
-        {
-          "id": "trees",
-          "label": "Trees"
-        },
-        {
-          "id": "freestyle",
-          "label": "Freestyle"
-        },
-        {
-          "id": "backcountry",
-          "label": "Backcountry"
+          "id": "packing",
+          "label": "Packing"
         }
       ]
     },
@@ -89,26 +47,6 @@
         {
           "id": "cheap",
           "label": "Cheap"
-        },
-        {
-          "id": "not-cheap",
-          "label": "Not cheap"
-        },
-        {
-          "id": "trees",
-          "label": "Trees"
-        },
-        {
-          "id": "night",
-          "label": "Night"
-        },
-        {
-          "id": "powder",
-          "label": "Powder"
-        },
-        {
-          "id": "park",
-          "label": "Park"
         }
       ]
     }
@@ -162,6 +100,32 @@
           {
             "time": 0,
             "text": "Flight + hotel + lift pass under NT$100k is doable in Europe."
+          }
+        ]
+      }
+    },
+    {
+      "id": "v3",
+      "title": "Snowboard trip packing: what’s in the bag",
+      "description": "Mickie (@mhfiitt) packs for a 3-day snowboarding trip — board, boots, outerwear, layers, and pocket snacks. Instagram: well tbh it’s usually 49.9999lbs 😂",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/v3-DVAq4YyDZKA.jpg",
+      "file": "https://xiaoou-wiki-api.singerxo.workers.dev/media/videos/v3-DVAq4YyDZKA.mp4",
+      "source": {
+        "platform": "instagram",
+        "creator": "Mickie",
+        "url": "https://www.instagram.com/p/DVAq4YyDZKA/"
+      },
+      "category": "travel",
+      "subtags": [
+        "packing"
+      ],
+      "duration": "0:27",
+      "addedAt": "2026-10-02",
+      "notes": {
+        "markers": [
+          {
+            "time": 0,
+            "text": "Pack board, boots + bindings, jacket/pants, fleece, helmet/goggles/gloves/socks, base layers, snacks, and camera."
           }
         ]
       }

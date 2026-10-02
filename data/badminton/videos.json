@@ -327,6 +327,38 @@
           }
         ]
       }
+    },
+    {
+      "id": "bd13",
+      "title": "Low stance: footwork for drops vs flat clears",
+      "description": "Coach Liu Hui on receiving with a low center of gravity — how stance and steps differ for drops and flat high clears. Original: 重心压低怎么接吊球？刘辉教练教你接吊和接平高球的站位步伐区别",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/bd13-4n506ctkeKo.jpg",
+      "file": "https://xiaoou-wiki-api.singerxo.workers.dev/media/videos/bd13-4n506ctkeKo.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "刘辉羽毛球",
+        "url": "https://www.youtube.com/watch?v=4n506ctkeKo"
+      },
+      "category": "intermediate",
+      "subtags": [
+        "footwork",
+        "drop",
+        "clear"
+      ],
+      "duration": "5:03",
+      "addedAt": "2026-10-02",
+      "notes": {
+        "markers": [
+          {
+            "time": 158,
+            "text": "Main threats"
+          },
+          {
+            "time": 242,
+            "text": "Right setup"
+          }
+        ]
+      }
     }
   ],
   "resorts": []

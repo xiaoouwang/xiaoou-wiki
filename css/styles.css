@@ -1765,6 +1765,7 @@ a.brand:hover .brand-name {
 }
 
 .notes-label,
+.own-video-label,
 .source-label {
   margin: 0 0 2px;
   font-size: 0.65rem;
@@ -1772,6 +1773,29 @@ a.brand:hover .brand-name {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--accent-deep);
+}
+
+.own-video-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.88));
+}
+
+.own-video-body {
+  display: grid;
+  gap: 10px;
+  color: var(--text);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.own-video-body p {
+  margin: 0;
 }
 
 .notes-abstract {
