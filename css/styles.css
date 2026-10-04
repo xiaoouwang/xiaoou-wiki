@@ -1337,6 +1337,20 @@ a.brand:hover .brand-name {
   letter-spacing: 0.02em;
 }
 
+.idea-video-card .idea-thumb {
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, #5B8C6A 55%, #1e2f3c), color-mix(in srgb, #3D7EA6 45%, #1e2f3c));
+}
+
+.idea-thumb-mark {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.92);
+}
+
 .card-body {
   display: flex;
   flex-direction: column;

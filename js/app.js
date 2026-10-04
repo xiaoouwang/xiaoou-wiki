@@ -21,6 +21,21 @@ const SITE = {
     `data/${document.body.dataset.sport || "snowboard"}/ideas.json`,
 };
 
+/** Page tab id for the ideas notebook: "ideas" (self-dev) or "resource" (other topics). */
+const IDEAS_TAB =
+  document.querySelector('.tab[data-tab="ideas"]')?.dataset.tab ||
+  document.querySelector('.tab[data-tab="resource"]')?.dataset.tab ||
+  "resource";
+
+function isIdeasTab(tab = state.tab) {
+  return tab === "ideas" || tab === "resource";
+}
+
+function normalizeIdeasTab(tab) {
+  if (tab === "ideas" || tab === "resource") return IDEAS_TAB;
+  return tab;
+}
+
 const PROGRAMS_KEY = `${SITE.sport}-wikipedia-programs`;
 const API_BASE =
   localStorage.getItem("xiaoou_wiki_api") || "https://xiaoou-wiki-api.singerxo.workers.dev";
@@ -254,13 +269,14 @@ function hrefFor(params) {
   return str ? `?${str}` : location.pathname;
 }
 
-function libraryHref({ category, subtag, video, resort } = {}) {
+function libraryHref({ category, subtag, video, resort, idea } = {}) {
   return hrefFor({
     tab: "library",
     category: category || state.activeCategory,
     subtag: subtag || undefined,
     video: video || undefined,
     resort: resort || undefined,
+    idea: idea || undefined,
   });
 }
 
@@ -281,7 +297,7 @@ function programsHref({ program } = {}) {
 
 function resourceHref({ idea } = {}) {
   return hrefFor({
-    tab: "resource",
+    tab: IDEAS_TAB,
     idea: idea || undefined,
   });
 }
@@ -295,12 +311,13 @@ function buildRouteParams() {
     if (state.activeSubtag) params.subtag = state.activeSubtag;
     if (state.activeVideoId) params.video = state.activeVideoId;
     if (state.activeResortId) params.resort = state.activeResortId;
+    if (state.activeIdeaId && state.sheetMode === "idea") params.idea = state.activeIdeaId;
   } else if (state.tab === "theory") {
     if (state.activeSeriesId) params.series = state.activeSeriesId;
     if (state.activeArticleId) params.article = state.activeArticleId;
   } else if (state.tab === "programs") {
     if (state.activeProgramId) params.program = state.activeProgramId;
-  } else if (state.tab === "resource") {
+  } else if (isIdeasTab()) {
     if (state.activeIdeaId) params.idea = state.activeIdeaId;
   }
 
@@ -367,7 +384,10 @@ function buildSeoDescription() {
   if (state.tab === "programs") {
     return `Build ${topic} exercise programs from library videos on ${SITE.title}.`;
   }
-  if (state.tab === "resource") {
+  if (isIdeasTab()) {
+    if (state.videoIdeas?.kind === "youtube-ideas") {
+      return `YouTube video ideas for ${topic} on ${SITE.title}. Part of Skill Wikipedia.`;
+    }
     return `Ideas and resources for ${topic} on ${SITE.title} — pinned notes and working links.`;
   }
   const cat = categoryById(state.activeCategory);
@@ -399,7 +419,7 @@ function updateDocumentSeo() {
   } else if (state.tab === "programs" && state.activeProgramId) {
     const program = programById(state.activeProgramId);
     if (program) title = `${program.name} · ${base}`;
-  } else if (state.tab === "resource" && state.activeIdeaId) {
+  } else if (state.activeIdeaId && (isIdeasTab() || state.sheetMode === "idea")) {
     if (state.activeIdeaId === "full") title = `Pinned note · ${base}`;
     else {
       const idea = videoIdeaById(state.activeIdeaId);
@@ -409,8 +429,11 @@ function updateDocumentSeo() {
     title = `Theory · ${base}`;
   } else if (state.tab === "programs") {
     title = `Programs · ${base}`;
-  } else if (state.tab === "resource") {
-    title = `Resource · ${base}`;
+  } else if (isIdeasTab()) {
+    title =
+      state.videoIdeas?.kind === "youtube-ideas"
+        ? `YouTube ideas · ${base}`
+        : `Resource · ${base}`;
   } else {
     const cat = categoryById(state.activeCategory);
     if (cat) title = `${cat.label} · ${base}`;
@@ -493,11 +516,34 @@ function applyRouteFromUrl() {
       return;
     }
 
-    if (tab === "resource") {
+    if (isIdeasTab(tab)) {
+      // Self-dev YouTube ideas live in the library; redirect old Ideas URLs.
+      if (state.videoIdeas?.kind === "youtube-ideas") {
+        state.activeCategory = "all";
+        state.activeSubtag = null;
+        renderCategoryRail();
+        renderSubtagRail();
+        renderLibrary();
+        setTab("library", { sync: false });
+        if (ideaId && videoIdeaById(ideaId)) openIdeaSheet(videoIdeaById(ideaId), { sync: false });
+        else closeSheet({ sync: false });
+        return;
+      }
       state.activeIdeaId = null;
-      setTab("resource", { sync: false });
+      setTab(IDEAS_TAB, { sync: false });
       if (ideaId) openResourceIdea(ideaId, { sync: false });
       else showResourceHome({ sync: false });
+      return;
+    }
+
+    if (ideaId && videoIdeaById(ideaId) && state.videoIdeas?.kind === "youtube-ideas") {
+      state.activeCategory = "all";
+      state.activeSubtag = null;
+      renderCategoryRail();
+      renderSubtagRail();
+      renderLibrary();
+      setTab("library", { sync: false });
+      openIdeaSheet(videoIdeaById(ideaId), { sync: false });
       return;
     }
 
@@ -1287,6 +1333,50 @@ function resortCardHTML(resort) {
   </a>`;
 }
 
+function libraryYoutubeIdeas() {
+  if (state.videoIdeas?.kind !== "youtube-ideas") return [];
+  return state.videoIdeas.ideas || [];
+}
+
+function shouldShowLibraryIdeas() {
+  if (!libraryYoutubeIdeas().length) return false;
+  if (isMapMode() || isResortsMode()) return false;
+  // Show on the default library so they appear as soon as the topic opens.
+  if (state.activeCategory !== "all") return false;
+  if (state.activeSubtag) return false;
+  return true;
+}
+
+function filteredLibraryIdeas() {
+  if (!shouldShowLibraryIdeas()) return [];
+  const q = state.query.trim().toLowerCase();
+  const ideas = libraryYoutubeIdeas();
+  if (!q) return ideas;
+  return ideas.filter((idea) => {
+    const hay = [idea.title, idea.teaser, ...(idea.body || [])].join(" ").toLowerCase();
+    return hay.includes(q);
+  });
+}
+
+function ideaCardHTML(idea) {
+  return `<a class="video-card idea-video-card" href="${libraryHref({ category: "all", idea: idea.id })}" data-idea-id="${escapeHtml(idea.id)}">
+    <div class="thumb idea-thumb" aria-hidden="true">
+      <span class="idea-thumb-mark">YT</span>
+      <span class="duration-badge">Idea</span>
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <h3 class="card-title">${escapeHtml(idea.title)}</h3>
+        <div class="meta-pills">
+          <span class="level-pill" style="--level-color:#5B8C6A">YouTube idea</span>
+        </div>
+      </div>
+      <p class="card-desc">${escapeHtml(idea.teaser || "Open this YouTube idea")}</p>
+      <div class="card-tags"><span class="mini-tag">Script</span></div>
+    </div>
+  </a>`;
+}
+
 function renderLibrary() {
   if (isMapMode()) {
     els.videoList.hidden = true;
@@ -1328,12 +1418,16 @@ function renderLibrary() {
   }
 
   const list = filteredVideos().sort((a, b) => b.addedAt.localeCompare(a.addedAt));
+  const ideas = filteredLibraryIdeas();
   els.resortList.hidden = true;
   els.resortList.innerHTML = "";
   els.videoList.hidden = false;
-  els.videoList.innerHTML = list.map(videoCardHTML).join("");
-  els.resultCount.textContent = `${list.length} video${list.length === 1 ? "" : "s"}`;
-  els.emptyState.hidden = list.length > 0;
+  els.videoList.innerHTML = ideas.map(ideaCardHTML).join("") + list.map(videoCardHTML).join("");
+  const parts = [];
+  if (ideas.length) parts.push(`${ideas.length} YouTube idea${ideas.length === 1 ? "" : "s"}`);
+  if (list.length) parts.push(`${list.length} video${list.length === 1 ? "" : "s"}`);
+  els.resultCount.textContent = parts.join(" · ") || "0 items";
+  els.emptyState.hidden = list.length + ideas.length > 0;
 }
 
 function setSubtag(id, { sync = true } = {}) {
@@ -1441,7 +1535,10 @@ function paragraphsFromList(lines) {
     .map((para) => String(para || "").trim())
     .filter(Boolean)
     .map((para) => {
-      const withBreaks = linkifyEscapedText(escapeHtml(para)).replaceAll("\n", "<br />");
+      const withBreaks = linkifyEscapedText(escapeHtml(para))
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\*(.+?)\*/g, "<em>$1</em>")
+        .replaceAll("\n", "<br />");
       return `<p>${withBreaks}</p>`;
     })
     .join("");
@@ -1474,23 +1571,21 @@ function renderResourceHome() {
   if (!els.ideasCards) return;
 
   if (!doc) {
-    if (els.ideasCount) els.ideasCount.textContent = "Ideas & resources";
-    els.ideasCards.innerHTML = `<p class="empty">No pinned note yet.</p>`;
+    if (els.ideasCount) els.ideasCount.textContent = IDEAS_TAB === "ideas" ? "YouTube ideas" : "Ideas & resources";
+    els.ideasCards.innerHTML = `<p class="empty">No ideas yet.</p>`;
     return;
   }
 
   const n = doc.ideas?.length || 0;
+  const youtubeMode = doc.kind === "youtube-ideas";
   if (els.ideasCount) {
-    els.ideasCount.textContent =
-      n > 0 ? `1 pinned note · ${n} idea${n === 1 ? "" : "s"}` : "Ideas & resources";
+    if (youtubeMode) {
+      els.ideasCount.textContent = `${n} YouTube idea${n === 1 ? "" : "s"}`;
+    } else {
+      els.ideasCount.textContent =
+        n > 0 ? `1 pinned note · ${n} idea${n === 1 ? "" : "s"}` : "Ideas & resources";
+    }
   }
-
-  const summary = doc.summary || "Working notes, links, and resources for this topic.";
-  const pinned = `<a class="series-card idea-pinned-card" href="${resourceHref({ idea: "full" })}" data-idea-id="full">
-      <p class="idea-pin-label">Pinned</p>
-      <h3 class="series-card-title">${escapeHtml(doc.title || "Ideas & resources")}</h3>
-      <p class="series-card-summary">${escapeHtml(summary)}</p>
-    </a>`;
 
   const ideaCards = (doc.ideas || [])
     .map(
@@ -1500,6 +1595,18 @@ function renderResourceHome() {
       </a>`
     )
     .join("");
+
+  if (youtubeMode) {
+    els.ideasCards.innerHTML = ideaCards || `<p class="empty">No YouTube ideas yet.</p>`;
+    return;
+  }
+
+  const summary = doc.summary || "Working notes, links, and resources for this topic.";
+  const pinned = `<a class="series-card idea-pinned-card" href="${resourceHref({ idea: "full" })}" data-idea-id="full">
+      <p class="idea-pin-label">Pinned</p>
+      <h3 class="series-card-title">${escapeHtml(doc.title || "Ideas & resources")}</h3>
+      <p class="series-card-summary">${escapeHtml(summary)}</p>
+    </a>`;
 
   els.ideasCards.innerHTML = pinned + ideaCards;
 }
@@ -1533,7 +1640,9 @@ function openResourceIdea(id, { sync = true } = {}) {
   if (els.resourceHome) els.resourceHome.hidden = true;
   if (els.resourceDetail) els.resourceDetail.hidden = false;
   if (els.resourceDetailKicker) {
-    els.resourceDetailKicker.textContent = `Idea ${idea.number} of ${state.videoIdeas.ideas?.length || 0}`;
+    const total = state.videoIdeas.ideas?.length || 0;
+    const label = state.videoIdeas.kind === "youtube-ideas" ? "YouTube idea" : "Idea";
+    els.resourceDetailKicker.textContent = `${label} ${idea.number} of ${total}`;
   }
   if (els.resourceDetailTitle) els.resourceDetailTitle.textContent = idea.title;
   if (els.ideasDetailBody) els.ideasDetailBody.innerHTML = paragraphsFromList(idea.body);
@@ -1562,6 +1671,36 @@ function openVideoIdeasDocSheet({ sync = true } = {}) {
   els.sheetTitle.textContent = doc.title || "Ideas & resources";
   els.sheetDesc.className = "sheet-intro ideas-sheet-body";
   els.sheetDesc.innerHTML = fullVideoIdeasHTML(doc);
+
+  showSheet();
+  els.sheet.scrollTop = 0;
+  if (sync) syncRoute();
+}
+
+function openIdeaSheet(idea, { sync = true } = {}) {
+  if (!idea) return;
+
+  state.sheetMode = "idea";
+  state.activeIdeaId = idea.id;
+  state.activeVideoId = null;
+  state.activeResortId = null;
+  state.notesEditMode = false;
+  stopPlayer();
+
+  els.sheetMedia.hidden = true;
+  els.sourceCard.hidden = true;
+  els.sheetActions.hidden = true;
+  if (els.notesCard) els.notesCard.hidden = true;
+  clearOwnVideoCard();
+  if (els.sheetTags) {
+    els.sheetTags.innerHTML = `<span class="chip chip-active" style="--chip-color:#5B8C6A">YouTube idea</span>`;
+  }
+
+  els.sheetMeta.innerHTML = `<span class="level-pill" style="--level-color:#5B8C6A">YouTube idea</span>
+    <span class="platform-pill">Script</span>`;
+  els.sheetTitle.textContent = idea.title;
+  els.sheetDesc.className = "sheet-intro ideas-sheet-body";
+  els.sheetDesc.innerHTML = paragraphsFromList(idea.body);
 
   showSheet();
   els.sheet.scrollTop = 0;
@@ -1695,6 +1834,7 @@ function deleteActiveProgram() {
 }
 
 function setTab(tab, { sync = true } = {}) {
+  tab = normalizeIdeasTab(tab);
   state.tab = tab;
   els.tabs.forEach((btn) => {
     btn.classList.toggle("tab-active", btn.dataset.tab === tab);
@@ -1707,7 +1847,7 @@ function setTab(tab, { sync = true } = {}) {
     if (state.activeProgramId) openProgram(state.activeProgramId, { sync: false });
     else showProgramsHome({ sync: false });
   }
-  if (tab === "resource") {
+  if (isIdeasTab(tab)) {
     if (state.activeIdeaId) openResourceIdea(state.activeIdeaId, { sync: false });
     else showResourceHome({ sync: false });
   }
@@ -1755,6 +1895,7 @@ function openVideoSheet(video, { sync = true } = {}) {
   state.sheetMode = "video";
   state.activeVideoId = video.id;
   state.activeResortId = null;
+  state.activeIdeaId = null;
   state.notesEditMode = false;
   // Do not rebuild the library mid-click — that retargets taps onto sheet buttons.
 
@@ -1856,17 +1997,14 @@ function showSheet() {
 }
 
 function closeSheet({ sync = true } = {}) {
-  const wasIdeasDoc = state.sheetMode === "ideas-doc";
   stopPlayer();
   els.sheet.classList.remove("sheet-open");
   els.sheet.setAttribute("aria-hidden", "true");
   state.activeVideoId = null;
   state.activeResortId = null;
+  state.activeIdeaId = null;
   state.sheetMode = null;
   state.notesEditMode = false;
-  if (wasIdeasDoc && state.activeIdeaId === "full") {
-    state.activeIdeaId = null;
-  }
   if (sync) syncRoute({ replace: true });
   setTimeout(() => {
     if (!els.picker.classList.contains("picker-open")) {
@@ -2456,6 +2594,29 @@ function bindEvents() {
       return;
     }
 
+    const ideaFromLibrary = e.target.closest(".video-card[data-idea-id], a[data-idea-id]");
+    if (ideaFromLibrary?.dataset?.ideaId) {
+      e.preventDefault();
+      const idea = videoIdeaById(ideaFromLibrary.dataset.ideaId);
+      if (idea) {
+        if (state.videoIdeas?.kind === "youtube-ideas") {
+          setTab("library", { sync: false });
+          if (state.activeCategory !== "all") {
+            state.activeCategory = "all";
+            state.activeSubtag = null;
+            renderCategoryRail();
+            renderSubtagRail();
+            renderLibrary();
+          }
+          openIdeaSheet(idea);
+        } else {
+          setTab(IDEAS_TAB, { sync: false });
+          openResourceIdea(idea.id);
+        }
+      }
+      return;
+    }
+
     const videoCard = e.target.closest(".video-card");
     if (videoCard) {
       e.preventDefault();
@@ -2495,12 +2656,6 @@ function bindEvents() {
       return;
     }
 
-    const ideaCard = e.target.closest("a[data-idea-id]");
-    if (ideaCard) {
-      e.preventDefault();
-      setTab("resource", { sync: false });
-      openResourceIdea(ideaCard.dataset.ideaId);
-    }
   });
 
   els.programSteps?.addEventListener("click", (e) => {
@@ -2554,10 +2709,10 @@ function bindEvents() {
       if (tab.dataset.tab === "programs") {
         state.activeProgramId = null;
       }
-      if (tab.dataset.tab === "resource") {
+      if (isIdeasTab(tab.dataset.tab)) {
         state.activeIdeaId = null;
       }
-      setTab(tab.dataset.tab);
+      setTab(normalizeIdeasTab(tab.dataset.tab));
     });
   });
 
@@ -2705,7 +2860,7 @@ function updateTabHrefs() {
     if (name === "library") tab.setAttribute("href", libraryHref({ category: state.activeCategory }));
     else if (name === "theory") tab.setAttribute("href", theoryHref());
     else if (name === "programs") tab.setAttribute("href", programsHref());
-    else if (name === "resource") tab.setAttribute("href", resourceHref());
+    else if (isIdeasTab(name)) tab.setAttribute("href", resourceHref());
   });
 }
 
