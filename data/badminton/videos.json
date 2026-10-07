@@ -359,6 +359,36 @@
           }
         ]
       }
+    },
+    {
+      "id": "bd14",
+      "title": "Don't plant and hit: push off before contact",
+      "description": "Ten-year players still plant the foot and hit — that wastes the push-off. Forehand finds the shuttle with the right foot, backhand with the left. Original: 打了十年的球友 还在落脚击球",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/bd14-reaE9ChE3U4.jpg",
+      "file": "https://xiaoou-wiki-api.singerxo.workers.dev/media/videos/bd14-reaE9ChE3U4.mp4",
+      "source": {
+        "platform": "youtube",
+        "creator": "羊羽",
+        "url": "https://www.youtube.com/watch?v=reaE9ChE3U4"
+      },
+      "category": "beginner",
+      "subtags": [
+        "footwork"
+      ],
+      "duration": "4:47",
+      "addedAt": "2026-10-07",
+      "notes": {
+        "markers": [
+          {
+            "time": 64,
+            "text": "落脚就意味着蹬地的力量被浪费了"
+          },
+          {
+            "time": 206,
+            "text": "正手用右脚找球，反手用左脚找球。如果没有找球这个概念，就说明不会用蹬地"
+          }
+        ]
+      }
     }
   ],
   "resorts": []
