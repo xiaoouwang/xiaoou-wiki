@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Xiaoou Wang — TAL, humanités numériques &amp; montagne</title>
+    <meta
+      name="description"
+      content="Xiaoou Wang — Doctorat en informatique (TAL), ingénieur en humanités numériques à la MSHS Sud-Est, moniteur national de ski et snowboard. Projets, publications, Skill Wikipedia."
+    />
+    <meta name="author" content="Xiaoou Wang" />
+    <link rel="canonical" href="https://xiaoouwang.github.io/xiaoou-wiki/portfolio.html" />
+    <meta property="og:title" content="Xiaoou Wang" />
+    <meta
+      property="og:description"
+      content="Doctorat en TAL · Humanités numériques · Moniteur national de ski &amp; snowboard"
+    />
+    <meta property="og:image" content="https://xiaoouwang.github.io/xiaoou-wiki/assets/xiaoou-wang.png" />
+    <meta property="og:url" content="https://xiaoouwang.github.io/xiaoou-wiki/portfolio.html" />
+    <meta name="theme-color" content="#0f1c2a" />
+    <link rel="icon" href="assets/xiaoou-wang.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Sora:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0f1c2a;
+        --ink-soft: #1a2d40;
+        --fog: #e8eef4;
+        --muted: #6d8094;
+        --paper: #f7f4ef;
+        --copper: #c56a2d;
+        --copper-deep: #9a4e1c;
+        --glacier: #7eb6c9;
+        --line: color-mix(in srgb, var(--ink) 12%, transparent);
+        --max: 1080px;
+        --font-display: "Fraunces", Georgia, serif;
+        --font-body: "Sora", system-ui, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--font-body);
+        color: var(--ink);
+        background: var(--paper);
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      .wrap {
+        width: min(100% - 2.4rem, var(--max));
+        margin-inline: auto;
+      }
+
+      /* —— Hero —— */
+      .hero {
+        position: relative;
+        min-height: 100svh;
+        display: grid;
+        align-items: end;
+        color: #f4f7fa;
+        overflow: hidden;
+        isolation: isolate;
+      }
+
+      .hero-media {
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+      }
+
+      .hero-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 35%;
+      }
+
+      .hero-shade {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background:
+          linear-gradient(180deg, rgba(15, 28, 42, 0.28) 0%, rgba(15, 28, 42, 0.55) 42%, rgba(15, 28, 42, 0.92) 100%),
+          radial-gradient(ellipse at 70% 20%, rgba(197, 106, 45, 0.28), transparent 55%);
+      }
+
+      .hero-inner {
+        padding: clamp(4rem, 12vh, 7rem) 0 3.2rem;
+      }
+
+      .hero-brand {
+        margin: 0;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: clamp(3.2rem, 11vw, 6.4rem);
+        line-height: 0.95;
+        letter-spacing: -0.035em;
+      }
+
+      .hero-line {
+        margin: 1rem 0 0;
+        max-width: 28ch;
+        font-size: clamp(1.15rem, 2.4vw, 1.55rem);
+        font-weight: 500;
+        line-height: 1.35;
+        color: color-mix(in srgb, #fff 92%, var(--glacier));
+      }
+
+      .hero-sub {
+        margin: 0.85rem 0 0;
+        max-width: 42ch;
+        color: color-mix(in srgb, #fff 72%, transparent);
+        font-size: 0.98rem;
+      }
+
+      .hero-cta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.8rem;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2.75rem;
+        padding: 0.65rem 1.15rem;
+        border-radius: 999px;
+        text-decoration: none;
+        font-size: 0.92rem;
+        font-weight: 600;
+        transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .btn-primary {
+        background: var(--copper);
+        color: #fff;
+      }
+
+      .btn-primary:hover {
+        background: var(--copper-deep);
+      }
+
+      .btn-ghost {
+        background: color-mix(in srgb, #fff 12%, transparent);
+        color: #fff;
+        border: 1px solid color-mix(in srgb, #fff 28%, transparent);
+        backdrop-filter: blur(8px);
+      }
+
+      .btn-ghost:hover {
+        background: color-mix(in srgb, #fff 20%, transparent);
+      }
+
+      /* —— Nav —— */
+      .topnav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.1rem 0;
+        color: #fff;
+      }
+
+      .topnav a {
+        text-decoration: none;
+        font-size: 0.84rem;
+        font-weight: 600;
+        opacity: 0.88;
+      }
+
+      .topnav a:hover {
+        opacity: 1;
+      }
+
+      .topnav-links {
+        display: flex;
+        gap: 1.1rem;
+        flex-wrap: wrap;
+      }
+
+      /* —— Sections —— */
+      section {
+        padding: clamp(3.5rem, 8vw, 5.5rem) 0;
+      }
+
+      .section-kicker {
+        margin: 0 0 0.55rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--copper);
+      }
+
+      .section-title {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(1.9rem, 4vw, 2.7rem);
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+      }
+
+      .section-lead {
+        margin: 0.85rem 0 0;
+        max-width: 52ch;
+        color: var(--muted);
+        font-size: 1.02rem;
+      }
+
+      /* —— About —— */
+      .about {
+        background: #fff;
+      }
+
+      .about-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+        gap: clamp(1.5rem, 4vw, 3rem);
+        align-items: start;
+        margin-top: 2.2rem;
+      }
+
+      .about-photo {
+        width: 100%;
+        max-width: 280px;
+        aspect-ratio: 2 / 3;
+        object-fit: cover;
+        object-position: center top;
+        border-radius: 2px;
+        filter: contrast(1.02) saturate(0.95);
+      }
+
+      .about-copy p {
+        margin: 0 0 1rem;
+        font-size: 1.05rem;
+      }
+
+      .about-copy p:last-child {
+        margin-bottom: 0;
+      }
+
+      .facts {
+        display: grid;
+        gap: 0.85rem;
+        margin-top: 1.6rem;
+        padding-top: 1.4rem;
+        border-top: 1px solid var(--line);
+      }
+
+      .fact {
+        display: grid;
+        grid-template-columns: 7.5rem 1fr;
+        gap: 0.75rem;
+        font-size: 0.95rem;
+      }
+
+      .fact dt {
+        margin: 0;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .fact dd {
+        margin: 0;
+      }
+
+      .fact a {
+        color: var(--copper-deep);
+        text-decoration: underline;
+        text-underline-offset: 0.15em;
+      }
+
+      /* —— Roles —— */
+      .roles {
+        background:
+          linear-gradient(160deg, #102032 0%, #18324a 55%, #1c3a3f 100%);
+        color: #eef4f8;
+      }
+
+      .roles .section-kicker {
+        color: var(--glacier);
+      }
+
+      .roles .section-lead {
+        color: color-mix(in srgb, #fff 65%, transparent);
+      }
+
+      .role-list {
+        display: grid;
+        gap: 0;
+        margin: 2.2rem 0 0;
+        border-top: 1px solid color-mix(in srgb, #fff 16%, transparent);
+      }
+
+      .role {
+        display: grid;
+        grid-template-columns: minmax(0, 0.35fr) minmax(0, 0.65fr);
+        gap: 1rem 1.5rem;
+        padding: 1.35rem 0;
+        border-bottom: 1px solid color-mix(in srgb, #fff 16%, transparent);
+      }
+
+      .role h3 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: 1.35rem;
+        font-weight: 600;
+      }
+
+      .role p {
+        margin: 0;
+        color: color-mix(in srgb, #fff 72%, transparent);
+      }
+
+      /* —— Work —— */
+      .work-list {
+        display: grid;
+        gap: 0.85rem;
+        margin-top: 2rem;
+      }
+
+      .work-item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 1rem;
+        align-items: center;
+        padding: 1.15rem 1.25rem;
+        text-decoration: none;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        transition: border-color 0.18s ease, transform 0.18s ease;
+      }
+
+      .work-item:hover {
+        border-color: color-mix(in srgb, var(--copper) 45%, var(--line));
+        transform: translateY(-1px);
+      }
+
+      .work-item h3 {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 700;
+      }
+
+      .work-item p {
+        margin: 0.28rem 0 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .work-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin-top: 0.55rem;
+      }
+
+      .tag {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 0.22rem 0.5rem;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--ink) 6%, transparent);
+        color: var(--ink-soft);
+      }
+
+      .work-arrow {
+        font-size: 1.25rem;
+        color: var(--copper);
+      }
+
+      /* —— Skills —— */
+      .skills {
+        background: color-mix(in srgb, var(--fog) 70%, #fff);
+      }
+
+      .skill-columns {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+
+      .skill-col h3 {
+        margin: 0 0 0.7rem;
+        font-family: var(--font-display);
+        font-size: 1.2rem;
+      }
+
+      .skill-col ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.45rem;
+      }
+
+      .skill-col li {
+        padding: 0.45rem 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.95rem;
+      }
+
+      /* —— Pubs —— */
+      .pubs ol {
+        margin: 2rem 0 0;
+        padding: 0;
+        list-style: none;
+        counter-reset: pub;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .pubs li {
+        counter-increment: pub;
+        display: grid;
+        grid-template-columns: 2.2rem 1fr;
+        gap: 0.75rem;
+        padding: 1rem 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .pubs li::before {
+        content: counter(pub, decimal-leading-zero);
+        font-family: var(--font-display);
+        font-weight: 600;
+        color: var(--copper);
+        font-size: 1.05rem;
+      }
+
+      .pubs strong {
+        display: block;
+        font-size: 1rem;
+        margin-bottom: 0.2rem;
+      }
+
+      .pubs span {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      /* —— Contact —— */
+      .contact {
+        background: var(--ink);
+        color: #eef4f8;
+      }
+
+      .contact .section-kicker {
+        color: var(--glacier);
+      }
+
+      .contact .section-lead {
+        color: color-mix(in srgb, #fff 65%, transparent);
+      }
+
+      .contact-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+        margin-top: 1.8rem;
+      }
+
+      .contact .btn-ghost {
+        border-color: color-mix(in srgb, #fff 22%, transparent);
+      }
+
+      .contact .btn-primary {
+        background: var(--copper);
+      }
+
+      footer {
+        padding: 1.4rem 0 2rem;
+        background: var(--ink);
+        color: color-mix(in srgb, #fff 45%, transparent);
+        font-size: 0.82rem;
+        border-top: 1px solid color-mix(in srgb, #fff 10%, transparent);
+      }
+
+      footer a {
+        color: color-mix(in srgb, #fff 75%, transparent);
+        text-decoration: none;
+      }
+
+      footer a:hover {
+        color: #fff;
+      }
+
+      @media (max-width: 820px) {
+        .about-grid,
+        .role,
+        .skill-columns {
+          grid-template-columns: 1fr;
+        }
+
+        .about-photo {
+          max-width: 220px;
+        }
+
+        .fact {
+          grid-template-columns: 1fr;
+          gap: 0.15rem;
+        }
+
+        .topnav-links {
+          display: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .btn,
+        .work-item {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero-media" aria-hidden="true">
+        <img src="assets/mountains.jpg" alt="" />
+      </div>
+      <div class="hero-shade" aria-hidden="true"></div>
+      <div class="wrap">
+        <nav class="topnav" aria-label="Navigation">
+          <a href="#about">Xiaoou Wang</a>
+          <div class="topnav-links">
+            <a href="#roles">Parcours</a>
+            <a href="#work">Projets</a>
+            <a href="#skills">Domaines</a>
+            <a href="#pubs">Publications</a>
+            <a href="#contact">Liens</a>
+          </div>
+        </nav>
+        <div class="hero-inner">
+          <h1 class="hero-brand">Xiaoou Wang</h1>
+          <p class="hero-line">TAL, humanités numériques &amp; montagne.</p>
+          <p class="hero-sub">
+            Doctorat en informatique · Ingénieur à la MSHS Sud-Est · Moniteur national de ski &amp; snowboard.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#work">Voir les projets</a>
+            <a class="btn btn-ghost" href="#contact">Me retrouver</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="about" id="about">
+        <div class="wrap">
+          <p class="section-kicker">À propos</p>
+          <h2 class="section-title">Essentiel</h2>
+          <div class="about-grid">
+            <img
+              class="about-photo"
+              src="assets/xiaoou-wang.png"
+              alt="Portrait de Xiaoou Wang"
+              width="392"
+              height="600"
+            />
+            <div class="about-copy">
+              <p>
+                Je construis des outils d’IA et d’humanités numériques utiles à la recherche, à l’enseignement et à la
+                médiation — et je transmets aussi des compétences de montagne et de pratique personnelle.
+              </p>
+              <p>
+                Doctorat en informatique spécialisé en Traitement Automatique des Langues, réalisé au laboratoire
+                <a href="https://www.i3s.unice.fr/" target="_blank" rel="noopener noreferrer">i3S</a>
+                &amp;
+                <a href="https://www.inria.fr/fr" target="_blank" rel="noopener noreferrer">Inria</a>.
+                Aujourd’hui ingénieur à la
+                <a href="https://mshs.univ-cotedazur.fr/" target="_blank" rel="noopener noreferrer">MSHS Sud-Est</a>,
+                j’accompagne plus de 18 laboratoires sur leurs projets numériques.
+              </p>
+              <dl class="facts">
+                <div class="fact">
+                  <dt>Recherche</dt>
+                  <dd>Argumentation computationnelle, fact-checking explicable, évaluation de productions écrites</dd>
+                </div>
+                <div class="fact">
+                  <dt>Transmission</dt>
+                  <dd>Moniteur national de ski &amp; snowboard · Skill Wikipedia · YouTube <em>Fragments d’un zèbre</em></dd>
+                </div>
+                <div class="fact">
+                  <dt>Lieux</dt>
+                  <dd>Université Côte d’Azur · Inria · MSHS Sud-Est</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="roles" id="roles">
+        <div class="wrap">
+          <p class="section-kicker">Parcours</p>
+          <h2 class="section-title">Trois filières, une même exigence</h2>
+          <p class="section-lead">
+            Comprendre, construire, transmettre — en laboratoire, sur le terrain numérique, et en montagne.
+          </p>
+          <div class="role-list">
+            <article class="role">
+              <h3>Doctorat en TAL</h3>
+              <p>
+                Informatique / NLP à i3S &amp; Inria : argumentation, justifications pour le fact-checking, jeux de
+                données et protocoles d’évaluation.
+              </p>
+            </article>
+            <article class="role">
+              <h3>Ingénieur MSHS Sud-Est</h3>
+              <p>
+                Prototypes interactifs et accompagnement de laboratoires en humanités numériques — de l’environnement
+                aux arts, du droit aux sciences cognitives.
+              </p>
+            </article>
+            <article class="role">
+              <h3>Moniteur &amp; créateur</h3>
+              <p>
+                Enseignement du ski et du snowboard, Skill Wikipedia multi-disciplines, et contenus YouTube sur le
+                développement personnel.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="work">
+        <div class="wrap">
+          <p class="section-kicker">Projets</p>
+          <h2 class="section-title">Sélection</h2>
+          <p class="section-lead">Outils publics pour la recherche, l’apprentissage et la vie privée.</p>
+          <div class="work-list">
+            <a class="work-item" href="https://3ia-demos.inria.fr/safe/" target="_blank" rel="noopener noreferrer">
+              <div>
+                <h3>SAFE</h3>
+                <p>Argumentation structurée pour la vérification des faits avec explications.</p>
+                <div class="work-tags">
+                  <span class="tag">Fact-checking</span>
+                  <span class="tag">Argumentation</span>
+                  <span class="tag">Inria 3IA</span>
+                </div>
+              </div>
+              <span class="work-arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="work-item" href="https://singer-8yu.pages.dev/" target="_blank" rel="noopener noreferrer">
+              <div>
+                <h3>Singer</h3>
+                <p>Apprentissage des langues par le chant — paroles synchronisées et modes d’étude.</p>
+                <div class="work-tags">
+                  <span class="tag">Éducation</span>
+                  <span class="tag">Chant</span>
+                  <span class="tag">Langues</span>
+                </div>
+              </div>
+              <span class="work-arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="work-item" href="https://xiaoouwang.github.io/Incognito/" target="_blank" rel="noopener noreferrer">
+              <div>
+                <h3>Incognito</h3>
+                <p>Anonymisation de textes respectueuse de la vie privée, dans le navigateur.</p>
+                <div class="work-tags">
+                  <span class="tag">Confidentialité</span>
+                  <span class="tag">Science ouverte</span>
+                </div>
+              </div>
+              <span class="work-arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="work-item" href="https://xiaoouwang.github.io/xiaoou-wiki/" target="_blank" rel="noopener noreferrer">
+              <div>
+                <h3>Skill Wikipedia</h3>
+                <p>
+                  Bibliothèque multi-disciplines : snowboard, ski, badminton, natation, chant, piano, guitare,
+                  développement personnel.
+                </p>
+                <div class="work-tags">
+                  <span class="tag">Apprentissage</span>
+                  <span class="tag">Vidéos</span>
+                  <span class="tag">Pratique</span>
+                </div>
+              </div>
+              <span class="work-arrow" aria-hidden="true">→</span>
+            </a>
+            <a
+              class="work-item"
+              href="https://xiaoouwang.github.io/theatre_rabanel/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div>
+                <h3>Dialogues sur le théâtre</h3>
+                <p>Livre sonore interactif avec question-réponse augmentée (archives BnF).</p>
+                <div class="work-tags">
+                  <span class="tag">RAG</span>
+                  <span class="tag">Archives</span>
+                  <span class="tag">Théâtre</span>
+                </div>
+              </div>
+              <span class="work-arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="work-item" href="https://xiaoouwang.github.io/LSLDisplayer/" target="_blank" rel="noopener noreferrer">
+              <div>
+                <h3>Multimodal LSL Explorer</h3>
+                <p>Visualisation synchronisée de signaux multimodaux (Lab Streaming Layer).</p>
+                <div class="work-tags">
+                  <span class="tag">LSL</span>
+                  <span class="tag">Multimodal</span>
+                </div>
+              </div>
+              <span class="work-arrow" aria-hidden="true">→</span>
+            </a>
+            <a
+              class="work-item"
+              href="https://www.youtube.com/@fragmentsdunzebre"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div>
+                <h3>Fragments d’un zèbre</h3>
+                <p>Chaîne YouTube — réflexion personnelle, psychologie et habitudes.</p>
+                <div class="work-tags">
+                  <span class="tag">YouTube</span>
+                  <span class="tag">Self-development</span>
+                </div>
+              </div>
+              <span class="work-arrow" aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="skills" id="skills">
+        <div class="wrap">
+          <p class="section-kicker">Domaines</p>
+          <h2 class="section-title">Ce que je couvre</h2>
+          <div class="skill-columns">
+            <div class="skill-col">
+              <h3>IA &amp; TAL</h3>
+              <ul>
+                <li>Argumentation computationnelle</li>
+                <li>Fact-checking explicable</li>
+                <li>Évaluation automatique d’écrits</li>
+                <li>RAG &amp; interfaces de recherche</li>
+                <li>Anonymisation &amp; vie privée</li>
+              </ul>
+            </div>
+            <div class="skill-col">
+              <h3>Humanités numériques</h3>
+              <ul>
+                <li>Prototypes de médiation</li>
+                <li>Accompagnement de laboratoires</li>
+                <li>Gestion des données de recherche</li>
+                <li>Outils OCR / transcription</li>
+                <li>Visualisation multimodale</li>
+              </ul>
+            </div>
+            <div class="skill-col">
+              <h3>Pratique &amp; transmission</h3>
+              <ul>
+                <li>Ski &amp; snowboard (moniteur national)</li>
+                <li>Badminton, natation, musique</li>
+                <li>Pédagogie vidéo</li>
+                <li>Développement personnel</li>
+                <li>Écriture &amp; conférences</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="pubs" id="pubs">
+        <div class="wrap">
+          <p class="section-kicker">Publications</p>
+          <h2 class="section-title">Sélection récente</h2>
+          <p class="section-lead">Travaux avec Elena Cabrio et Serena Villata, et collaborations TALN / ACL / LREC.</p>
+          <ol>
+            <li>
+              <div>
+                <strong>SAFE: Structured Argumentation for Fact-checking with Explanations</strong>
+                <span>IJCAI 2025 · Montréal</span>
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>Leveraging Argumentation Schemes in Justification Generation for Automated Fact-checking</strong>
+                <span>WI-IAT 2025 · Londres</span>
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>When automated fact-checking meets argumentation</strong>
+                <span>Argument &amp; Computation, 2025</span>
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>Argument-structured Justification Generation for Explainable Fact-checking</strong>
+                <span>WI-IAT 2024 · Bangkok</span>
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>Is Attention Explanation? An Introduction to the Debate</strong>
+                <span>ACL 2022</span>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="contact" id="contact">
+        <div class="wrap">
+          <p class="section-kicker">Liens</p>
+          <h2 class="section-title">Me retrouver</h2>
+          <p class="section-lead">Profils, publications et sites publics.</p>
+          <div class="contact-links">
+            <a class="btn btn-primary" href="https://xiaoouwang.github.io/" target="_blank" rel="noopener noreferrer"
+              >Site principal</a
+            >
+            <a
+              class="btn btn-ghost"
+              href="https://scholar.google.fr/citations?user=vKAMMpwAAAAJ&amp;hl=en"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Google Scholar</a
+            >
+            <a
+              class="btn btn-ghost"
+              href="https://www.linkedin.com/in/xiaoou-wang/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >LinkedIn</a
+            >
+            <a class="btn btn-ghost" href="https://medium.com/@xiaoouwang" target="_blank" rel="noopener noreferrer"
+              >Medium</a
+            >
+            <a
+              class="btn btn-ghost"
+              href="https://www.youtube.com/@fragmentsdunzebre"
+              target="_blank"
+              rel="noopener noreferrer"
+              >YouTube</a
+            >
+            <a class="btn btn-ghost" href="https://xiaoouwang.github.io/xiaoou-wiki/" target="_blank" rel="noopener noreferrer"
+              >Skill Wikipedia</a
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <p>
+          © Xiaoou Wang ·
+          <a href="https://xiaoouwang.github.io/xiaoou-wiki/">Skill Wikipedia</a>
+          · Portfolio
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
