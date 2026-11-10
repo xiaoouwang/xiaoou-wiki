@@ -2772,3 +2772,151 @@ a.brand:hover .brand-name {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+/* —— Piano sheets (AlphaTab) —— */
+.sheet-score-thumb {
+  display: grid;
+  place-items: center;
+  background: #f4f1ea;
+}
+
+.sheet-score-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  background: #fff;
+}
+
+.sheet-score-mark {
+  font-size: 1.35rem;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1;
+}
+
+.sheet-score-thumb:not(:has(img)) {
+  background:
+    linear-gradient(145deg, color-mix(in srgb, #4a6fa5 58%, #1e2f3c), color-mix(in srgb, #7a6bb5 35%, #1e2f3c));
+}
+
+.sheets-detail-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.sheets-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sheets-title {
+  margin: 2px 0 4px;
+  font-size: 1.25rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.sheets-meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.sheets-downloads {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+a.sheets-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: auto;
+  height: 36px;
+  min-height: 36px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+a.sheets-download.btn-primary {
+  border-color: transparent;
+  background: var(--accent);
+  color: #fff;
+}
+
+a.sheets-download.btn-ghost-block {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--text);
+}
+
+.sheets-video-wrap {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  background: #0b1220;
+}
+
+.sheets-video {
+  display: block;
+  width: 100%;
+  max-height: min(48vh, 480px);
+  background: #0b1220;
+}
+
+.sheets-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.sheets-status.is-error {
+  color: #b42318;
+}
+
+.sheets-viewport {
+  overflow: auto;
+  max-height: min(70vh, 820px);
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  background: #fff;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sheets-alphatab {
+  min-height: 240px;
+  padding: 8px 4px 16px;
+}
+
+.sheets-alphatab .at-surface {
+  box-shadow: none !important;
+}
+
+.sheets-description {
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px dashed color-mix(in srgb, var(--line) 90%, transparent);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.sheets-description a {
+  color: var(--accent-deep, #2f5f8a);
+}

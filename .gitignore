@@ -3,6 +3,9 @@ videos/**
 !videos/.gitkeep
 thumbnails/**
 !thumbnails/.gitkeep
+assets/soundfonts/**
+!assets/soundfonts/.gitkeep
+sheets/*.mp4
 
 .DS_Store
 node_modules/

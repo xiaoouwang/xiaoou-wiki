@@ -234,7 +234,15 @@
       </div>
 
       <nav class="tabbar" aria-label="Main">
-        <a class="tab tab-active" href="?tab=library" data-tab="library">
+        <a class="tab tab-active" href="?tab=sheets" data-tab="sheets">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M5 4h10l4 4v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" />
+            <path d="M15 4v4h4" />
+            <path d="M8 12h8M8 16h6" stroke-linecap="round" />
+          </svg>
+          <span>Sheets</span>
+        </a>
+        <a class="tab" href="?tab=library" data-tab="library">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8">
             <rect x="3" y="4" width="7" height="7" rx="1.5" />
             <rect x="14" y="4" width="7" height="7" rx="1.5" />
@@ -293,6 +301,7 @@
             <li><a href="?tab=library&amp;category=advanced">Advanced videos</a></li>
             <li><a href="?tab=library&amp;category=resorts">Guides &amp; resources</a></li>
             <li><a href="?tab=theory">Theory series</a></li>
+            <li><a href="?tab=sheets">Music sheets</a></li>
             <li><a href="?tab=programs">Exercise programs</a></li>
             <li><a href="?tab=resource">Resource</a></li>
             <li><a href="index.html">Snowboard Wikipedia</a></li>
@@ -305,7 +314,7 @@
           </ul>
         </section>
 
-        <section class="view view-active" id="view-library" data-view="library">
+        <section class="view" id="view-library" data-view="library">
           <div class="view-meta"><p class="count" id="result-count"></p></div>
           <div class="video-list" id="video-list"></div>
           <div class="resort-list" id="resort-list" hidden></div>
@@ -330,6 +339,47 @@
               <h2 class="program-detail-title" id="article-title"></h2>
               <div id="article-content"></div>
             </article>
+          </div>
+        </section>
+
+        <section class="view view-active" id="view-sheets" data-view="sheets">
+          <div id="sheets-list">
+            <div class="view-meta"><p class="count" id="sheets-count">Music sheets</p></div>
+            <div class="video-list" id="sheets-cards"></div>
+            <p class="empty" id="sheets-empty" hidden>No sheets yet.</p>
+          </div>
+          <div id="sheets-detail" hidden>
+            <div class="section-head">
+              <button class="text-btn" id="sheets-back" type="button">← Back</button>
+            </div>
+            <div class="sheets-detail-card">
+              <div class="sheets-card-head">
+                <div>
+                  <p class="count">Music sheet</p>
+                  <h2 class="sheets-title" id="sheets-detail-title"></h2>
+                  <p class="sheets-meta" id="sheets-detail-meta"></p>
+                </div>
+                <div class="sheets-downloads">
+                  <a class="btn-primary sheets-download" id="sheets-download-mxl" href="#" download>Download MXL</a>
+                  <a class="btn-ghost-block sheets-download" id="sheets-download-pdf" href="#" download>Download PDF</a>
+                </div>
+              </div>
+              <div class="sheets-video-wrap" id="sheets-video-wrap" hidden>
+                <video
+                  id="sheets-video"
+                  class="sheets-video"
+                  controls
+                  playsinline
+                  preload="metadata"
+                  controlslist="nodownload"
+                ></video>
+              </div>
+              <p class="sheets-status" id="sheets-status" hidden></p>
+              <div class="sheets-viewport" id="sheets-viewport">
+                <div id="alphaTab" class="sheets-alphatab"></div>
+              </div>
+              <article class="sheets-description article-body" id="sheets-description"></article>
+            </div>
           </div>
         </section>
 
@@ -420,6 +470,7 @@
     </aside>
 
     <script src="js/app.js" type="module"></script>
+    <script src="js/piano-sheets.js" type="module"></script>
   
     <!-- Default Statcounter code for me https://xiaoouwang.github.io/xiaoou-wiki -->
     <script type="text/javascript">

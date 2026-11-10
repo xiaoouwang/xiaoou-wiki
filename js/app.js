@@ -317,6 +317,9 @@ function buildRouteParams() {
     if (state.activeArticleId) params.article = state.activeArticleId;
   } else if (state.tab === "programs") {
     if (state.activeProgramId) params.program = state.activeProgramId;
+  } else if (state.tab === "sheets") {
+    const sheet = new URLSearchParams(location.search).get("sheet");
+    if (sheet) params.sheet = sheet;
   } else if (isIdeasTab()) {
     if (state.activeIdeaId) params.idea = state.activeIdeaId;
   }
@@ -513,6 +516,21 @@ function applyRouteFromUrl() {
       setTab("programs", { sync: false });
       if (programId && programById(programId)) openProgram(programId, { sync: false });
       else showProgramsHome({ sync: false });
+      return;
+    }
+
+    if (tab === "sheets") {
+      setTab("sheets", { sync: false });
+      return;
+    }
+
+    // Piano defaults to Sheets when no tab is specified.
+    if (
+      !params.get("tab") &&
+      document.body.dataset.sport === "piano" &&
+      document.querySelector('.tab[data-tab="sheets"]')
+    ) {
+      setTab("sheets", { sync: false });
       return;
     }
 
@@ -1862,6 +1880,7 @@ function setTab(tab, { sync = true } = {}) {
     state.activeProgramId = null;
     state.activeIdeaId = null;
   }
+  document.dispatchEvent(new CustomEvent("wiki:tabchange", { detail: { tab } }));
   if (sync) syncRoute();
 }
 
@@ -2860,6 +2879,7 @@ function updateTabHrefs() {
     if (name === "library") tab.setAttribute("href", libraryHref({ category: state.activeCategory }));
     else if (name === "theory") tab.setAttribute("href", theoryHref());
     else if (name === "programs") tab.setAttribute("href", programsHref());
+    else if (name === "sheets") tab.setAttribute("href", hrefFor({ tab: "sheets" }));
     else if (isIdeasTab(name)) tab.setAttribute("href", resourceHref());
   });
 }

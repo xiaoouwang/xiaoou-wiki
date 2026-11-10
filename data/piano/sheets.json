@@ -1,0 +1,50 @@
+{
+  "sheets": [
+    {
+      "id": "ilfaitbonrever",
+      "title": "Il fait bon rêver",
+      "titleAlt": "有梦好甜蜜",
+      "teaser": "Une chanson chinoise qui me rappelle mon enfance, les soirées d’été, le bruit de la pluie et le chant des cigales.",
+      "description": "🌙 Il fait bon rêver — 有梦好甜蜜\n\nUne chanson chinoise qui me rappelle mon enfance, les soirées d'été, le bruit de la pluie et le chant des cigales. 🌿\n\nCette mélodie est tirée de 我为歌狂 (Music Up), un dessin animé qui a marqué toute une génération en Chine au début des années 2000.\n\nL'histoire tourne autour d'une bande de lycéens passionnés de musique, aux caractères bien différents, qui forment des groupes et apprennent à grandir ensemble, entre amitié, rivalités, premiers amours et rêves à poursuivre. 🎸\n\nParmi les chansons de cet animé, 有梦好甜蜜, que j'ai choisi de traduire par « Il fait bon rêver », a toujours eu une place particulière dans mon cœur.\n\nAprès avoir traduit les paroles en français, j'ai eu envie d'aller un peu plus loin en réalisant un arrangement pour piano, pour faire découvrir cette jolie mélodie autrement.\n\nJ'espère qu'il vous plaira et, qui sait, qu'il vous donnera envie de la jouer à votre tour ! 🎹🎶\n\nVersion originale avec traduction :\n\n• Il fait bon rêver (有梦好甜蜜加法语字幕) https://www.youtube.com/watch?v=eP-rxC0DOjo",
+      "mxl": "sheets/ilfaitbonrever.mxl",
+      "pdf": "sheets/ilfaitbonrever.pdf",
+      "mscz": "sheets/ilfaitbonrever.mscz",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/sheets/ilfaitbonrever.jpg",
+      "video": "https://xiaoou-wiki-api.singerxo.workers.dev/media/sheets/ilfaitbonrever.mp4"
+    },
+    {
+      "id": "enpleurs",
+      "title": "En pleurs",
+      "titleAlt": "哭了",
+      "teaser": "Transcription d’une chanson de Li Quan — séparation, solitude, et la fragilité d’une voix qui n’en peut plus.",
+      "description": "《哭了》 — « En pleurs », de 李泉 (Li Quan)\n\nChanteur, compositeur et pianiste formé au Conservatoire de Shanghai, Li Quan est pour moi un véritable poète du piano. Un musicien chez qui les mots et les notes semblent prolonger une même pensée, avec cette sensibilité qui donne aux émotions les plus intimes toute leur place.\n\nDans 《哭了》, la séparation se raconte à travers des gestes simples : laisser toutes les lumières allumées, attendre quelqu’un qui ne vient pas, ouvrir les fenêtres et sentir le froid entrer. Tout rappelle une présence, mais on se retrouve seul, jusque dans sa propre voix.\n\nCe qui me touche dans ces paroles, c’est la fatigue qui accompagne le chagrin. On attend encore, alors qu’on sait déjà que tout a changé. Les questions reviennent — qu’est-ce que la solitude, qu’est-ce que l’amour ? — jusqu’à ce qu’il ne reste plus que cet aveu : « Je ne veux plus chanter. Je suis déjà en pleurs. »\n\nAujourd’hui, c’est cette fragilité que j’ai envie de retrouver au fil de la transcription.\n\nhttps://www.youtube.com/watch?v=cuS7HjGDc8o Interprétation en live",
+      "mxl": "sheets/enpleurs.mxl",
+      "pdf": "sheets/enpleurs.pdf",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/sheets/enpleurs.jpg",
+      "video": "https://xiaoou-wiki-api.singerxo.workers.dev/media/sheets/enpleurs.mp4"
+    },
+    {
+      "id": "honesty",
+      "title": "Honesty",
+      "titleAlt": "Pink Sweat$",
+      "teaser": "Un live que j’ai beaucoup aimé — arrangement piano inspiré d’une interprétation live.",
+      "description": "Un live que j'ai beaucoup aimé, inspiré de https://www.youtube.com/watch?v=ZGrFdtFn1SE&list=RDZGrFdtFn1SE&start_radio=1",
+      "mxl": "sheets/Honesty-repaired.mxl",
+      "pdf": "sheets/Honesty_repaired.pdf",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/sheets/honesty.jpg",
+      "video": "https://xiaoou-wiki-api.singerxo.workers.dev/media/sheets/Honesty_repaired.mp4"
+    },
+    {
+      "id": "atmyworst",
+      "title": "At My Worst",
+      "titleAlt": "Pink Sweat$",
+      "teaser": "One of those piano covers that catches your ear — transcribed and lightly reshaped for a more concert-like feel.",
+      "description": "One of my hobbies is discovering beautiful covers of songs I love. Every now and then, I come across a piano accompaniment that really catches my ear.\n\nThis is one of those discoveries! 🎹 I loved the arrangement so much that I decided to transcribe it into sheet music and share it here for anyone who'd like to play it too.\n\n🎵 Original cover: https://www.youtube.com/watch?v=2uaYCcH_i4I\n\nI made a few small adjustments to the accompaniment to give it a slightly more concert-like feel.",
+      "mxl": "sheets/atmyworst.mxl",
+      "pdf": "sheets/atmyworst.pdf",
+      "mscz": "sheets/atmyworst.mscz",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/sheets/atmyworst.jpg",
+      "video": "https://xiaoou-wiki-api.singerxo.workers.dev/media/sheets/atmyworst.mp4"
+    }
+  ]
+}
