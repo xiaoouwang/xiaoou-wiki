@@ -45,6 +45,17 @@
       "mscz": "sheets/atmyworst.mscz",
       "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/sheets/atmyworst.jpg",
       "video": "https://xiaoou-wiki-api.singerxo.workers.dev/media/sheets/atmyworst.mp4"
+    },
+    {
+      "id": "surlefil",
+      "title": "Sur le fil",
+      "titleAlt": "小心翼翼",
+      "teaser": "Une mélodie douce et mélancolique tirée de la série The First Half of My Life — un amour qui s’effrite après une infidélité.",
+      "description": "🎹 Sur le fil — 小心翼翼\n\nUne chanson chinoise tirée de la série The First Half of My Life (我的前半生), diffusée en 2017.\n\nComposée par Wang Zongxian, écrite par Ren Yingjie et interprétée par Ye Qisheng, cette chanson raconte une histoire d'amour qui s'effrite peu à peu après une infidélité.\n\nDans la série, une histoire d'infidélité vient bouleverser un mariage et briser la confiance qui unissait le couple. Dès lors, quelque chose se fissure : les promesses perdent leur sens, les silences remplacent les mots, et les gestes de tendresse ne suffisent plus à masquer les blessures.\n\nOn essaie pourtant de préserver les apparences, de faire comme si rien n'avait changé, comme si l'amour était une boule de cristal : belle, précieuse, mais prête à se briser à tout moment.\n\nToute la mélancolie de cette chanson réside dans ce paradoxe : on continue à prendre mille précautions pour préserver une relation, tout en sentant qu'elle nous échappe inexorablement.\n\nUne mélodie douce et mélancolique, qui raconte cette lente désillusion, les non-dits et l'impuissance face à un amour qui s'éteint peu à peu.\n\n🎼 Sur le fil — 小心翼翼\n\n🎵 Série : 我的前半生 (The First Half of My Life, 2017)\n\nArrangement inspiré de https://www.youtube.com/watch?v=Ds1qQ_3UUBY",
+      "mxl": "sheets/surlefil.mxl",
+      "pdf": "sheets/surlefil.pdf",
+      "thumbnail": "https://xiaoou-wiki-api.singerxo.workers.dev/media/thumbnails/sheets/surlefil.jpg",
+      "video": "https://xiaoou-wiki-api.singerxo.workers.dev/media/sheets/surlefil.mp4"
     }
   ]
 }
